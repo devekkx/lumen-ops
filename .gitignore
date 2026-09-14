@@ -8,6 +8,7 @@
 
 # Node
 /node_modules
+/Lumen-Ops-Build-Week 1.pdf:Zone.Identifier
 npm-debug.log
 yarn-error.log
 
