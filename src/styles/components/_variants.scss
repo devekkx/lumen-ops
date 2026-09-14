@@ -1,0 +1,2 @@
+@use '../variables' as *;
+@mixin status-variants($colors: $status-colors) { @each $name, $color in $colors { .status-#{$name} { background: color-mix(in srgb, #{$color} 14%, white); color: $color; } } }

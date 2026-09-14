@@ -1,0 +1,2 @@
+@use 'variables' as *;
+.btn-lumen { --bs-btn-bg: #{$lumen-navy}; --bs-btn-border-color: #{$lumen-navy}; --bs-btn-hover-bg: #{$lumen-slate}; --bs-btn-hover-border-color: #{$lumen-slate}; --bs-btn-color: white; }
