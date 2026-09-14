@@ -3,7 +3,7 @@
   <aside aria-label="Primary navigation">
     <div class="brand">Lumen Ops</div>
     <button class="btn btn-sm btn-outline-light" type="button" (click)="toggle()" [attr.aria-expanded]="!collapsed()">Toggle menu</button>
-    <nav><a routerLink="/luminarias" routerLinkActive="active">Luminaires</a><a routerLink="/averias" routerLinkActive="active">Faults</a><a routerLink="/ordenes-trabajo" routerLinkActive="active">Work orders</a><a routerLink="/cuadrillas" routerLinkActive="active">Crews</a></nav>
+    <nav><a routerLink="/dashboard" routerLinkActive="active">Dashboard</a><a routerLink="/luminarias" routerLinkActive="active">Luminaires</a><a routerLink="/averias" routerLinkActive="active">Faults</a><a routerLink="/ordenes-trabajo" routerLinkActive="active">Work orders</a><a routerLink="/cuadrillas" routerLinkActive="active">Crews</a></nav>
   </aside>
   <section class="content"><header><span>Municipal lighting operations</span><div><span class="me-3">{{ auth.user()?.sub }}</span><a routerLink="/auth/login" (click)="logout()">Sign out</a></div></header><main id="main-content"><router-outlet /></main><footer>© Lumen Ops</footer></section>
 </div>
