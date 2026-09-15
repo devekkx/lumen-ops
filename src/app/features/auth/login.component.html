@@ -1,0 +1,80 @@
+<div class="login" *transloco="let t">
+	<div class="login__inner">
+		<div class="login__head">
+			<span class="login__wordmark">lumen ops</span>
+			<h1 class="login__title">{{ t('auth.title') }}</h1>
+			<p class="login__subtitle">{{ t('auth.subtitle') }}</p>
+		</div>
+
+		<div class="login__grid">
+			<form class="login__form" (ngSubmit)="submit()">
+				<label class="lum-field" for="login-email">
+					<span class="lum-field__label">{{ t('auth.user') }}</span>
+					<input
+						class="lum-field__control"
+						id="login-email"
+						type="email"
+						name="email"
+						autocomplete="username"
+						[placeholder]="t('auth.userPlaceholder')"
+						[ngModel]="email()"
+						(ngModelChange)="email.set($event)"
+					/>
+				</label>
+
+				<label class="lum-field" for="login-password">
+					<span class="lum-field__label">{{ t('auth.password') }}</span>
+					<input
+						class="lum-field__control"
+						id="login-password"
+						type="password"
+						name="password"
+						autocomplete="current-password"
+						[placeholder]="t('auth.passwordPlaceholder')"
+						[ngModel]="password()"
+						(ngModelChange)="password.set($event)"
+					/>
+				</label>
+
+				@if (error()) {
+					<p class="login__error" role="alert">{{ error() }}</p>
+				} @else if (bootFailure()) {
+					<p class="login__error" role="alert">{{ t(bootFailure()!) }}</p>
+				}
+
+				<label class="login__switch">
+					<input
+						type="checkbox"
+						name="expired"
+						[ngModel]="expired()"
+						(ngModelChange)="expired.set($event)"
+					/>
+					<span>{{ t('auth.expiredSwitch') }}</span>
+				</label>
+
+				<button class="lum-btn lum-btn--primary lum-btn--block" type="submit" [disabled]="busy()">
+					{{ busy() ? t('auth.signingIn') : t('auth.signIn') }}
+				</button>
+			</form>
+
+			<div class="login__users">
+				<p class="login__users-hint">{{ t('auth.demoUsers') }}</p>
+
+				@for (user of users(); track user.id) {
+					<button class="login__user" type="button" (click)="use(user)" [disabled]="busy()">
+						<span class="login__avatar" [class]="'lum-pill--' + tone(user.roles)">
+							{{ initials(user.name) }}
+						</span>
+						<span class="login__user-text">
+							<span class="login__user-name">{{ user.name }}</span>
+							<span class="login__user-org">{{ user.org }}</span>
+							<span class="login__user-role" [class]="'lum-pill--' + tone(user.roles)">
+								{{ t('role.' + user.roles[0]) }}
+							</span>
+						</span>
+					</button>
+				}
+			</div>
+		</div>
+	</div>
+</div>

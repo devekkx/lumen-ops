@@ -1,0 +1,36 @@
+/* Shown while provideAppInitializer resolves the session. Without it, a reload
+   on a deep route renders the login screen for one frame before the token is
+   decoded — which looks like being logged out at random. */
+.boot {
+	min-height: 100vh;
+	display: grid;
+	place-items: center;
+	align-content: center;
+	justify-items: center;
+	gap: 20px;
+	padding: var(--space-lg);
+	text-align: center;
+	background: var(--color-canvas);
+
+	&__wordmark {
+		font: var(--type-display-lg);
+		letter-spacing: var(--tracking-display-lg);
+		color: var(--color-primary);
+	}
+
+	&__spinner {
+		width: 26px;
+		height: 26px;
+		border: 2px solid var(--color-hairline);
+		border-top-color: var(--color-primary);
+		border-radius: var(--radius-full);
+		animation: lum-spin 700ms linear infinite;
+	}
+
+	&__copy {
+		max-width: 300px;
+		font: var(--type-body-sm);
+		color: var(--color-muted);
+		text-wrap: pretty;
+	}
+}

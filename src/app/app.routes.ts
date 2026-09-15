@@ -1,26 +1,107 @@
 import { Routes } from '@angular/router';
-import { ShellComponent } from './layout/shell.component';
-import { authGuard, rolesGuard } from './core/auth/auth.guards';
 import { ROLE_GROUPS } from './core/auth/auth.models';
+import { authGuard, hasRole, hasRoleAndNot, someRoleGuard } from './core/auth/auth.guards';
+import { ShellComponent } from './layout/shell.component';
 
-const feature = (path: string, label: string) => ({
-  path,
-  data: { breadcrumb: label },
-  loadComponent: () => import('./features/placeholder-page.component').then((m) => m.PlaceholderPageComponent)
-});
-
+/* Route segments are Spanish while the code is English — the real app mixes the
+   two, and it is better to meet that here than to be surprised by it later. */
 export const routes: Routes = [
-  { path: 'auth/login', loadComponent: () => import('./features/login.component').then((m) => m.LoginComponent) },
-  {
-    path: '', component: ShellComponent, canActivate: [authGuard], children: [
-      { path: '', pathMatch: 'full', redirectTo: 'luminarias' },
-      { path: 'dashboard', data: { breadcrumb: 'Dashboard' }, loadComponent: () => import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent) },
-      { path: 'luminarias', data: { breadcrumb: 'Luminaires' }, loadComponent: () => import('./features/luminaires/luminaires-page.component').then((m) => m.LuminairesPageComponent) },
-      { ...feature('averias', 'Faults'), canActivate: [rolesGuard], data: { breadcrumb: 'Faults', roles: ROLE_GROUPS.COUNCIL } },
-      { ...feature('ordenes-trabajo', 'Work orders'), canActivate: [rolesGuard], data: { breadcrumb: 'Work orders', roles: ROLE_GROUPS.CONTRACTOR } },
-      feature('cuadrillas', 'Crews'),
-      feature('unauthorized', 'Unauthorized')
-    ]
-  },
-  { path: '**', redirectTo: 'luminarias' }
+	{
+		path: 'auth/login',
+		loadComponent: () => import('./features/auth/login.component').then((m) => m.LoginComponent)
+	},
+	{
+		path: '',
+		component: ShellComponent,
+		canActivate: [authGuard],
+		children: [
+			/* Four empty-path redirects, each behind a different canMatch, so `/`
+			   means a different screen per role. canActivate cannot express this:
+			   see the comment on hasRoleAndNot for why matching and activation are
+			   not interchangeable here.
+
+			   Evaluation order, top to bottom:
+			     1. COUNCIL and not ADMIN     -> averias
+			     2. CONTRACTOR and not ADMIN  -> ordenes-trabajo
+			     3. VIEWER only               -> luminarias
+			     4. ADMIN                     -> panel
+			     5. anyone else               -> luminarias  (no canMatch: always wins) */
+			{
+				path: '',
+				pathMatch: 'full',
+				canMatch: [hasRoleAndNot(['COUNCIL'], ['ADMIN'])],
+				redirectTo: 'averias'
+			},
+			{
+				path: '',
+				pathMatch: 'full',
+				canMatch: [hasRoleAndNot(['CONTRACTOR'], ['ADMIN'])],
+				redirectTo: 'ordenes-trabajo'
+			},
+			{
+				path: '',
+				pathMatch: 'full',
+				canMatch: [hasRoleAndNot(['VIEWER'], ['ADMIN', 'COUNCIL', 'CONTRACTOR'])],
+				redirectTo: 'luminarias'
+			},
+			{
+				path: '',
+				pathMatch: 'full',
+				canMatch: [hasRole(['ADMIN'])],
+				redirectTo: 'panel'
+			},
+			{ path: '', pathMatch: 'full', redirectTo: 'luminarias' },
+
+			{
+				path: 'panel',
+				data: { breadcrumb: 'nav.dashboard', roles: ROLE_GROUPS.COUNCIL },
+				canActivate: [someRoleGuard],
+				loadComponent: () =>
+					import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent)
+			},
+			{
+				path: 'luminarias',
+				data: { breadcrumb: 'nav.luminaires' },
+				loadComponent: () =>
+					import('./features/luminaires/luminaires-page.component').then(
+						(m) => m.LuminairesPageComponent
+					)
+			},
+			{
+				path: 'averias',
+				data: { breadcrumb: 'nav.faults' },
+				loadComponent: () =>
+					import('./features/placeholder-page.component').then((m) => m.PlaceholderPageComponent)
+			},
+			{
+				path: 'ordenes-trabajo',
+				data: { breadcrumb: 'nav.orders', roles: ROLE_GROUPS.CONTRACTOR },
+				canActivate: [someRoleGuard],
+				loadComponent: () =>
+					import('./features/placeholder-page.component').then((m) => m.PlaceholderPageComponent)
+			},
+			{
+				path: 'cuadrillas',
+				data: { breadcrumb: 'nav.crews', roles: ROLE_GROUPS.CONTRACTOR },
+				canActivate: [someRoleGuard],
+				loadComponent: () =>
+					import('./features/placeholder-page.component').then((m) => m.PlaceholderPageComponent)
+			},
+			{
+				path: 'mapa',
+				data: { breadcrumb: 'nav.map' },
+				loadComponent: () =>
+					import('./features/luminaires/luminaire-map.component').then(
+						(m) => m.LuminaireMapComponent
+					)
+			},
+			{
+				path: 'unauthorized',
+				data: { breadcrumb: 'unauth.title' },
+				loadComponent: () =>
+					import('./features/auth/unauthorized.component').then((m) => m.UnauthorizedComponent)
+			}
+		]
+	},
+	{ path: '**', redirectTo: '' }
 ];
