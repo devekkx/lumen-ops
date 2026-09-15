@@ -1,2 +1,46 @@
+@use 'sass:map';
 @use '../variables' as *;
-@mixin status-variants($colors: $status-colors) { @each $name, $color in $colors { .status-#{$name} { background: color-mix(in srgb, #{$color} 14%, white); color: $color; } } }
+
+/* Generates, from one Sass map and with no repeated hex value:
+     - a --tone-<name>-ink / --tone-<name>-tint custom property pair, so the map
+       reaches OpenLayers styles and ECharts options as well as CSS, and
+     - a .lum-pill--<name> class for the status pills in tables and detail views.
+   The map is the single source of truth for what a status colour means. */
+
+@mixin status-variants($variants: $status-variants, $alpha: $status-tint-alpha) {
+	:root {
+		@each $name, $ink in $variants {
+			--tone-#{$name}-ink: #{$ink};
+			--tone-#{$name}-tint: #{rgba($ink, $alpha)};
+		}
+	}
+
+	@each $name, $ink in $variants {
+		.lum-pill--#{$name} {
+			color: var(--tone-#{$name}-ink);
+			background: var(--tone-#{$name}-tint);
+		}
+	}
+}
+
+/* The pill shell itself — tone-independent. */
+@mixin pill-base {
+	.lum-pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+		padding: var(--space-xs) 10px;
+		border-radius: var(--radius-full);
+		font: var(--type-badge);
+		white-space: nowrap;
+
+		&::before {
+			content: '';
+			width: 6px;
+			height: 6px;
+			border-radius: var(--radius-full);
+			background: currentcolor;
+			flex-shrink: 0;
+		}
+	}
+}

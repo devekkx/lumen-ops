@@ -1,0 +1,102 @@
+/* Design tokens ported from the Lumen Ops canvas design system.
+   Source: _ds/my-design-system-2509d192.../tokens/*.css
+   Custom properties rather than Sass variables so that runtime consumers
+   (OpenLayers styles, ECharts option objects) can read the same values. */
+
+:root {
+	/* ---- Brand & accent -------------------------------------------------- */
+	--color-primary: #ff385c;
+	--color-primary-active: #e00b41;
+	--color-primary-disabled: #ffd1da;
+
+	/* ---- Surfaces -------------------------------------------------------- */
+	--color-canvas: #ffffff;
+	--color-surface-soft: #f7f7f7;
+	--color-surface-card: #ffffff;
+	--color-surface-strong: #f2f2f2;
+
+	/* ---- Hairlines & borders --------------------------------------------- */
+	--color-hairline: #dddddd;
+	--color-hairline-soft: #ebebeb;
+	--color-border-strong: #c1c1c1;
+
+	/* ---- Text ------------------------------------------------------------ */
+	--color-ink: #222222;
+	--color-body: #3f3f3f;
+	--color-muted: #6a6a6a;
+	--color-muted-soft: #929292;
+	--color-on-primary: #ffffff;
+	--color-on-dark: #ffffff;
+
+	/* ---- Semantic -------------------------------------------------------- */
+	--color-error: #c13515;
+	--color-error-hover: #b32505;
+
+	/* ---- Semantic aliases ------------------------------------------------ */
+	--bg-page: var(--color-surface-soft);
+	--surface-raised: var(--color-surface-card);
+	--surface-sunken: var(--color-surface-soft);
+	--text-heading: var(--color-ink);
+	--text-body: var(--color-body);
+	--text-subtle: var(--color-muted);
+	--border-default: var(--color-hairline);
+	--border-focus: var(--color-ink);
+	--accent: var(--color-primary);
+	--accent-press: var(--color-primary-active);
+	--on-accent: var(--color-on-primary);
+
+	/* ---- Typography ------------------------------------------------------ */
+	--font-sans: 'Inter', -apple-system, system-ui, Roboto, 'Helvetica Neue', sans-serif;
+	--font-display: var(--font-sans);
+
+	--weight-regular: 400;
+	--weight-medium: 500;
+	--weight-semibold: 600;
+	--weight-bold: 700;
+
+	--type-display-xl: 700 28px/1.43 var(--font-sans);
+	--type-display-lg: 500 22px/1.18 var(--font-sans);
+	--type-display-md: 700 21px/1.43 var(--font-sans);
+	--type-display-sm: 600 20px/1.2 var(--font-sans);
+	--type-title-md: 600 16px/1.25 var(--font-sans);
+	--type-title-sm: 500 16px/1.25 var(--font-sans);
+	--type-body-md: 400 16px/1.5 var(--font-sans);
+	--type-body-sm: 400 14px/1.43 var(--font-sans);
+	--type-caption: 500 14px/1.29 var(--font-sans);
+	--type-caption-sm: 400 13px/1.23 var(--font-sans);
+	--type-badge: 600 11px/1.18 var(--font-sans);
+	--type-micro-label: 700 12px/1.33 var(--font-sans);
+	--type-button-md: 500 16px/1.25 var(--font-sans);
+	--type-button-sm: 500 14px/1.29 var(--font-sans);
+	--type-nav-link: 600 16px/1.25 var(--font-sans);
+
+	--tracking-display-lg: -0.44px;
+	--tracking-display-sm: -0.18px;
+	--tracking-uppercase-tag: 0.32px;
+
+	/* ---- Spacing: 4px base with a 2px micro-step ------------------------- */
+	--space-xxs: 2px;
+	--space-xs: 4px;
+	--space-sm: 8px;
+	--space-md: 12px;
+	--space-base: 16px;
+	--space-lg: 24px;
+	--space-xl: 32px;
+	--space-xxl: 48px;
+	--space-section: 64px;
+
+	/* ---- Radius: soft everywhere ----------------------------------------- */
+	--radius-none: 0px;
+	--radius-xs: 4px;
+	--radius-sm: 8px;
+	--radius-md: 14px;
+	--radius-lg: 20px;
+	--radius-xl: 32px;
+	--radius-full: 9999px;
+
+	/* ---- Elevation: exactly one tier plus the flat baseline -------------- */
+	--shadow-card: rgba(0, 0, 0, 0.02) 0 0 0 1px, rgba(0, 0, 0, 0.04) 0 2px 6px 0,
+		rgba(0, 0, 0, 0.1) 0 4px 8px 0;
+	--shadow-none: none;
+	--scrim: rgba(0, 0, 0, 0.5);
+}

@@ -1,4 +1,25 @@
-$lumen-navy: #17212d;
-$lumen-slate: #3d4859;
-$lumen-cream: #fafaf9;
-$status-colors: ('active': #198754, 'warning': #d39e00, 'fault': #dc3545, 'inactive': #6c757d);
+/* Sass-side values. Anything a stylesheet needs to iterate over lives here;
+   anything a runtime consumer needs lives in _tokens.scss as a custom property.
+
+   One ink per tone and nothing repeated: the tint is derived, not hand-picked,
+   and the domain vocabulary maps onto these seven tones rather than adding
+   colours of its own (see LUMEN_TONES in @shared/models/status-tone). */
+
+$status-variants: (
+	'healthy': #1f6f5c,
+	'critical': #c13515,
+	'deep': #8c1f0b,
+	'attention': #9a5b00,
+	'queued': #2f5fa8,
+	'neutral': #6a6a6a,
+	'brand': #ff385c
+);
+
+/* Tint opacity applied to the ink to produce each pill background. */
+$status-tint-alpha: 0.1;
+
+/* Shell geometry, shared between the layout component and the global reset. */
+$aside-width: 248px;
+$aside-width-collapsed: 72px;
+$header-height: 72px;
+$shell-breakpoint: 920px;

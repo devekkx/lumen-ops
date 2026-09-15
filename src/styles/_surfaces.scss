@@ -1,0 +1,85 @@
+/* Surface primitives: the card, the inline panel, empty/error states and the
+   toast. Depth comes from hairlines and white-on-soft separation; the single
+   shadow tier is reserved for things that float (menus, toasts, modals). */
+
+.lum-card {
+	background: var(--color-canvas);
+	border: 1px solid var(--color-hairline-soft);
+	border-radius: var(--radius-md);
+	padding: var(--space-lg);
+}
+
+.lum-panel {
+	background: var(--color-surface-soft);
+	border: 1px solid var(--color-hairline-soft);
+	border-radius: var(--radius-sm);
+	padding: var(--space-md) var(--space-base);
+}
+
+.lum-floating {
+	background: var(--color-canvas);
+	border: 1px solid var(--color-hairline);
+	border-radius: var(--radius-md);
+	box-shadow: var(--shadow-card);
+}
+
+/* Empty and error states share a centred column; only the copy differs. */
+.lum-state {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--space-md);
+	padding: var(--space-xxl) var(--space-lg);
+	text-align: center;
+
+	&__title {
+		margin: 0;
+		font: var(--type-title-md);
+		color: var(--color-ink);
+	}
+
+	&__body {
+		margin: 0;
+		max-width: 46ch;
+		font: var(--type-body-sm);
+		color: var(--color-muted);
+		text-wrap: pretty;
+	}
+}
+
+.lum-toast {
+	display: flex;
+	gap: var(--space-md);
+	align-items: flex-start;
+	padding: 14px var(--space-base);
+	border-radius: var(--radius-md);
+	background: var(--color-canvas);
+	border: 1px solid var(--color-hairline);
+	box-shadow: var(--shadow-card);
+	animation: lum-rise 160ms ease;
+
+	&__dot {
+		width: var(--space-sm);
+		height: var(--space-sm);
+		margin-top: 6px;
+		border-radius: var(--radius-full);
+		flex-shrink: 0;
+	}
+
+	&__body {
+		margin: 0;
+		flex: 1;
+		font: var(--type-body-sm);
+		color: var(--color-body);
+		text-wrap: pretty;
+	}
+}
+
+.lum-spinner {
+	width: 18px;
+	height: 18px;
+	border: 2px solid var(--color-hairline);
+	border-top-color: var(--color-ink);
+	border-radius: var(--radius-full);
+	animation: lum-spin 700ms linear infinite;
+}

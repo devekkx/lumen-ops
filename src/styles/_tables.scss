@@ -1,1 +1,137 @@
-.lumen-table { th { color: var(--bs-secondary-color); font-size: .75rem; text-transform: uppercase; } tbody tr { cursor: pointer; } }
+/* The presentational table surface, ported from the canvas.
+   A card with a hairline border, a 3px progress rail at the top edge, and a
+   sticky uppercase header. Column widths are content-driven; long cells
+   ellipsize rather than wrapping so row height stays uniform. */
+
+.lum-table-card {
+	background: var(--color-canvas);
+	border: 1px solid var(--color-hairline-soft);
+	border-radius: var(--radius-md);
+	overflow: hidden;
+
+	&__rail {
+		height: 3px;
+		overflow: hidden;
+		background: var(--color-surface-soft);
+	}
+
+	/* Indeterminate sweep — the table is loading but we cannot say how far. */
+	&__rail-fill {
+		width: 25%;
+		height: 3px;
+		background: var(--color-primary);
+		animation: lum-sweep 900ms ease-in-out infinite;
+	}
+
+	&__scroll {
+		overflow-x: auto;
+	}
+}
+
+.lum-table {
+	width: 100%;
+	min-width: 640px;
+	border-collapse: collapse;
+
+	caption {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+	}
+
+	th {
+		padding: 0;
+		background: var(--color-surface-soft);
+		border-bottom: 1px solid var(--color-hairline);
+		position: sticky;
+		top: 0;
+		z-index: 1;
+	}
+
+	&__heading {
+		display: block;
+		width: 100%;
+		padding: var(--space-md) var(--space-base);
+		font: var(--type-micro-label);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-uppercase-tag);
+		color: var(--color-muted);
+		white-space: nowrap;
+	}
+
+	&__sort {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		border: none;
+		background: none;
+		cursor: pointer;
+
+		&:hover {
+			color: var(--color-ink);
+		}
+
+		&--active {
+			color: var(--color-ink);
+		}
+	}
+
+	&__arrow {
+		font-size: 10px;
+	}
+
+	tbody tr {
+		border-bottom: 1px solid var(--color-hairline-soft);
+
+		&:hover {
+			background: var(--color-surface-soft);
+		}
+	}
+
+	&__row--clickable {
+		cursor: pointer;
+	}
+
+	td {
+		padding: 13px var(--space-base);
+		max-width: 280px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font: var(--type-body-sm);
+		color: var(--color-body);
+	}
+
+	&__actions {
+		padding: var(--space-sm) var(--space-base);
+		text-align: right;
+		white-space: nowrap;
+	}
+
+	&__actions-group {
+		display: inline-flex;
+		gap: var(--space-sm);
+		justify-content: flex-end;
+	}
+
+	/* Skeleton rows keep the table's height stable while a page is in flight. */
+	&__skeleton-cell {
+		padding: 17px var(--space-base);
+	}
+}
+
+.lum-skeleton {
+	display: block;
+	height: 12px;
+	border-radius: var(--radius-xs);
+	background: linear-gradient(
+		90deg,
+		var(--color-surface-soft) 25%,
+		var(--color-surface-strong) 37%,
+		var(--color-surface-soft) 63%
+	);
+	background-size: 400% 100%;
+	animation: lum-shimmer 1.4s ease infinite;
+}
