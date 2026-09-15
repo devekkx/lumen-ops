@@ -1,33 +1,395 @@
-import express from 'express';
+/* The mock backend.
+ *
+ * Not throwaway scaffolding: the pagination envelope and the filter payload are
+ * the contract every later exercise consumes, copied from the real backend's
+ * shape including the parts that look odd (one-based pages, `ordination`
+ * rather than `sort`, a `filters` array of structured conditions).
+ */
 
-type Status = 'active' | 'warning' | 'fault' | 'inactive';
-type Luminaire = { id: number; code: string; street: string; lat: number; lon: number; lampType: 'SODIUM' | 'LED' | 'METAL_HALIDE'; wattage: number; installedAt: string; status: Status; zoneId: number };
-type Fault = { id: number; luminaireId: number; title: string; severity: 'low' | 'medium' | 'high'; startsAt: string; endsAt: string; status: 'open' | 'assigned' | 'resolved'; photos: string[] };
-type WorkOrder = { id: number; faultId: number; crewId: number; status: 'open' | 'assigned' | 'complete'; scheduledAt: string };
-type Crew = { id: number; name: string; zoneId: number; members: number };
-type PageRequest = { page?: string; perPage?: string; searchTerm?: string; sort?: string; direction?: string };
-const users = { ADMIN: ['admin@lumen.local', 'ADMIN'], COUNCIL: ['council@lumen.local', 'COUNCIL'], CONTRACTOR: ['contractor@lumen.local', 'CONTRACTOR'], VIEWER: ['viewer@lumen.local', 'VIEWER'] } as const;
-const lamps: Luminaire[] = Array.from({ length: 600 }, (_, index) => ({ id: index + 1, code: `LUM-${String(index + 1).padStart(4, '0')}`, street: `${['Harbour', 'North', 'Market', 'Cedar'][index % 4]} Street`, lat: 64.14 + (index % 25) * .002, lon: -21.94 + (index % 19) * .002, lampType: ['SODIUM', 'LED', 'METAL_HALIDE'][index % 3] as Luminaire['lampType'], wattage: [70, 100, 150][index % 3], installedAt: `202${index % 5}-0${(index % 9) + 1}-15`, status: ['active', 'warning', 'fault', 'inactive'][index % 4] as Status, zoneId: (index % 12) + 1 }));
-let faults: Fault[] = Array.from({ length: 400 }, (_, index) => ({ id: index + 1, luminaireId: (index % 600) + 1, title: ['Lamp out', 'Intermittent light', 'Damaged pole'][index % 3], severity: ['low', 'medium', 'high'][index % 3] as Fault['severity'], startsAt: `2026-0${(index % 8) + 1}-0${(index % 9) + 1}`, endsAt: `2026-0${(index % 8) + 1}-2${index % 8}`, status: ['open', 'assigned', 'resolved'][index % 3] as Fault['status'], photos: [] }));
-const crews: Crew[] = Array.from({ length: 12 }, (_, index) => ({ id: index + 1, name: `Crew ${String.fromCharCode(65 + index)}`, zoneId: index + 1, members: 3 + (index % 4) }));
-let workOrders: WorkOrder[] = Array.from({ length: 250 }, (_, index) => ({ id: index + 1, faultId: (index % 400) + 1, crewId: (index % 12) + 1, status: ['open', 'assigned', 'complete'][index % 3] as WorkOrder['status'], scheduledAt: `2026-09-${String((index % 28) + 1).padStart(2, '0')}` }));
-const token = (role: keyof typeof users) => `eyJhbGciOiJub25lIn0.${Buffer.from(JSON.stringify({ sub: users[role][0], roles: [role], exp: Math.floor(Date.now() / 1000) + 3600 })).toString('base64url')}.`;
-const delay = () => new Promise((resolve) => setTimeout(resolve, 300 + Math.random() * 600));
-const page = <T extends { id: number }>(items: T[], request: PageRequest) => { const number = Math.max(1, Number(request.page ?? 1)); const perPage = Math.min(600, Math.max(1, Number(request.perPage ?? 20))); const search = String(request.searchTerm ?? '').toLowerCase(); const sort = String(request.sort ?? 'id') as keyof T; const direction = request.direction === 'DESC' ? -1 : 1; const filtered = items.filter((item) => JSON.stringify(item).toLowerCase().includes(search)).sort((a, b) => String(a[sort] ?? '').localeCompare(String(b[sort] ?? '')) * direction); return { data: filtered.slice((number - 1) * perPage, number * perPage), currentPage: number, lastPage: Math.max(1, Math.ceil(filtered.length / perPage)), total: filtered.length, perPage }; };
-const app = express(); app.use(express.json({ limit: '2mb' }));
+import express, { type Request, type Response } from 'express';
+import { evaluateFilters, matchesSearch, type Filters } from './filters';
+import { USERS, findUser, publicUser, signToken } from './auth';
+import { dashboard, energyFor } from './energy';
+import {
+	DAY,
+	NOW,
+	OPEN_FAULT_STATUSES,
+	TRAP_500_ID,
+	crews,
+	database,
+	luminaires,
+	nextCode,
+	resetDatabase,
+	type Fault,
+	type FaultStatus,
+	type WorkOrder
+} from './seed';
 
-app.post('/api/auth/login', (request, response) => { const role = (request.body?.role ?? 'VIEWER') as keyof typeof users; if (!(role in users)) return response.status(401).json({ message: 'Unknown training role' }); return response.json({ token: token(role) }); });
-app.get('/api/luminaires/paged', async (request, response) => { await delay(); response.json(page(lamps, request.query)); });
-app.get('/api/luminaires/:id', (request, response) => { const lamp = lamps.find(({ id }) => id === Number(request.params.id)); return lamp ? response.json(lamp) : response.sendStatus(404); });
-app.put('/api/luminaires/:id', (request, response) => { const index = lamps.findIndex(({ id }) => id === Number(request.params.id)); if (index < 0) return response.sendStatus(404); lamps[index] = { ...lamps[index], ...request.body, id: lamps[index].id }; return response.json(lamps[index]); });
-app.get('/api/luminaires/:id/energy', (request, response) => { const start = new Date(String(request.query.from ?? Date.now() - 24 * 3600_000)); response.json(Array.from({ length: 72 }, (_, hour) => ({ at: new Date(start.getTime() + hour * 3600_000).toISOString(), kwh: Number((2.5 + Math.sin(hour / 24 * Math.PI * 2) + (Number(request.params.id) % 7) / 10).toFixed(2)) }))); });
-app.get('/api/faults/paged', async (request, response) => { await delay(); response.json(page(faults, request.query)); });
-app.post('/api/faults', (request, response) => { const fault: Fault = { ...request.body, id: Math.max(0, ...faults.map(({ id }) => id)) + 1, status: 'open', photos: request.body.photos ?? [] }; faults = [fault, ...faults]; response.status(201).json(fault); });
-app.put('/api/faults/:id', (request, response) => { const index = faults.findIndex(({ id }) => id === Number(request.params.id)); if (index < 0) return response.sendStatus(404); faults[index] = { ...faults[index], ...request.body, id: faults[index].id }; return response.json(faults[index]); });
-app.delete('/api/faults/:id', (request, response) => { faults = faults.filter(({ id }) => id !== Number(request.params.id)); response.sendStatus(204); });
-app.get('/api/work-orders/paged', async (request, response) => { await delay(); response.json(page(workOrders, request.query)); });
-app.get('/api/crews/paged', async (request, response) => { await delay(); response.json(page(crews, request.query)); });
-app.get('/api/dashboard/summary', (_request, response) => response.json({ byLampType: ['SODIUM', 'LED', 'METAL_HALIDE'].map((name, index) => ({ name, value: lamps.filter((lamp) => lamp.lampType === name).length + index })), bySeverity: ['low', 'medium', 'high'].map((name) => ({ name, value: faults.filter((fault) => fault.severity === name).length })), energy: Array.from({ length: 30 }, (_, day) => ({ at: `2026-09-${String(day + 1).padStart(2, '0')}`, kwh: Math.round(1650 + Math.sin(day / 30 * Math.PI * 2) * 220) })) }));
-app.get('/api/traps/500', (_request, response) => response.status(500).json({ message: 'Deliberate exercise error' }));
-app.get('/api/traps/slow', async (_request, response) => { await new Promise((resolve) => setTimeout(resolve, 4000)); response.json({ ok: true }); });
-app.listen(3000, () => console.log('Mock API listening on http://localhost:3000'));
+const PORT = Number(process.env.PORT ?? 3000);
+
+/* Artificial latency, from exercise 1.2 step 5. Without it, debouncing and
+   race conditions are invisible on localhost and two later exercises become
+   meaningless — so the paged endpoints are deliberately slow and jittery. */
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const pagedLatency = () => 300 + Math.random() * 600;
+const quickLatency = () => 120 + Math.random() * 230;
+
+interface PagedRequest {
+	page?: number;
+	perPage?: number;
+	searchTerm?: string;
+	searchKeys?: string[];
+	ordination?: { property: string; direction?: 'ASC' | 'DESC' };
+	filters?: Filters;
+}
+
+const collections = () => ({
+	luminaires,
+	faults: database.faults,
+	'work-orders': database.workOrders,
+	crews
+});
+
+type CollectionName = keyof ReturnType<typeof collections>;
+
+/* Spanish collation on purpose: sorting 'Ñ' and accented street names with the
+   default comparator puts them after 'Z', which looks like a bug to anyone
+   reading a Madrid street list. */
+const compare = (a: unknown, b: unknown): number => {
+	if (a === b) return 0;
+	if (a == null) return 1;
+	if (b == null) return -1;
+	if (typeof a === 'number' && typeof b === 'number') return a - b;
+	return String(a).localeCompare(String(b), 'es');
+};
+
+const paginate = <T extends object>(rows: readonly T[], request: PagedRequest) => {
+	const perPage = Math.min(200, Math.max(1, Number(request.perPage ?? 20)));
+	const { searchTerm, searchKeys, ordination, filters } = request;
+
+	let matched = rows.filter(
+		(row) => matchesSearch(row, searchTerm, searchKeys) && evaluateFilters(row, filters)
+	);
+
+	if (ordination?.property) {
+		const direction = ordination.direction === 'DESC' ? -1 : 1;
+		const property = ordination.property as keyof T;
+		matched = matched
+			.slice()
+			.sort((a, b) => compare(a[property], b[property]) * direction);
+	}
+
+	const total = matched.length;
+	const lastPage = Math.max(1, Math.ceil(total / perPage));
+	/* Clamping rather than returning an empty page: asking for page 40 of 12
+	   is a stale request, and an empty table is a worse answer than the end. */
+	const currentPage = Math.min(Math.max(1, Number(request.page ?? 1)), lastPage);
+	const start = (currentPage - 1) * perPage;
+
+	return { data: matched.slice(start, start + perPage), currentPage, lastPage, total, perPage };
+};
+
+const app = express();
+app.use(express.json({ limit: '4mb' }));
+
+/* ---- auth ------------------------------------------------------------- */
+
+app.post('/api/auth/login', async (request: Request, response: Response) => {
+	await sleep(quickLatency());
+	const { email, password, expiredToken = false } = request.body ?? {};
+	const user = findUser(email);
+
+	if (!user || user.password !== password) {
+		return response.status(401).json({ code: 'INVALID_CREDENTIALS' });
+	}
+	return response.json({
+		token: signToken(user, expiredToken ? -1 : 60),
+		user: publicUser(user)
+	});
+});
+
+/* The login screen lists the seeded users, so nobody has to read the source to
+   find a password. */
+app.get('/api/auth/users', (_request: Request, response: Response) =>
+	response.json(USERS.map(publicUser))
+);
+
+/* ---- collections ------------------------------------------------------ */
+
+app.post('/api/:collection/paged', async (request: Request, response: Response) => {
+	const name = request.params.collection as CollectionName;
+	/* The four collections have nothing in common but being objects, and
+	   paginate only ever reads properties by name, so the union collapses to
+	   object[] here rather than being narrowed per collection. */
+	const rows = collections()[name] as readonly object[] | undefined;
+	if (!rows) return response.status(404).json({ code: 'UNKNOWN_COLLECTION' });
+
+	await sleep(pagedLatency());
+	return response.json(paginate(rows, request.body ?? {}));
+});
+
+app.get('/api/luminaires/search', async (request: Request, response: Response) => {
+	await sleep(220 + Math.random() * 260);
+	const needle = String(request.query.q ?? '')
+		.trim()
+		.toLowerCase();
+	if (!needle) return response.json([]);
+
+	const limit = Math.min(20, Math.max(1, Number(request.query.limit ?? 8)));
+	return response.json(
+		luminaires
+			.filter(
+				(item) =>
+					item.code.toLowerCase().includes(needle) ||
+					item.street.toLowerCase().includes(needle) ||
+					item.zone.toLowerCase().includes(needle)
+			)
+			.slice(0, limit)
+	);
+});
+
+/* The map needs every matching feature, not a page of them — the filter still
+   applies, so filtering the table visibly filters the map. */
+app.post('/api/luminaires/geo', async (request: Request, response: Response) => {
+	await sleep(pagedLatency());
+	const { searchTerm, searchKeys = ['code', 'street', 'zone'], filters } = request.body ?? {};
+	return response.json(
+		luminaires.filter(
+			(item) => matchesSearch(item, searchTerm, searchKeys) && evaluateFilters(item, filters)
+		)
+	);
+});
+
+app.get('/api/luminaires/:id', async (request: Request, response: Response) => {
+	await sleep(quickLatency());
+	const { id } = request.params;
+
+	/* Trap one: this id always fails, so the error interceptor and the retry
+	   policy in exercise 3.1 have something real to be tested against. */
+	if (id === TRAP_500_ID) {
+		return response.status(500).json({ code: 'TRAP_ALWAYS_500' });
+	}
+
+	const found = luminaires.find((item) => item.id === id || item.code === id);
+	return found ? response.json(found) : response.status(404).json({ code: 'NOT_FOUND' });
+});
+
+app.get('/api/luminaires/:id/energy', async (request: Request, response: Response) => {
+	await sleep(quickLatency());
+	const luminaire = luminaires.find(
+		(item) => item.id === request.params.id || item.code === request.params.id
+	);
+	if (!luminaire) return response.status(404).json({ code: 'NOT_FOUND' });
+
+	const from = Date.parse(String(request.query.from ?? '')) || NOW - 7 * DAY;
+	const to = Date.parse(String(request.query.to ?? '')) || NOW;
+	return response.json({
+		luminaireId: luminaire.id,
+		unit: 'kWh',
+		readings: energyFor(luminaire, from, to)
+	});
+});
+
+app.get('/api/luminaires/:id/faults', async (request: Request, response: Response) => {
+	await sleep(quickLatency());
+	return response.json(
+		database.faults.filter(
+			(fault) =>
+				fault.luminaireId === request.params.id && OPEN_FAULT_STATUSES.includes(fault.status)
+		)
+	);
+});
+
+app.get('/api/crews', async (_request: Request, response: Response) => {
+	await sleep(quickLatency());
+	return response.json(crews);
+});
+
+/* ---- faults ----------------------------------------------------------- */
+
+app.post('/api/faults', async (request: Request, response: Response) => {
+	await sleep(quickLatency() + 180);
+	const model = request.body ?? {};
+	const luminaire = luminaires.find((item) => item.id === model.luminaireId);
+	if (!luminaire) return response.status(422).json({ code: 'UNKNOWN_LUMINAIRE' });
+
+	const created: Fault = {
+		...model,
+		id: `fault-${Date.now().toString(36)}`,
+		code: nextCode('AVR', database.faults),
+		luminaireCode: luminaire.code,
+		street: luminaire.street,
+		zone: luminaire.zone,
+		zoneId: luminaire.zoneId,
+		status: model.status ?? 'REPORTED',
+		photos: model.photos ?? 0
+	};
+	database.faults = [created, ...database.faults];
+	return response.status(201).json(created);
+});
+
+app.put('/api/faults/:id', async (request: Request, response: Response) => {
+	await sleep(quickLatency() + 180);
+	const index = database.faults.findIndex((fault) => fault.id === request.params.id);
+	if (index < 0) return response.status(404).json({ code: 'NOT_FOUND' });
+
+	const model = request.body ?? {};
+	const luminaire = luminaires.find((item) => item.id === model.luminaireId);
+	if (model.luminaireId && !luminaire) {
+		return response.status(422).json({ code: 'UNKNOWN_LUMINAIRE' });
+	}
+
+	database.faults[index] = {
+		...database.faults[index],
+		...model,
+		id: database.faults[index].id,
+		...(luminaire
+			? {
+					luminaireCode: luminaire.code,
+					street: luminaire.street,
+					zone: luminaire.zone,
+					zoneId: luminaire.zoneId
+				}
+			: {})
+	};
+	return response.json(database.faults[index]);
+});
+
+/* Validating a fault is what creates its work order — the state change has a
+   consequence elsewhere, which is the point of modelling the lifecycle. */
+app.post('/api/faults/:id/transition', async (request: Request, response: Response) => {
+	await sleep(quickLatency());
+	const fault = database.faults.find((item) => item.id === request.params.id);
+	if (!fault) return response.status(404).json({ code: 'NOT_FOUND' });
+
+	const next = request.body?.status as FaultStatus;
+	fault.status = next;
+
+	if (next === 'VALIDATED' && !database.workOrders.some((order) => order.faultId === fault.id)) {
+		const order: WorkOrder = {
+			id: `wo-${Date.now().toString(36)}`,
+			code: nextCode('OT', database.workOrders),
+			faultId: fault.id,
+			faultCode: fault.code,
+			luminaireCode: fault.luminaireCode,
+			severity: fault.severity,
+			crewId: null,
+			crewCode: null,
+			crewName: null,
+			contractor: null,
+			zoneId: fault.zoneId,
+			zone: fault.zone,
+			status: 'DRAFT',
+			scheduledAt: new Date(Date.now() + 2 * DAY).toISOString(),
+			closedAt: null,
+			hours: 0,
+			cost: 0
+		};
+		database.workOrders = [order, ...database.workOrders];
+	}
+
+	if (next === 'CLOSED') {
+		database.workOrders
+			.filter((order) => order.faultId === fault.id)
+			.forEach((order) => {
+				order.status = 'DONE';
+				order.closedAt = new Date().toISOString();
+				order.hours ||= 2;
+				order.cost ||= 196;
+			});
+	}
+
+	return response.json(fault);
+});
+
+app.delete('/api/faults/:id', async (request: Request, response: Response) => {
+	await sleep(quickLatency());
+	const removed = database.faults.find((fault) => fault.id === request.params.id);
+	if (!removed) return response.status(404).json({ code: 'NOT_FOUND' });
+
+	database.faults = database.faults.filter((fault) => fault.id !== request.params.id);
+	database.workOrders = database.workOrders.filter((order) => order.faultId !== removed.id);
+	return response.status(204).send();
+});
+
+/* ---- work orders ------------------------------------------------------ */
+
+app.patch('/api/work-orders/:id', async (request: Request, response: Response) => {
+	await sleep(quickLatency());
+	const order = database.workOrders.find((item) => item.id === request.params.id);
+	if (!order) return response.status(404).json({ code: 'NOT_FOUND' });
+
+	const patch = request.body ?? {};
+
+	if (patch.crewId) {
+		const crew = crews.find((item) => item.id === patch.crewId);
+		if (!crew) return response.status(422).json({ code: 'UNKNOWN_CREW' });
+		Object.assign(order, {
+			crewId: crew.id,
+			crewCode: crew.code,
+			crewName: crew.name,
+			contractor: crew.contractor
+		});
+		if (order.status === 'DRAFT') order.status = 'ASSIGNED';
+	}
+
+	if (patch.status) order.status = patch.status;
+	if (patch.scheduledAt) order.scheduledAt = patch.scheduledAt;
+
+	/* The order and its fault stay in step in both directions. */
+	const fault = database.faults.find((item) => item.id === order.faultId);
+	if (patch.status === 'DONE') {
+		order.closedAt = new Date().toISOString();
+		order.hours ||= 2.5;
+		order.cost ||= 244;
+		if (fault) fault.status = 'CLOSED';
+	}
+	if (patch.status === 'IN_PROGRESS' && fault) fault.status = 'IN_PROGRESS';
+
+	return response.json(order);
+});
+
+/* ---- dashboard -------------------------------------------------------- */
+
+app.get('/api/dashboard', async (request: Request, response: Response) => {
+	await sleep(pagedLatency());
+	return response.json(
+		dashboard({
+			from: request.query.from as string,
+			to: request.query.to as string,
+			zoneId: request.query.zoneId as string
+		})
+	);
+});
+
+/* ---- diagnostics ------------------------------------------------------ */
+
+/* Trap two: four seconds, so a timeout and a cancelled request are observable
+   without throttling the browser. */
+app.get('/api/diagnostics/slow', async (_request: Request, response: Response) => {
+	await sleep(4000);
+	return response.json({ ok: true, tookMs: 4000 });
+});
+
+app.get('/api/diagnostics/traps', (_request: Request, response: Response) =>
+	response.json({ always500LuminaireId: TRAP_500_ID, slowPath: '/api/diagnostics/slow' })
+);
+
+app.post('/api/diagnostics/reset', (_request: Request, response: Response) => {
+	resetDatabase();
+	return response.json({ ok: true, ...counts() });
+});
+
+const counts = () => ({
+	luminaires: luminaires.length,
+	faults: database.faults.length,
+	workOrders: database.workOrders.length,
+	crews: crews.length
+});
+
+app.listen(PORT, () => {
+	const { luminaires: l, faults: f, workOrders: w, crews: c } = counts();
+	console.log(`Mock API on http://localhost:${PORT}`);
+	console.log(`  seeded: ${l} luminaires · ${f} faults · ${w} work orders · ${c} crews`);
+	console.log(`  traps:  always-500 luminaire ${TRAP_500_ID} · 4s GET /api/diagnostics/slow`);
+});
