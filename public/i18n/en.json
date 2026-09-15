@@ -1,0 +1,293 @@
+{
+	"app": {
+		"name": "Lumen Ops",
+		"tagline": "Street-lighting operations console · Madrid"
+	},
+	"nav": {
+		"section": {
+			"operation": "Operations",
+			"reference": "Reference"
+		},
+		"dashboard": "Dashboard",
+		"luminaires": "Luminaires",
+		"faults": "Faults",
+		"orders": "Work orders",
+		"crews": "Crews",
+		"map": "Map",
+		"docs": "Documentation"
+	},
+	"auth": {
+		"title": "Sign in to Lumen Ops",
+		"subtitle": "Madrid city council street-lighting contract",
+		"user": "User",
+		"userPlaceholder": "name@lumen.madrid",
+		"password": "Password",
+		"passwordPlaceholder": "Your password",
+		"signIn": "Sign in",
+		"signingIn": "Signing in…",
+		"demoUsers": "Four seeded users, each with a different home page",
+		"useUser": "Use this user",
+		"invalid": "Wrong user or password",
+		"expired": "Your session expired. Sign in again.",
+		"boot": "Resolving the session before the first route…",
+		"expiredSwitch": "Sign in with an already-expired token (to test the bootstrap)",
+		"bootFailed": "Session could not be resolved"
+	},
+	"shell": {
+		"collapse": "Collapse the sidebar",
+		"expand": "Expand the sidebar",
+		"skip": "Skip to content",
+		"language": "Language",
+		"logout": "Sign out",
+		"menu": "Menu",
+		"close": "Close",
+		"homeCrumb": "Home"
+	},
+	"table": {
+		"searchPlaceholder": "Search by code or street",
+		"searchFaults": "Search by code, street or description",
+		"search": "Search",
+		"filters": "Filters",
+		"clear": "Clear",
+		"showing": "Showing {a}–{b} of {total}",
+		"page": "Page {page} of {last}",
+		"prev": "Previous",
+		"next": "Next",
+		"perPage": "Per page",
+		"empty": "No record matches the filters",
+		"emptyHint": "Try clearing the search or the filters.",
+		"loading": "Loading…",
+		"error": "The table could not be loaded",
+		"retry": "Retry",
+		"actions": "Actions",
+		"dsl": "Filter DSL inspector",
+		"dslEmpty": "No conditions: empty filters produce no condition at all.",
+		"engine": "Engine",
+		"engineV1": "v1 · RxJS",
+		"engineV2": "v2 · signals + resource()",
+		"operator": "Concurrency operator",
+		"staleWarning": "Stale result on screen: mergeMap lets the slow response win.",
+		"resourceState": "resource() state",
+		"requests": "Requests"
+	},
+	"lum": {
+		"title": "Luminaires",
+		"subtitle": "{total} geolocated assets under contract",
+		"code": "Code",
+		"street": "Street",
+		"zone": "District",
+		"lampType": "Lamp type",
+		"wattage": "Wattage",
+		"installedAt": "Installed",
+		"status": "Status",
+		"detail": "Luminaire record",
+		"energy": "Hourly consumption",
+		"openFaults": "Open faults",
+		"coords": "Coordinates",
+		"viewOnMap": "Show on map",
+		"newFault": "Report a fault"
+	},
+	"fault": {
+		"title": "Faults",
+		"subtitle": "Reports filed by citizens and council inspectors",
+		"code": "Code",
+		"luminaire": "Luminaire",
+		"severity": "Severity",
+		"status": "Status",
+		"reportedBy": "Source",
+		"reportedAt": "Reported",
+		"dueAt": "Due",
+		"description": "Description",
+		"descriptionPlaceholder": "What the reporter saw, and where",
+		"photos": "Photos",
+		"addPhotos": "Add photos",
+		"new": "New fault",
+		"edit": "Edit fault",
+		"validate": "Validate",
+		"reject": "Reject",
+		"close": "Close",
+		"delete": "Delete",
+		"save": "Save",
+		"cancel": "Cancel",
+		"saved": "Fault {code} saved",
+		"deleted": "Fault {code} deleted",
+		"validated": "Fault {code} validated and turned into a work order",
+		"closedMsg": "Fault {code} closed",
+		"rejected": "Fault {code} rejected",
+		"picker": "Affected luminaire",
+		"pickerPlaceholder": "Type a code or a street",
+		"pickerHint": "Type to search 600 luminaires · ↑ ↓ to move, Enter to pick",
+		"pickerEmpty": "No luminaire matches",
+		"pickerClear": "Clear the chosen luminaire",
+		"mode": {
+			"create": "Create",
+			"edit": "Edit"
+		},
+		"dirtyTitle": "Leave without saving?",
+		"dirtyBody": "This form has unsaved changes. Leaving now discards them.",
+		"dirtyLeave": "Leave without saving",
+		"dirtyStay": "Keep editing"
+	},
+	"order": {
+		"title": "Work orders",
+		"subtitle": "Validated faults assigned to contractor crews",
+		"code": "Code",
+		"fault": "Fault",
+		"crew": "Crew",
+		"status": "Status",
+		"scheduledAt": "Scheduled",
+		"hours": "Hours",
+		"cost": "Cost",
+		"assign": "Assign",
+		"start": "Start",
+		"complete": "Complete",
+		"unassigned": "Unassigned",
+		"assignTitle": "Assign a crew to {code}",
+		"assigned": "Order {code} assigned to {crew}",
+		"started": "Order {code} in progress",
+		"completed": "Order {code} completed"
+	},
+	"crew": {
+		"title": "Crews",
+		"subtitle": "Twelve crews across two contractors",
+		"code": "Code",
+		"name": "Crew",
+		"contractor": "Contractor",
+		"members": "Operatives",
+		"zone": "Home district",
+		"load": "Load",
+		"openOrders": "{n} open orders"
+	},
+	"map": {
+		"title": "Map",
+		"subtitle": "Map and table are two views of one selection",
+		"selected": "Selected",
+		"none": "No luminaire selected",
+		"legend": "Legend",
+		"cluster": "Cluster points",
+		"clusterHint": "600 raw points are already noticeable while dragging",
+		"detail": "Open record",
+		"features": "{n} points on the map",
+		"loading": "Loading the map…",
+		"offline": "OSM tiles could not load. The vector layer still works."
+	},
+	"dash": {
+		"title": "Dashboard",
+		"subtitle": "Hourly energy series and contract health"
+	},
+	"kpi": {
+		"luminaires": "Luminaires",
+		"openFaults": "Open faults",
+		"ordersOpen": "Orders in progress",
+		"consumption": "Consumption in range",
+		"availability": "Availability"
+	},
+	"chart": {
+		"consumption": "Consumption (kWh)",
+		"byLampType": "Consumption by lamp type",
+		"bySeverity": "Faults by severity",
+		"range": "Range",
+		"range7": "7 days",
+		"range30": "30 days",
+		"range90": "90 days",
+		"range1": "24 hours",
+		"empty": "No data in the selected range",
+		"kwh": "kWh",
+		"faults": "Faults"
+	},
+	"diag": {
+		"title": "Mock API traps",
+		"body": "Two endpoints exist to force failures: one always returns 500, the other takes four seconds.",
+		"trap500": "Call the always-500 id",
+		"slow": "Call the 4 s endpoint",
+		"retry": "Bounded retry: GET only",
+		"retryNote": "A retried POST would file a duplicate fault report, so retry is structurally impossible outside GET."
+	},
+	"docs": {
+		"title": "Documentation",
+		"subtitle": "The notes each exercise asks for, plus the screen map",
+		"exercise": "Exercise {id}",
+		"tests": "Spec suite",
+		"runTests": "Run the suite",
+		"running": "Running…",
+		"passed": "{n} passing",
+		"failed": "{n} failing",
+		"coverage": "Coverage threshold"
+	},
+	"unauth": {
+		"title": "Not authorised",
+		"body": "Your role has no access to that screen. You were redirected here instead of failing silently.",
+		"back": "Go to my home page"
+	},
+	"confirm": {
+		"title": "Confirm this action?",
+		"yes": "Confirm",
+		"no": "Cancel",
+		"deleteFault": "Fault {code} will be deleted. This cannot be undone.",
+		"validateFault": "Fault {code} will be validated and its work order created.",
+		"closeFault": "Fault {code} will be closed and its order completed."
+	},
+	"error": {
+		"401": "Your session is not valid. Sign in again.",
+		"403": "You do not have permission for this operation.",
+		"404": "That record was not found. Another user may have deleted it.",
+		"500": "The server failed to process the request. Try again in a minute.",
+		"offline": "No connection to the mock API. Retry when the network is back.",
+		"timeout": "The request took too long and was cancelled."
+	},
+	"validation": {
+		"required": "This field is required",
+		"minLength": "At least {n} characters",
+		"maxLength": "At most {n} characters",
+		"dateOrder": "The due date cannot be earlier than the report date",
+		"dateSpan": "The range cannot exceed one year",
+		"dateInvalid": "Invalid date"
+	},
+	"common": {
+		"all": "All",
+		"from": "From",
+		"to": "To",
+		"back": "Back",
+		"close": "Close",
+		"of": "of",
+		"none": "—",
+		"loading": "Loading…",
+		"role": "Role",
+		"org": "Organisation"
+	},
+	"status": {
+		"OK": "Healthy",
+		"FAULT": "Faulty",
+		"MAINTENANCE": "Maintenance",
+		"OFFLINE": "No comms",
+		"REPORTED": "Reported",
+		"VALIDATED": "Validated",
+		"IN_PROGRESS": "In progress",
+		"CLOSED": "Closed",
+		"REJECTED": "Rejected",
+		"DRAFT": "Draft",
+		"ASSIGNED": "Assigned",
+		"DONE": "Done"
+	},
+	"severity": {
+		"LOW": "Low",
+		"MEDIUM": "Medium",
+		"HIGH": "High",
+		"CRITICAL": "Critical"
+	},
+	"lamp": {
+		"SODIUM": "Sodium",
+		"LED": "LED",
+		"METAL_HALIDE": "Metal halide"
+	},
+	"source": {
+		"CITIZEN": "Citizen",
+		"INSPECTOR": "Inspector"
+	},
+	"role": {
+		"ADMIN": "Administration",
+		"COUNCIL": "City council",
+		"CONTRACTOR": "Contractor",
+		"VIEWER": "Read only"
+	}
+}
