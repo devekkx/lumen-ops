@@ -1,0 +1,149 @@
+.login {
+	min-height: 100vh;
+	display: grid;
+	place-items: center;
+	background: var(--color-canvas);
+	padding: 40px 20px;
+
+	&__inner {
+		width: 100%;
+		max-width: 1000px;
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-xl);
+	}
+
+	&__head {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-sm);
+		text-align: center;
+	}
+
+	/* The brand's one loud moment on this screen. */
+	&__wordmark {
+		font: var(--type-display-lg);
+		letter-spacing: var(--tracking-display-lg);
+		color: var(--color-primary);
+	}
+
+	&__title {
+		font: var(--type-display-sm);
+		letter-spacing: var(--tracking-display-sm);
+		color: var(--color-ink);
+	}
+
+	&__subtitle {
+		font: var(--type-body-sm);
+		color: var(--color-muted);
+	}
+
+	/* auto-fit collapses the two columns to one under ~660px without a query. */
+	&__grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+		gap: var(--space-lg);
+		align-items: start;
+	}
+
+	&__form {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-base);
+		padding: var(--space-lg);
+		background: var(--color-canvas);
+		border: 1px solid var(--color-hairline);
+		border-radius: var(--radius-md);
+		box-shadow: var(--shadow-card);
+	}
+
+	&__error {
+		font: var(--type-caption-sm);
+		color: var(--color-error);
+	}
+
+	&__switch {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		font: var(--type-caption-sm);
+		color: var(--color-muted);
+		cursor: pointer;
+
+		input {
+			width: var(--space-base);
+			height: var(--space-base);
+			accent-color: var(--color-primary);
+		}
+	}
+
+	&__users {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-md);
+	}
+
+	&__users-hint {
+		font: var(--type-caption);
+		color: var(--color-muted);
+		text-wrap: pretty;
+	}
+
+	&__user {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		width: 100%;
+		padding: 14px var(--space-base);
+		text-align: left;
+		background: var(--color-canvas);
+		border: 1px solid var(--color-hairline);
+		border-radius: var(--radius-md);
+		cursor: pointer;
+		transition: box-shadow 120ms ease, border-color 120ms ease;
+
+		&:hover:not(:disabled) {
+			box-shadow: var(--shadow-card);
+			border-color: var(--color-hairline-soft);
+		}
+
+		&:disabled {
+			cursor: not-allowed;
+			opacity: 0.6;
+		}
+	}
+
+	/* Tone comes from the role via a .lum-pill--* class, so an avatar and that
+	   user's role badge can never disagree about colour. */
+	&__avatar {
+		width: 40px;
+		height: 40px;
+		flex-shrink: 0;
+		border-radius: var(--radius-full);
+		display: grid;
+		place-items: center;
+		font: var(--type-title-md);
+	}
+
+	&__user-text {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-xxs);
+		min-width: 0;
+	}
+
+	&__user-name {
+		font: var(--type-title-sm);
+		color: var(--color-ink);
+	}
+
+	&__user-org {
+		font: var(--type-caption-sm);
+		color: var(--color-muted);
+	}
+
+	&__user-role {
+		font: var(--type-caption-sm);
+		background: none;
+	}
+}

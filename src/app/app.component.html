@@ -1,1 +1,9 @@
-<router-outlet />
+@if (auth.booting()) {
+	<div class="boot" *transloco="let t">
+		<span class="boot__wordmark">lumen ops</span>
+		<div class="boot__spinner" aria-hidden="true"></div>
+		<p class="boot__copy" role="status">{{ t('auth.boot') }}</p>
+	</div>
+} @else {
+	<router-outlet />
+}
