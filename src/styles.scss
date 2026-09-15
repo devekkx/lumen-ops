@@ -1,7 +1,142 @@
+/* Global entry point. Order matters: tokens define the custom properties every
+   later rule reads, so they come first and Bootstrap's own cascade sits
+   underneath the Lumen layer that follows it. */
+
+@use 'styles/tokens';
 @use 'styles/variables' as *;
 @use 'styles/buttons';
+@use 'styles/forms';
 @use 'styles/tables';
+@use 'styles/surfaces';
 @use 'styles/components/variants' as variants;
+
 @include variants.status-variants;
-body { background: $lumen-cream; color: $lumen-navy; }
-:focus-visible { outline: 3px solid #0d6efd; outline-offset: 3px; }
+@include variants.pill-base;
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background: var(--bg-page);
+	color: var(--color-ink);
+	font: var(--type-body-md);
+	-webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p {
+	margin: 0;
+}
+
+a {
+	color: var(--color-ink);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+
+	&:hover {
+		color: var(--color-primary);
+	}
+}
+
+button,
+input,
+select,
+textarea {
+	font-family: var(--font-sans);
+}
+
+/* One focus treatment for the whole app. Controls that carry focus in their
+   own border (the text field) opt out locally rather than globally. */
+*:focus-visible {
+	outline: 2px solid var(--color-ink);
+	outline-offset: 2px;
+	border-radius: var(--radius-xs);
+}
+
+/* Hidden from sight, never from focus or from a screen reader. */
+.lum-visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+.lum-skip-link {
+	position: absolute;
+	top: var(--space-sm);
+	left: var(--space-sm);
+	z-index: 100;
+	padding: var(--space-sm) var(--space-md);
+	border-radius: var(--radius-sm);
+	background: var(--color-ink);
+	color: var(--color-on-dark);
+	text-decoration: none;
+	transform: translateY(-200%);
+	transition: transform 120ms ease;
+
+	&:focus {
+		transform: none;
+	}
+}
+
+@keyframes lum-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* The indeterminate table rail. */
+@keyframes lum-sweep {
+	0% {
+		transform: translateX(-100%);
+	}
+
+	100% {
+		transform: translateX(400%);
+	}
+}
+
+@keyframes lum-rise {
+	from {
+		opacity: 0;
+		transform: translateY(var(--space-sm));
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes lum-shimmer {
+	0% {
+		background-position: 100% 0;
+	}
+
+	100% {
+		background-position: 0 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
