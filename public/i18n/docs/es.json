@@ -1,0 +1,8 @@
+{
+	"docs": {
+		"scope": {
+			"loaded": "Ámbito «docs» cargado bajo demanda",
+			"note": "Estas claves no viajan en el paquete raíz."
+		}
+	}
+}

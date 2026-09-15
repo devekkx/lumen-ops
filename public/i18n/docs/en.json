@@ -1,0 +1,8 @@
+{
+	"docs": {
+		"scope": {
+			"loaded": "Scope “docs” loaded on demand",
+			"note": "These keys do not ship in the root bundle."
+		}
+	}
+}

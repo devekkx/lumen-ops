@@ -1,0 +1,293 @@
+{
+	"app": {
+		"name": "Lumen Ops",
+		"tagline": "Consola de alumbrado público · Madrid"
+	},
+	"nav": {
+		"section": {
+			"operation": "Operación",
+			"reference": "Referencia"
+		},
+		"dashboard": "Panel",
+		"luminaires": "Luminarias",
+		"faults": "Averías",
+		"orders": "Órdenes de trabajo",
+		"crews": "Cuadrillas",
+		"map": "Mapa",
+		"docs": "Documentación"
+	},
+	"auth": {
+		"title": "Entrar en Lumen Ops",
+		"subtitle": "Contrato de alumbrado del Ayuntamiento de Madrid",
+		"user": "Usuario",
+		"userPlaceholder": "nombre@lumen.madrid",
+		"password": "Contraseña",
+		"passwordPlaceholder": "Tu contraseña",
+		"signIn": "Entrar",
+		"signingIn": "Entrando…",
+		"demoUsers": "Cuatro usuarios de prueba, cada uno con su propia página de inicio",
+		"useUser": "Usar este usuario",
+		"invalid": "Usuario o contraseña incorrectos",
+		"expired": "Tu sesión ha caducado. Vuelve a entrar.",
+		"boot": "Resolviendo la sesión antes de la primera ruta…",
+		"expiredSwitch": "Entrar con un token ya caducado (para probar el arranque)",
+		"bootFailed": "No se pudo resolver la sesión"
+	},
+	"shell": {
+		"collapse": "Contraer el menú lateral",
+		"expand": "Desplegar el menú lateral",
+		"skip": "Ir al contenido",
+		"language": "Idioma",
+		"logout": "Salir",
+		"menu": "Menú",
+		"close": "Cerrar",
+		"homeCrumb": "Inicio"
+	},
+	"table": {
+		"searchPlaceholder": "Buscar por código o calle",
+		"searchFaults": "Buscar por código, calle o descripción",
+		"search": "Búsqueda",
+		"filters": "Filtros",
+		"clear": "Limpiar",
+		"showing": "Mostrando {a}–{b} de {total}",
+		"page": "Página {page} de {last}",
+		"prev": "Anterior",
+		"next": "Siguiente",
+		"perPage": "Por página",
+		"empty": "Ningún registro coincide con los filtros",
+		"emptyHint": "Prueba a limpiar la búsqueda o los filtros.",
+		"loading": "Cargando…",
+		"error": "No se pudo cargar la tabla",
+		"retry": "Reintentar",
+		"actions": "Acciones",
+		"dsl": "Inspector del DSL de filtros",
+		"dslEmpty": "Sin condiciones: filtros vacíos no generan condición.",
+		"engine": "Motor",
+		"engineV1": "v1 · RxJS",
+		"engineV2": "v2 · señales + resource()",
+		"operator": "Operador de concurrencia",
+		"staleWarning": "Resultado obsoleto en pantalla: mergeMap deja ganar a la respuesta lenta.",
+		"resourceState": "Estado de resource()",
+		"requests": "Peticiones"
+	},
+	"lum": {
+		"title": "Luminarias",
+		"subtitle": "{total} activos geolocalizados del contrato",
+		"code": "Código",
+		"street": "Calle",
+		"zone": "Distrito",
+		"lampType": "Tipo de lámpara",
+		"wattage": "Potencia",
+		"installedAt": "Instalación",
+		"status": "Estado",
+		"detail": "Ficha de luminaria",
+		"energy": "Consumo horario",
+		"openFaults": "Averías abiertas",
+		"coords": "Coordenadas",
+		"viewOnMap": "Ver en el mapa",
+		"newFault": "Parte de avería"
+	},
+	"fault": {
+		"title": "Averías",
+		"subtitle": "Partes de ciudadanos e inspectores del contrato",
+		"code": "Código",
+		"luminaire": "Luminaria",
+		"severity": "Gravedad",
+		"status": "Estado",
+		"reportedBy": "Origen",
+		"reportedAt": "Fecha del parte",
+		"dueAt": "Fecha límite",
+		"description": "Descripción",
+		"descriptionPlaceholder": "Qué ha visto el informante y dónde",
+		"photos": "Fotos",
+		"addPhotos": "Añadir fotos",
+		"new": "Nueva avería",
+		"edit": "Editar avería",
+		"validate": "Validar",
+		"reject": "Rechazar",
+		"close": "Cerrar",
+		"delete": "Eliminar",
+		"save": "Guardar",
+		"cancel": "Cancelar",
+		"saved": "Avería {code} guardada",
+		"deleted": "Avería {code} eliminada",
+		"validated": "Avería {code} validada y convertida en orden de trabajo",
+		"closedMsg": "Avería {code} cerrada",
+		"rejected": "Avería {code} rechazada",
+		"picker": "Luminaria afectada",
+		"pickerPlaceholder": "Escribe un código o una calle",
+		"pickerHint": "Escribe para buscar entre 600 luminarias · ↑ ↓ para navegar, Enter para elegir",
+		"pickerEmpty": "Ninguna luminaria coincide",
+		"pickerClear": "Quitar la luminaria elegida",
+		"mode": {
+			"create": "Crear",
+			"edit": "Editar"
+		},
+		"dirtyTitle": "¿Salir sin guardar?",
+		"dirtyBody": "El formulario tiene cambios sin guardar. Si sales ahora se pierden.",
+		"dirtyLeave": "Salir sin guardar",
+		"dirtyStay": "Seguir editando"
+	},
+	"order": {
+		"title": "Órdenes de trabajo",
+		"subtitle": "Averías validadas asignadas a cuadrillas de la contrata",
+		"code": "Código",
+		"fault": "Avería",
+		"crew": "Cuadrilla",
+		"status": "Estado",
+		"scheduledAt": "Programada",
+		"hours": "Horas",
+		"cost": "Coste",
+		"assign": "Asignar",
+		"start": "Iniciar",
+		"complete": "Completar",
+		"unassigned": "Sin asignar",
+		"assignTitle": "Asignar cuadrilla a {code}",
+		"assigned": "Orden {code} asignada a {crew}",
+		"started": "Orden {code} en ejecución",
+		"completed": "Orden {code} completada"
+	},
+	"crew": {
+		"title": "Cuadrillas",
+		"subtitle": "Doce cuadrillas de dos contratas",
+		"code": "Código",
+		"name": "Cuadrilla",
+		"contractor": "Contrata",
+		"members": "Operarios",
+		"zone": "Distrito base",
+		"load": "Carga",
+		"openOrders": "{n} órdenes abiertas"
+	},
+	"map": {
+		"title": "Mapa",
+		"subtitle": "Mapa y tabla son dos vistas de una misma selección",
+		"selected": "Seleccionada",
+		"none": "Ninguna luminaria seleccionada",
+		"legend": "Leyenda",
+		"cluster": "Agrupar puntos",
+		"clusterHint": "600 puntos sin agrupar ya se notan al arrastrar",
+		"detail": "Abrir ficha",
+		"features": "{n} puntos en el mapa",
+		"loading": "Cargando el mapa…",
+		"offline": "No se pudieron cargar las teselas OSM. La capa vectorial sigue funcionando."
+	},
+	"dash": {
+		"title": "Panel",
+		"subtitle": "Series horarias de consumo y estado del contrato"
+	},
+	"kpi": {
+		"luminaires": "Luminarias",
+		"openFaults": "Averías abiertas",
+		"ordersOpen": "Órdenes en curso",
+		"consumption": "Consumo del periodo",
+		"availability": "Disponibilidad"
+	},
+	"chart": {
+		"consumption": "Consumo (kWh)",
+		"byLampType": "Consumo por tipo de lámpara",
+		"bySeverity": "Averías por gravedad",
+		"range": "Rango",
+		"range7": "7 días",
+		"range30": "30 días",
+		"range90": "90 días",
+		"range1": "24 horas",
+		"empty": "Sin datos en el rango elegido",
+		"kwh": "kWh",
+		"faults": "Averías"
+	},
+	"diag": {
+		"title": "Trampas del mock",
+		"body": "Dos endpoints existen para provocar fallos: uno devuelve 500 siempre, otro tarda cuatro segundos.",
+		"trap500": "Llamar al id que devuelve 500",
+		"slow": "Llamar al endpoint de 4 s",
+		"retry": "Reintento acotado: solo en GET",
+		"retryNote": "Un POST reintentado duplicaría un parte de avería, así que el reintento es estructuralmente imposible fuera de GET."
+	},
+	"docs": {
+		"title": "Documentación",
+		"subtitle": "Las notas que pide cada ejercicio, más el mapa de pantallas",
+		"exercise": "Ejercicio {id}",
+		"tests": "Suite de especificaciones",
+		"runTests": "Ejecutar la suite",
+		"running": "Ejecutando…",
+		"passed": "{n} correctas",
+		"failed": "{n} fallidas",
+		"coverage": "Umbral de cobertura"
+	},
+	"unauth": {
+		"title": "Sin autorización",
+		"body": "Tu rol no tiene acceso a esa pantalla. Se te ha redirigido aquí en lugar de fallar en silencio.",
+		"back": "Ir a mi página de inicio"
+	},
+	"confirm": {
+		"title": "¿Confirmas la acción?",
+		"yes": "Confirmar",
+		"no": "Cancelar",
+		"deleteFault": "Se eliminará la avería {code}. La acción no se puede deshacer.",
+		"validateFault": "Se validará la avería {code} y se creará su orden de trabajo.",
+		"closeFault": "Se cerrará la avería {code} y su orden quedará completada."
+	},
+	"error": {
+		"401": "Tu sesión no es válida. Vuelve a entrar.",
+		"403": "No tienes permiso para esta operación.",
+		"404": "No encontramos ese registro. Puede que otro usuario lo haya eliminado.",
+		"500": "El servidor falló al procesar la petición. Vuelve a intentarlo en un minuto.",
+		"offline": "Sin conexión con el mock API. Reintenta cuando vuelva la red.",
+		"timeout": "La petición tardó demasiado y se ha cancelado."
+	},
+	"validation": {
+		"required": "Este campo es obligatorio",
+		"minLength": "Mínimo {n} caracteres",
+		"maxLength": "Máximo {n} caracteres",
+		"dateOrder": "La fecha límite no puede ser anterior a la del parte",
+		"dateSpan": "El rango no puede superar un año",
+		"dateInvalid": "Fecha no válida"
+	},
+	"common": {
+		"all": "Todas",
+		"from": "Desde",
+		"to": "Hasta",
+		"back": "Volver",
+		"close": "Cerrar",
+		"of": "de",
+		"none": "—",
+		"loading": "Cargando…",
+		"role": "Rol",
+		"org": "Organización"
+	},
+	"status": {
+		"OK": "Correcta",
+		"FAULT": "Avería",
+		"MAINTENANCE": "Mantenimiento",
+		"OFFLINE": "Sin comunicación",
+		"REPORTED": "Registrada",
+		"VALIDATED": "Validada",
+		"IN_PROGRESS": "En ejecución",
+		"CLOSED": "Cerrada",
+		"REJECTED": "Rechazada",
+		"DRAFT": "Borrador",
+		"ASSIGNED": "Asignada",
+		"DONE": "Completada"
+	},
+	"severity": {
+		"LOW": "Baja",
+		"MEDIUM": "Media",
+		"HIGH": "Alta",
+		"CRITICAL": "Crítica"
+	},
+	"lamp": {
+		"SODIUM": "Sodio",
+		"LED": "LED",
+		"METAL_HALIDE": "Halogenuro metálico"
+	},
+	"source": {
+		"CITIZEN": "Ciudadano",
+		"INSPECTOR": "Inspector"
+	},
+	"role": {
+		"ADMIN": "Administración",
+		"COUNCIL": "Ayuntamiento",
+		"CONTRACTOR": "Contrata",
+		"VIEWER": "Consulta"
+	}
+}
