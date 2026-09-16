@@ -6,11 +6,11 @@
 			<p class="text-secondary mb-0">{{ t('fault.subtitle') }}</p>
 		</div>
 		<div class="d-flex gap-2">
-			<button type="button" class="lum-btn lum-btn--secondary" (click)="refresh()">
+			<button type="button" class="btn btn-outline-secondary" (click)="refresh()">
 				{{ t('table.retry') }}
 			</button>
 			@if (abilities().createFault) {
-				<a class="lum-btn lum-btn--primary" data-action="create" routerLink="/averias/nueva">
+				<a class="btn btn-primary" data-action="create" routerLink="/averias/nueva">
 					{{ t('fault.new') }}
 				</a>
 			}
@@ -78,54 +78,82 @@
 		(retry)="refresh()"
 	>
 		<ng-template #rowActions let-fault>
-			<div class="d-flex flex-wrap gap-2">
+			<div class="d-flex flex-wrap gap-1">
 				@if (abilities().editFault) {
 					<a
-						class="lum-btn lum-btn--tertiary lum-btn--sm"
+						class="btn btn-sm btn-link p-1"
 						data-action="edit"
+						data-bs-toggle="tooltip"
+						[title]="t('fault.edit')"
+						[attr.aria-label]="t('fault.edit')"
 						[routerLink]="['/averias', fault.id, 'editar']"
 					>
-						{{ t('fault.edit') }}
+						<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z" />
+						</svg>
 					</a>
 				}
 				@if (canValidate(fault)) {
 					<button
 						type="button"
-						class="lum-btn lum-btn--tertiary lum-btn--sm"
+						class="btn btn-sm btn-link p-1"
 						data-action="validate"
+						data-bs-toggle="tooltip"
+						[title]="t('fault.validate')"
+						[attr.aria-label]="t('fault.validate')"
 						(click)="validateFault(fault)"
 					>
-						{{ t('fault.validate') }}
+						<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<path d="M20 6 9 17l-5-5" />
+						</svg>
 					</button>
 				}
 				@if (canReject(fault)) {
 					<button
 						type="button"
-						class="lum-btn lum-btn--tertiary lum-btn--sm"
+						class="btn btn-sm btn-link p-1"
 						data-action="reject"
+						data-bs-toggle="tooltip"
+						[title]="t('fault.reject')"
+						[attr.aria-label]="t('fault.reject')"
 						(click)="rejectFault(fault)"
 					>
-						{{ t('fault.reject') }}
+						<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<path d="M18 6 6 18M6 6l12 12" />
+						</svg>
 					</button>
 				}
 				@if (canClose(fault)) {
 					<button
 						type="button"
-						class="lum-btn lum-btn--tertiary lum-btn--sm"
+						class="btn btn-sm btn-link p-1"
 						data-action="close"
+						data-bs-toggle="tooltip"
+						[title]="t('fault.close')"
+						[attr.aria-label]="t('fault.close')"
 						(click)="closeFault(fault)"
 					>
-						{{ t('fault.close') }}
+						<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<circle cx="12" cy="12" r="10" />
+							<path d="m8 12 3 3 5-6" />
+						</svg>
 					</button>
 				}
 				@if (abilities().deleteFault) {
 					<button
 						type="button"
-						class="lum-btn lum-btn--tertiary lum-btn--sm"
+						class="btn btn-sm btn-link p-1 text-danger"
 						data-action="delete"
+						data-bs-toggle="tooltip"
+						[title]="t('fault.delete')"
+						[attr.aria-label]="t('fault.delete')"
 						(click)="deleteFault(fault)"
 					>
-						{{ t('fault.delete') }}
+						<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<path d="M4 7h16" />
+							<path d="M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3" />
+							<path d="M18 7l-1 13a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 7" />
+						</svg>
 					</button>
 				}
 			</div>

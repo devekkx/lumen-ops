@@ -52,7 +52,7 @@
 					<span>{{ t('auth.expiredSwitch') }}</span>
 				</label>
 
-				<button class="lum-btn lum-btn--primary lum-btn--block" type="submit" [disabled]="busy()">
+				<button class="btn btn-primary w-100" type="submit" [disabled]="busy()">
 					{{ busy() ? t('auth.signingIn') : t('auth.signIn') }}
 				</button>
 			</form>

@@ -16,7 +16,7 @@ import { Component, input, output } from '@angular/core';
 			</div>
 			@if (actionLabel()) {
 				<button
-					class="lum-btn lum-btn--primary lum-btn--sm"
+					class="btn btn-primary btn-sm"
 					type="button"
 					[attr.data-write-action]="writeAction() || null"
 					(click)="action.emit()"

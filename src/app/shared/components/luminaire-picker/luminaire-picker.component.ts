@@ -12,6 +12,7 @@ import {
 	switchMap
 } from 'rxjs';
 import { ApiService } from '@core/api/api.service';
+import { LumenTooltipDirective } from '@shared/directives/tooltip.directive';
 
 /* Just enough of the luminaire shape to label a suggestion — reimplemented
    locally rather than importing @features/luminaires' Luminaire, the same
@@ -34,7 +35,7 @@ interface PickerLuminaire {
 @Component({
 	selector: 'lumen-luminaire-picker',
 	standalone: true,
-	imports: [TranslocoDirective],
+	imports: [TranslocoDirective, LumenTooltipDirective],
 	templateUrl: './luminaire-picker.component.html',
 	providers: [
 		{

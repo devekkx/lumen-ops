@@ -105,7 +105,7 @@
 	@if (error) {
 		<div class="lum-state" role="alert">
 			<p class="lum-state__title">{{ t('table.error') }}</p>
-			<button type="button" class="lum-btn lum-btn--secondary lum-btn--sm" (click)="retry.emit()">
+			<button type="button" class="btn btn-outline-secondary btn-sm" (click)="retry.emit()">
 				{{ t('table.retry') }}
 			</button>
 		</div>
@@ -124,7 +124,7 @@
 		<div class="lum-table__pager">
 			<button
 				type="button"
-				class="lum-btn lum-btn--secondary lum-btn--sm"
+				class="btn btn-outline-secondary btn-sm"
 				[disabled]="!page || page.currentPage === 1"
 				(click)="pageChange.emit((page?.currentPage ?? 1) - 1)"
 			>
@@ -135,7 +135,7 @@
 			</span>
 			<button
 				type="button"
-				class="lum-btn lum-btn--secondary lum-btn--sm"
+				class="btn btn-outline-secondary btn-sm"
 				[disabled]="!page || page.currentPage === page.lastPage"
 				(click)="pageChange.emit((page?.currentPage ?? 1) + 1)"
 			>

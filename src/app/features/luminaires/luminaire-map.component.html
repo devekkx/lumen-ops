@@ -23,7 +23,7 @@
 			} @else if (apiError()) {
 				<div class="lum-map__overlay">
 					<p class="lum-state__title mb-2">{{ t('table.error') }}</p>
-					<button type="button" class="lum-btn lum-btn--secondary lum-btn--sm" (click)="retry()">
+					<button type="button" class="btn btn-outline-secondary btn-sm" (click)="retry()">
 						{{ t('table.retry') }}
 					</button>
 				</div>
