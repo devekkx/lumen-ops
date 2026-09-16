@@ -1,5 +1,6 @@
 <div class="shell" *transloco="let t" [class.shell--narrow]="narrow()">
 	<a class="lum-skip-link" href="#main">{{ t('shell.skip') }}</a>
+	<lumen-toast-host />
 
 	@if (showBackdrop()) {
 		<div class="shell__backdrop" (click)="closeAside()"></div>

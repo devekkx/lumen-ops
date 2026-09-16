@@ -6,6 +6,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
 import { AuthService } from '@core/auth/auth.service';
 import { LOCALES, LanguageService, Locale } from '@core/i18n/language.service';
 import { toneFor } from '@shared/models/status-tone';
+import { ToastHostComponent } from '@shared/components/toast-host/toast-host.component';
 import { NAV_GROUPS } from './nav.config';
 import { crumbsFrom } from './breadcrumbs';
 
@@ -15,7 +16,7 @@ const MOBILE_WIDTH = 920;
 @Component({
 	selector: 'lumen-shell',
 	standalone: true,
-	imports: [RouterOutlet, RouterLink, TranslocoDirective],
+	imports: [RouterOutlet, RouterLink, TranslocoDirective, ToastHostComponent],
 	templateUrl: './shell.component.html',
 	styleUrl: './shell.component.scss'
 })
