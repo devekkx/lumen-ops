@@ -1,0 +1,85 @@
+import { Component, inject, signal } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
+import { MODAL_DATA, MODAL_REF, ModalRef, ModalService } from '@core/overlay/modal.service';
+import { Crew } from '../crews/crew.service';
+
+export interface AssignCrewDialogData {
+	code: string;
+	crews: readonly Crew[];
+}
+
+/* A small, single-purpose picker rather than a whole form component — the
+   only input is "which crew", which is exactly what a <select> already
+   models. Shaped like ConfirmDialogComponent (same ModalService, same
+   MODAL_REF/MODAL_DATA tokens, same resolve-a-promise contract) because
+   assigning a crew is the same "one modal decision" the confirm dialog
+   already solves, just with a value attached to the "yes". */
+@Component({
+	selector: 'lumen-assign-crew-dialog',
+	standalone: true,
+	imports: [TranslocoDirective],
+	template: `
+		<div
+			*transloco="let t"
+			class="lum-modal lum-floating"
+			role="dialog"
+			aria-modal="true"
+			[attr.aria-labelledby]="titleId"
+		>
+			<h2 [id]="titleId" class="lum-modal__title">
+				{{ t('order.assignTitle', { code: data.code }) }}
+			</h2>
+			<label class="lum-field mb-3">
+				<span class="lum-field__label">{{ t('order.crew') }}</span>
+				<select
+					class="lum-field__control"
+					(change)="selected.set($any($event.target).value)"
+				>
+					<option value="">{{ t('order.unassigned') }}</option>
+					@for (crew of data.crews; track crew.id) {
+						<option [value]="crew.id">{{ crew.code }} · {{ crew.name }}</option>
+					}
+				</select>
+			</label>
+			<div class="lum-modal__actions">
+				<button type="button" class="lum-btn lum-btn--secondary" (click)="cancel()">
+					{{ t('confirm.no') }}
+				</button>
+				<button
+					type="button"
+					class="lum-btn lum-btn--primary"
+					[disabled]="!selected()"
+					(click)="confirm()"
+				>
+					{{ t('order.assign') }}
+				</button>
+			</div>
+		</div>
+	`
+})
+export class AssignCrewDialogComponent {
+	private readonly ref = inject<ModalRef<string>>(MODAL_REF);
+	readonly data = inject<AssignCrewDialogData>(MODAL_DATA);
+
+	private static nextId = 0;
+	readonly titleId = `assign-crew-dialog-title-${AssignCrewDialogComponent.nextId++}`;
+
+	readonly selected = signal('');
+
+	confirm(): void {
+		if (this.selected()) this.ref.close(this.selected());
+	}
+
+	cancel(): void {
+		this.ref.close();
+	}
+}
+
+/* The one place that opens an AssignCrewDialogComponent, mirroring
+   confirmDialog() in confirm-dialog.component.ts — resolves with the chosen
+   crew id, or undefined if the picker was dismissed without one. */
+export const assignCrewDialog = (
+	modal: ModalService,
+	data: AssignCrewDialogData
+): Promise<string | undefined> =>
+	modal.open<AssignCrewDialogComponent, string>(AssignCrewDialogComponent, data);
