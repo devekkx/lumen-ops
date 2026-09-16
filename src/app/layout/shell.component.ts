@@ -7,6 +7,7 @@ import { AuthService } from '@core/auth/auth.service';
 import { LOCALES, LanguageService, Locale } from '@core/i18n/language.service';
 import { toneFor } from '@shared/models/status-tone';
 import { ToastHostComponent } from '@shared/components/toast-host/toast-host.component';
+import { LumenTooltipDirective } from '@shared/directives/tooltip.directive';
 import { NAV_GROUPS } from './nav.config';
 import { crumbsFrom } from './breadcrumbs';
 
@@ -22,7 +23,7 @@ const TOGGLE_RADIUS = 17; // half of the 34px disc, so it straddles the edge
 @Component({
 	selector: 'lumen-shell',
 	standalone: true,
-	imports: [RouterOutlet, RouterLink, TranslocoDirective, ToastHostComponent],
+	imports: [RouterOutlet, RouterLink, TranslocoDirective, ToastHostComponent, LumenTooltipDirective],
 	templateUrl: './shell.component.html',
 	styleUrl: './shell.component.scss'
 })

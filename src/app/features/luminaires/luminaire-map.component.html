@@ -23,7 +23,7 @@
 			} @else if (apiError()) {
 				<div class="lum-map__overlay">
 					<p class="lum-state__title mb-2">{{ t('table.error') }}</p>
-					<button type="button" class="lum-btn lum-btn--secondary lum-btn--sm" (click)="retry()">
+					<button type="button" class="btn btn-outline-secondary btn-sm" (click)="retry()">
 						{{ t('table.retry') }}
 					</button>
 				</div>
@@ -31,7 +31,7 @@
 		</div>
 
 		<aside class="lum-map__side">
-			<div class="lum-panel">
+			<div class="card card-body">
 				<label class="lum-map__cluster-toggle">
 					<input
 						type="checkbox"
@@ -43,8 +43,8 @@
 				<p class="lum-state__body small mb-0 mt-1">{{ t('map.clusterHint') }}</p>
 			</div>
 
-			<div class="lum-panel">
-				<p class="lum-field__label mb-2">{{ t('map.legend') }}</p>
+			<div class="card card-body">
+				<p class="form-label mb-2">{{ t('map.legend') }}</p>
 				<ul class="lum-map__legend">
 					@for (status of statuses; track status) {
 						<li><span [class]="tone(status)">{{ t('status.' + status) }}</span></li>
@@ -52,8 +52,8 @@
 				</ul>
 			</div>
 
-			<div class="lum-panel">
-				<p class="lum-field__label mb-2">{{ t('map.selected') }}</p>
+			<div class="card card-body">
+				<p class="form-label mb-2">{{ t('map.selected') }}</p>
 				@if (selected(); as lamp) {
 					<dl class="lum-map__detail">
 						<dt>{{ t('lum.code') }}</dt>

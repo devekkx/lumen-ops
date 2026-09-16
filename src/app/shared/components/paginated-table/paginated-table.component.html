@@ -9,8 +9,8 @@
 	</span>
 
 	<div class="lum-table-card__scroll">
-		<table class="lum-table" [attr.aria-busy]="loading">
-			<caption>{{ t(caption) }}</caption>
+		<table class="table table-hover lum-table" [attr.aria-busy]="loading">
+			<caption class="visually-hidden">{{ t(caption) }}</caption>
 			<thead>
 				<tr>
 					@for (column of columns; track column.key) {
@@ -75,7 +75,7 @@
 													{{ t(pillColumns[column.key] + '.' + item[column.key]) }}
 												</span>
 											} @else {
-												{{ item[column.key] }}
+												<span data-bs-toggle="tooltip" [title]="item[column.key] + ''">{{ item[column.key] }}</span>
 											}
 										</button>
 									} @else if (pillColumns[column.key]) {
@@ -83,7 +83,7 @@
 											{{ t(pillColumns[column.key] + '.' + item[column.key]) }}
 										</span>
 									} @else {
-										{{ item[column.key] }}
+										<span data-bs-toggle="tooltip" [title]="item[column.key] + ''">{{ item[column.key] }}</span>
 									}
 								</td>
 							}
@@ -105,7 +105,7 @@
 	@if (error) {
 		<div class="lum-state" role="alert">
 			<p class="lum-state__title">{{ t('table.error') }}</p>
-			<button type="button" class="lum-btn lum-btn--secondary lum-btn--sm" (click)="retry.emit()">
+			<button type="button" class="btn btn-outline-secondary btn-sm" (click)="retry.emit()">
 				{{ t('table.retry') }}
 			</button>
 		</div>
@@ -128,7 +128,7 @@
 			<label class="lum-table__per-page">
 				{{ t('table.perPage') }}
 				<select
-					class="lum-field__control lum-field__control--sm"
+					class="form-select form-select-sm"
 					[value]="page?.perPage ?? 20"
 					(change)="perPageChange.emit(+$any($event.target).value)"
 				>
@@ -141,7 +141,7 @@
 			<div class="lum-table__pager">
 				<button
 					type="button"
-					class="lum-btn lum-btn--secondary lum-btn--sm"
+					class="btn btn-outline-secondary btn-sm"
 					[disabled]="!page || page.currentPage === 1"
 					(click)="pageChange.emit((page?.currentPage ?? 1) - 1)"
 				>
@@ -152,7 +152,7 @@
 				</span>
 				<button
 					type="button"
-					class="lum-btn lum-btn--secondary lum-btn--sm"
+					class="btn btn-outline-secondary btn-sm"
 					[disabled]="!page || page.currentPage === page.lastPage"
 					(click)="pageChange.emit((page?.currentPage ?? 1) + 1)"
 				>

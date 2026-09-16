@@ -32,10 +32,10 @@ export interface ConfirmDialogData {
 			<h2 [id]="titleId" class="lum-modal__title">{{ t(data.titleKey) }}</h2>
 			<p [id]="bodyId" class="lum-modal__body">{{ t(data.bodyKey, data.params) }}</p>
 			<div class="lum-modal__actions">
-				<button type="button" class="lum-btn lum-btn--secondary" (click)="cancel()">
+				<button type="button" class="btn btn-outline-secondary" (click)="cancel()">
 					{{ t(data.cancelKey) }}
 				</button>
-				<button type="button" class="lum-btn lum-btn--primary" (click)="confirm()">
+				<button type="button" class="btn btn-primary" (click)="confirm()">
 					{{ t(data.confirmKey) }}
 				</button>
 			</div>

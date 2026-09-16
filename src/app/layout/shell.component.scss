@@ -53,6 +53,11 @@
 		}
 	}
 
+	&__toggle-icon {
+		font-size: 1.125rem; // matches the 18px SVG this replaced
+		line-height: 1;
+	}
+
 	&__aside {
 		display: flex;
 		flex-direction: column;
@@ -151,6 +156,12 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+	}
+
+	&__link-icon {
+		flex-shrink: 0;
+		font-size: 1.25rem; // matches the 20px SVG this replaced
+		line-height: 1;
 	}
 
 	&__main {
@@ -263,6 +274,12 @@
 		&:hover {
 			box-shadow: var(--shadow-card);
 		}
+	}
+
+	&__chip-caret {
+		font-size: 1rem; // matches the 16px SVG this replaced
+		line-height: 1;
+		color: var(--color-muted);
 	}
 
 	&__avatar {

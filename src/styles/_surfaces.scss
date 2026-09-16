@@ -1,20 +1,9 @@
-/* Surface primitives: the card, the inline panel, empty/error states and the
-   toast. Depth comes from hairlines and white-on-soft separation; the single
-   shadow tier is reserved for things that float (menus, toasts, modals). */
-
-.lum-card {
-	background: var(--color-canvas);
-	border: 1px solid var(--color-hairline-soft);
-	border-radius: var(--radius-md);
-	padding: var(--space-lg);
-}
-
-.lum-panel {
-	background: var(--color-surface-soft);
-	border: 1px solid var(--color-hairline-soft);
-	border-radius: var(--radius-sm);
-	padding: var(--space-md) var(--space-base);
-}
+/* Surface primitives: empty/error states, the toast and the confirm modal's
+   panel. The card and the inline panel are gone from here — every former
+   .lum-card/.lum-panel usage is Bootstrap's own .card now (customized from
+   the same tokens in _bootstrap-overrides.scss). Depth comes from hairlines
+   and white-on-soft separation; the single shadow tier is reserved for
+   things that float (menus, toasts, modals). */
 
 .lum-floating {
 	background: var(--color-canvas);

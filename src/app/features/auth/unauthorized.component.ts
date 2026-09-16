@@ -14,7 +14,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
 			<span class="unauth__mark" aria-hidden="true">!</span>
 			<h1 class="unauth__title">{{ t('unauth.title') }}</h1>
 			<p class="unauth__body">{{ t('unauth.body') }}</p>
-			<button class="lum-btn lum-btn--primary lum-btn--sm" type="button" (click)="home()">
+			<button class="btn btn-primary btn-sm" type="button" (click)="home()">
 				{{ t('unauth.back') }}
 			</button>
 		</div>

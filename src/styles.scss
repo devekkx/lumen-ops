@@ -1,10 +1,13 @@
 /* Global entry point. Order matters: tokens define the custom properties every
-   later rule reads, so they come first and Bootstrap's own cascade sits
-   underneath the Lumen layer that follows it. */
+   later rule reads, so they come first; Bootstrap (customized from those same
+   tokens — see _bootstrap-overrides.scss) comes next, generating .btn/.card/
+   .form-control/.table already in this app's colours; the Lumen layer that
+   follows it still wins the cascade for the bespoke bits layered on top
+   (sortable table headers, status pills, toasts, the confirm modal, ...). */
 
 @use 'styles/tokens';
 @use 'styles/variables' as *;
-@use 'styles/buttons';
+@use 'styles/bootstrap-overrides';
 @use 'styles/forms';
 @use 'styles/tables';
 @use 'styles/surfaces';

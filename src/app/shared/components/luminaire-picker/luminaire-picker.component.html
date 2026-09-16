@@ -3,7 +3,7 @@
 		<input
 			type="text"
 			role="combobox"
-			class="lum-field__control"
+			class="form-control"
 			autocomplete="off"
 			aria-autocomplete="list"
 			aria-haspopup="listbox"
@@ -21,13 +21,13 @@
 		@if (selected()) {
 			<button
 				type="button"
-				class="lum-icon-btn lum-icon-btn--plain lum-icon-btn--sm"
+				class="btn-close"
+				data-bs-toggle="tooltip"
+				[title]="t('fault.pickerClear')"
 				[attr.aria-label]="t('fault.pickerClear')"
 				[disabled]="disabled()"
 				(click)="clear()"
-			>
-				&times;
-			</button>
+			></button>
 		}
 	</div>
 

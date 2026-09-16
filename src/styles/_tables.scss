@@ -1,7 +1,10 @@
-/* The presentational table surface, ported from the canvas.
-   A card with a hairline border, a 3px progress rail at the top edge, and a
-   sticky uppercase header. Column widths are content-driven; long cells
-   ellipsize rather than wrapping so row height stays uniform. */
+/* The presentational table surface, ported from the canvas. Bootstrap's own
+   .table (customized from the design tokens in _bootstrap-overrides.scss)
+   is the base now — cell colour, padding, borders and row hover come from
+   there — so only what Bootstrap has no equivalent for stays here: the card
+   shell with its 3px progress rail, the sticky uppercase header, the
+   sortable-header buttons, the ellipsis truncation, the skeleton-loading
+   rows, and the actions column. */
 
 .lum-table-card {
 	background: var(--color-canvas);
@@ -29,22 +32,20 @@
 }
 
 .lum-table {
-	width: 100%;
+	/* Column widths are content-driven; forcing a floor here means narrow
+	   columns get a horizontal scrollbar on the card rather than squeezing
+	   themselves unreadable. Bootstrap's .table already sets width: 100% and
+	   border-collapse: collapse, so neither needs restating. */
 	min-width: 640px;
-	border-collapse: collapse;
 
-	caption {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		overflow: hidden;
-		clip-path: inset(50%);
-	}
-
+	/* The heading's own padding lives on __heading/__sort below, so the cell
+	   itself must not double it up. Specificity note: Bootstrap's own cell
+	   padding rule is `.table > :not(caption) > * > *` (0,1,1) — this compiles
+	   to the equally-specific `.lum-table th` (0,1,1) and wins on source order,
+	   since this file's @use comes after the Bootstrap import in styles.scss. */
 	th {
 		padding: 0;
 		background: var(--color-surface-soft);
-		border-bottom: 1px solid var(--color-hairline);
 		position: sticky;
 		top: 0;
 		z-index: 1;
@@ -82,14 +83,10 @@
 		font-size: 10px;
 	}
 
-	tbody tr {
-		border-bottom: 1px solid var(--color-hairline-soft);
-
-		&:hover {
-			background: var(--color-surface-soft);
-		}
-	}
-
+	/* Row hover is Bootstrap's own .table-hover now (also on the <table> tag
+	   unconditionally, same as this rule used to apply to every table
+	   regardless of whether its rows are clickable) — only the pointer
+	   cursor for an actually-clickable row has no Bootstrap equivalent. */
 	&__row--clickable {
 		cursor: pointer;
 	}
@@ -110,19 +107,12 @@
 		cursor: pointer;
 	}
 
+	/* Long cells ellipsize rather than wrapping, so row height stays uniform —
+	   the cell's colour, font and padding are Bootstrap's own now. */
 	td {
-		padding: 13px var(--space-base);
 		max-width: 280px;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		white-space: nowrap;
-		font: var(--type-body-sm);
-		color: var(--color-body);
-	}
-
-	&__actions {
-		padding: var(--space-sm) var(--space-base);
-		text-align: right;
 		white-space: nowrap;
 	}
 
@@ -131,11 +121,20 @@
 		gap: var(--space-sm);
 		justify-content: flex-end;
 	}
+}
 
-	/* Skeleton rows keep the table's height stable while a page is in flight. */
-	&__skeleton-cell {
-		padding: 17px var(--space-base);
-	}
+/* Same specificity note as `.lum-table th` above: a compound td.<class>
+   selector ties Bootstrap's per-cell padding rule (0,1,1) and wins on
+   source order. */
+td.lum-table__actions {
+	padding-block: var(--space-sm);
+	text-align: right;
+	white-space: nowrap;
+}
+
+/* Skeleton rows keep the table's height stable while a page is in flight. */
+td.lum-table__skeleton-cell {
+	padding: 17px var(--space-base);
 }
 
 /* The count/pager/per-page row beneath the table. Wraps on narrow screens

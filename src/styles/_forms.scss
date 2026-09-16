@@ -1,70 +1,14 @@
-/* Form controls, ported from the canvas design system's TextInput.
-   Focus thickens the border to 2px ink rather than drawing a ring — that
-   thickening is the focus indicator, so the global outline is suppressed
-   here and only here. */
+/* Form controls are Bootstrap's own .form-control/.form-select/.form-label
+   now (customized from the same tokens in _bootstrap-overrides.scss) —
+   nothing here still needs .lum-field. Focus thickens the border to 2px ink
+   rather than drawing a ring — that thickening is the focus indicator, so
+   Bootstrap's own focus box-shadow is disabled ($input-focus-box-shadow:
+   none in the overrides) and the global focus outline is suppressed here,
+   and only here, same as it was for .lum-field__control before. */
 
-.lum-field {
-	display: block;
-
-	&__label {
-		display: block;
-		margin-bottom: var(--space-xs);
-		font: var(--type-caption);
-		color: var(--color-muted);
-	}
-
-	&__control {
-		width: 100%;
-		height: 56px;
-		padding: 14px var(--space-md);
-		border: 1px solid var(--color-hairline);
-		border-radius: var(--radius-sm);
-		background: var(--color-canvas);
-		color: var(--color-ink);
-		font: var(--type-body-md);
-		box-sizing: border-box;
-		transition: border-color 120ms ease;
-
-		&::placeholder {
-			color: var(--color-muted-soft);
-		}
-
-		&:focus {
-			outline: none;
-			border-width: 2px;
-			border-color: var(--color-ink);
-		}
-
-		&:disabled {
-			background: var(--color-surface-soft);
-			cursor: not-allowed;
-		}
-	}
-
-	&__control--sm {
-		height: 40px;
-		padding: var(--space-sm) var(--space-md);
-		font: var(--type-body-sm);
-	}
-
-	&__control--textarea {
-		height: auto;
-		min-height: 96px;
-		resize: vertical;
-	}
-
-	&__error {
-		display: block;
-		margin-top: var(--space-xs);
-		font: var(--type-caption-sm);
-		color: var(--color-error);
-	}
-
-	/* Invalid fields hold the thickened border whether focused or not. */
-	&--invalid &__control {
-		border-width: 2px;
-		border-color: var(--color-error);
-	}
+.form-control:focus,
+.form-select:focus {
+	outline: none;
 }
 
 /* The luminaire picker: a text input plus a positioned suggestion list. */

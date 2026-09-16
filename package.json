@@ -24,6 +24,7 @@
     "@jsverse/transloco": "^8.4.0",
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
     "echarts": "^6.1.0",
     "express": "^5.2.1",
     "ol": "^10.10.0",

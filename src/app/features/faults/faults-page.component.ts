@@ -4,6 +4,7 @@ import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from '@core/auth/auth.service';
 import { ToastService } from '@core/api/toast.service';
 import { Confirmable } from '@shared/decorators/confirmable.decorator';
+import { LumenTooltipDirective } from '@shared/directives/tooltip.directive';
 import {
 	PaginatedTableComponent,
 	TableColumn
@@ -23,7 +24,7 @@ import {
 @Component({
 	selector: 'lumen-faults-page',
 	standalone: true,
-	imports: [TranslocoDirective, RouterLink, PaginatedTableComponent],
+	imports: [TranslocoDirective, RouterLink, PaginatedTableComponent, LumenTooltipDirective],
 	templateUrl: './faults-page.component.html'
 })
 export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {

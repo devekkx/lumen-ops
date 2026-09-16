@@ -3,6 +3,7 @@ import { Component, ContentChild, EventEmitter, Input, Output, TemplateRef } fro
 import { TranslocoDirective } from '@jsverse/transloco';
 import { pillClass } from '../../models/status-tone';
 import { Page } from '../../models/pagination';
+import { LumenTooltipDirective } from '../../directives/tooltip.directive';
 
 export interface TableColumn<T> {
 	key: Extract<keyof T, string>;
@@ -18,7 +19,7 @@ export interface TableColumn<T> {
 @Component({
 	selector: 'lumen-table',
 	standalone: true,
-	imports: [TranslocoDirective, NgTemplateOutlet],
+	imports: [TranslocoDirective, NgTemplateOutlet, LumenTooltipDirective],
 	templateUrl: './paginated-table.component.html'
 })
 export class PaginatedTableComponent<T extends { id: string }> {
