@@ -6,12 +6,22 @@
 	</div>
 
 	<div class="lum-table-card__scroll">
-		<table class="lum-table">
+		<table class="lum-table" [attr.aria-busy]="loading">
 			<caption>{{ t(caption) }}</caption>
 			<thead>
 				<tr>
 					@for (column of columns; track column.key) {
-						<th>
+						<th
+							[attr.aria-sort]="
+								!column.sortable
+									? null
+									: sortProperty !== column.key
+										? 'none'
+										: sortDirection === 'ASC'
+											? 'ascending'
+											: 'descending'
+							"
+						>
 							@if (column.sortable) {
 								<button
 									type="button"
@@ -34,7 +44,7 @@
 			<tbody>
 				@if (loading && !page?.data?.length) {
 					@for (row of [0, 1, 2, 3, 4]; track row) {
-						<tr>
+						<tr aria-hidden="true">
 							@for (column of columns; track column.key) {
 								<td class="lum-table__skeleton-cell"><span class="lum-skeleton"></span></td>
 							}
