@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, ElementRef, ViewChild, computed, effect, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs';
@@ -28,6 +28,8 @@ export class ShellComponent {
 	readonly locales = LOCALES;
 	readonly activeLocale = this.language.current;
 	readonly user = this.auth.user;
+
+	@ViewChild('menuFirstFocusable') private menuFirstFocusable?: ElementRef<HTMLElement>;
 
 	readonly collapsed = signal(this.restoreCollapsed());
 	readonly menuOpen = signal(false);
@@ -103,8 +105,15 @@ export class ShellComponent {
 		if (this.narrow()) this.collapsed.set(true);
 	}
 
+	/* Opening the menu with the keyboard (Enter/Space on the trigger) should
+	   land focus inside it — otherwise a keyboard user hears "menu opened" and
+	   is left exactly where they were, with no obvious way to reach it. */
 	toggleMenu(): void {
-		this.menuOpen.update((open) => !open);
+		const next = !this.menuOpen();
+		this.menuOpen.set(next);
+		if (next) {
+			setTimeout(() => this.menuFirstFocusable?.nativeElement.focus());
+		}
 	}
 
 	closeMenu(): void {

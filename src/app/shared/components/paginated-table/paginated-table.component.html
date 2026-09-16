@@ -4,6 +4,9 @@
 			<div class="lum-table-card__rail-fill"></div>
 		}
 	</div>
+	<span class="visually-hidden" aria-live="polite">
+		{{ loading ? t('table.loading') : '' }}
+	</span>
 
 	<div class="lum-table-card__scroll">
 		<table class="lum-table" [attr.aria-busy]="loading">
@@ -58,10 +61,24 @@
 					}
 				} @else {
 					@for (item of page?.data ?? []; track item.id) {
-						<tr class="lum-table__row--clickable" (click)="rowSelected.emit(item)">
-							@for (column of columns; track column.key) {
+						<tr [class.lum-table__row--clickable]="rowSelected.observed">
+							@for (column of columns; track column.key; let first = $first) {
 								<td>
-									@if (pillColumns[column.key]) {
+									@if (first && rowSelected.observed) {
+										<button
+											type="button"
+											class="lum-table__row-open"
+											(click)="rowSelected.emit(item)"
+										>
+											@if (pillColumns[column.key]) {
+												<span [class]="pillClassFor(item[column.key])">
+													{{ t(pillColumns[column.key] + '.' + item[column.key]) }}
+												</span>
+											} @else {
+												{{ item[column.key] }}
+											}
+										</button>
+									} @else if (pillColumns[column.key]) {
 										<span [class]="pillClassFor(item[column.key])">
 											{{ t(pillColumns[column.key] + '.' + item[column.key]) }}
 										</span>
@@ -86,21 +103,21 @@
 	</div>
 
 	@if (error) {
-		<div class="lum-state">
+		<div class="lum-state" role="alert">
 			<p class="lum-state__title">{{ t('table.error') }}</p>
 			<button type="button" class="lum-btn lum-btn--secondary lum-btn--sm" (click)="retry.emit()">
 				{{ t('table.retry') }}
 			</button>
 		</div>
 	} @else if (!loading && !page?.data?.length) {
-		<div class="lum-state">
+		<div class="lum-state" aria-live="polite">
 			<p class="lum-state__title">{{ t('table.empty') }}</p>
 			<p class="lum-state__body">{{ t('table.emptyHint') }}</p>
 		</div>
 	}
 
 	<div class="lum-table-card__footer">
-		<span class="lum-table__count">
+		<span class="lum-table__count" aria-live="polite" aria-atomic="true">
 			{{ t('table.showing', { a: rangeStart(), b: rangeEnd(), total: page?.total ?? 0 }) }}
 		</span>
 
