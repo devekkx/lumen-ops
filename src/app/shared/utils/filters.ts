@@ -1,0 +1,168 @@
+import {
+	AssignmentType,
+	Filter,
+	FilterRecord,
+	FilterValue,
+	Filters,
+	IS_NOT_NULL_SENTINEL,
+	IS_NULL_SENTINEL,
+	MatchMode,
+	Operand,
+	RangeValue
+} from '../models/filter';
+
+/* "The user left this control empty", in every shape a form can express it.
+ *
+ * An object counts as blank when all of its own values are blank, which is what
+ * makes an untouched `{ from: null, to: null }` range produce no condition. */
+export const isBlank = (value: unknown): boolean => {
+	if (value === null || value === undefined || value === '') return true;
+	if (Array.isArray(value)) return value.length === 0;
+	if (value instanceof Date) return false;
+	if (typeof value === 'object') {
+		return Object.values(value as object).every(
+			(entry) => entry === null || entry === undefined || entry === ''
+		);
+	}
+	return false;
+};
+
+export interface ConditionOptions {
+	type?: AssignmentType;
+	operator?: 'AND' | 'OR';
+}
+
+export const condition = (
+	property: string,
+	matchMode: MatchMode,
+	value?: FilterValue,
+	options: ConditionOptions = {}
+): Filter => {
+	const filter: Filter = {
+		leftHand: { type: AssignmentType.STATIC, value: property },
+		matchMode
+	};
+
+	/* The null checks carry no operand at all — not an empty one. A rightHand
+	   of '' would read as "equals empty string" to any backend. */
+	if (matchMode !== MatchMode.IS_NULL && matchMode !== MatchMode.IS_NOT_NULL) {
+		filter.rightHand = {
+			type: options.type ?? AssignmentType.CONTROL,
+			value: value as FilterValue
+		} satisfies Operand;
+	}
+
+	if (options.operator) filter.operator = options.operator;
+	return filter;
+};
+
+export interface BuildOptions {
+	/* Pins a match mode for a key whose type does not imply the right one — a
+	   code field that should be EQUAL rather than the CONTAINS a string gets. */
+	overrides?: Record<string, MatchMode>;
+	type?: AssignmentType;
+}
+
+/* Turns a flat record of form values into Filters, choosing the match mode from
+ * the value's runtime type.
+ *
+ * The type-driven defaults are the point: a filter form should not have to
+ * restate what kind of comparison each of its fields wants.
+ *
+ *   string  -> CONTAINS   (a text box is a search box)
+ *   array   -> IN         (a multi-select is a set)
+ *   number  -> EQUAL      (a number box is an exact value)
+ *   boolean -> EQUAL
+ *   range   -> GTE + LTE  (two conditions, never one BETWEEN)
+ *
+ * A range becomes two chained conditions rather than a single BETWEEN so that a
+ * half-open range still filters. BETWEEN needs both ends; "installed after
+ * 2020, no upper bound" is a perfectly ordinary thing to ask for.
+ */
+export const buildFilterConditions = (
+	record: FilterRecord | null | undefined,
+	options: BuildOptions = {}
+): Filters => {
+	const { overrides = {}, type = AssignmentType.CONTROL } = options;
+	const filters: Filter[] = [];
+
+	for (const [key, raw] of Object.entries(record ?? {})) {
+		if (raw === IS_NULL_SENTINEL) {
+			filters.push(condition(key, MatchMode.IS_NULL));
+			continue;
+		}
+		if (raw === IS_NOT_NULL_SENTINEL) {
+			filters.push(condition(key, MatchMode.IS_NOT_NULL));
+			continue;
+		}
+
+		/* Blank means no condition at all — not a condition that matches
+		   nothing. This single line is what keeps an untouched filter panel
+		   from emptying the table. */
+		if (isBlank(raw)) continue;
+
+		const override = overrides[key];
+		if (override) {
+			filters.push(condition(key, override, raw as FilterValue, { type }));
+			continue;
+		}
+
+		if (Array.isArray(raw)) {
+			filters.push(condition(key, MatchMode.IN, raw, { type }));
+			continue;
+		}
+		if (typeof raw === 'number' || typeof raw === 'boolean') {
+			filters.push(condition(key, MatchMode.EQUAL, raw, { type }));
+			continue;
+		}
+		if (typeof raw === 'object') {
+			const range = raw as RangeValue;
+			if (!isBlank(range.from)) {
+				filters.push(condition(key, MatchMode.GTE, range.from as FilterValue, { type }));
+			}
+			if (!isBlank(range.to)) {
+				filters.push(condition(key, MatchMode.LTE, range.to as FilterValue, { type }));
+			}
+			continue;
+		}
+
+		filters.push(condition(key, MatchMode.CONTAINS, String(raw), { type }));
+	}
+
+	/* Conditions default to AND against the next one. Set it explicitly on all
+	   but the last so the payload is unambiguous to read and to log. */
+	return filters.map((filter, index) =>
+		index < filters.length - 1 ? { ...filter, operator: filter.operator ?? 'AND' } : filter
+	);
+};
+
+export interface FlatFilter extends Filter {
+	depth: number;
+}
+
+/* Nesting expresses precedence; flatten for logging, for the DSL inspector and
+   for specs, keeping the depth so a group is still visible in the output. */
+export const flattenFilters = (filters: Filters | null | undefined, depth = 0): FlatFilter[] => {
+	const out: FlatFilter[] = [];
+	for (const entry of filters ?? []) {
+		if (Array.isArray(entry)) out.push(...flattenFilters(entry, depth + 1));
+		else out.push({ ...entry, depth });
+	}
+	return out;
+};
+
+/* A human-readable one-liner for the inspector panel the canvas shows. */
+export const describeFilter = (filter: Filter): string => {
+	const right = filter.rightHand?.value;
+	const value = Array.isArray(right) ? `[${right.join(', ')}]` : String(right ?? '');
+	const operand = filter.rightHand ? ` ${value}` : '';
+	const chain = filter.operator ? ` ${filter.operator}` : '';
+	return `${filter.leftHand.value} ${filter.matchMode}${operand}${chain}`;
+};
+
+/* Groups a run of conditions into one OR set — the nesting the evaluator reads
+   as parenthesised. */
+export const orGroup = (...conditions: Filter[]): Filter[] =>
+	conditions.map((filter, index) =>
+		index < conditions.length - 1 ? { ...filter, operator: 'OR' } : filter
+	);
