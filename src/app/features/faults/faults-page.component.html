@@ -1,0 +1,134 @@
+<section *transloco="let t">
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<div>
+			<p class="text-uppercase text-secondary small mb-1">{{ t('nav.faults') }}</p>
+			<h1>{{ t('fault.title') }}</h1>
+			<p class="text-secondary mb-0">{{ t('fault.subtitle') }}</p>
+		</div>
+		<div class="d-flex gap-2">
+			<button type="button" class="lum-btn lum-btn--secondary" (click)="refresh()">
+				{{ t('table.retry') }}
+			</button>
+			@if (abilities().createFault) {
+				<a class="lum-btn lum-btn--primary" data-action="create" routerLink="/averias/nueva">
+					{{ t('fault.new') }}
+				</a>
+			}
+		</div>
+	</div>
+
+	<div class="lum-panel mb-3">
+		<label class="lum-field mb-3">
+			<span class="lum-field__label">{{ t('table.search') }}</span>
+			<input
+				class="lum-field__control lum-field__control--sm"
+				type="search"
+				[placeholder]="t('table.searchFaults')"
+				(input)="setSearch($any($event.target).value)"
+			/>
+		</label>
+
+		<div class="mb-3">
+			<span class="lum-field__label d-block mb-2">{{ t('fault.severity') }}</span>
+			<div class="d-flex flex-wrap gap-2">
+				@for (severity of severities; track severity) {
+					<button
+						type="button"
+						class="lum-chip"
+						[class.lum-chip--on]="isSeverityOn(severity)"
+						[attr.aria-pressed]="isSeverityOn(severity)"
+						(click)="toggleSeverity(severity, !isSeverityOn(severity))"
+					>
+						{{ t('severity.' + severity) }}
+					</button>
+				}
+			</div>
+		</div>
+
+		<div>
+			<span class="lum-field__label d-block mb-2">{{ t('fault.status') }}</span>
+			<div class="d-flex flex-wrap gap-2">
+				@for (status of statuses; track status) {
+					<button
+						type="button"
+						class="lum-chip"
+						[class.lum-chip--on]="isStatusOn(status)"
+						[attr.aria-pressed]="isStatusOn(status)"
+						(click)="toggleStatus(status, !isStatusOn(status))"
+					>
+						{{ t('status.' + status) }}
+					</button>
+				}
+			</div>
+		</div>
+	</div>
+
+	<lumen-table
+		[caption]="'fault.title'"
+		[columns]="columns"
+		[pillColumns]="pillColumns"
+		[page]="page$ | async"
+		[loading]="(loading | async) ?? false"
+		[error]="error | async"
+		[sortProperty]="sortProperty"
+		[sortDirection]="sortDirection"
+		(sort)="sortBy($event)"
+		(pageChange)="setPage($event)"
+		(perPageChange)="setPerPage($event)"
+		(retry)="refresh()"
+	>
+		<ng-template #rowActions let-fault>
+			<div class="d-flex flex-wrap gap-2">
+				@if (abilities().editFault) {
+					<a
+						class="lum-btn lum-btn--tertiary lum-btn--sm"
+						data-action="edit"
+						[routerLink]="['/averias', fault.id, 'editar']"
+					>
+						{{ t('fault.edit') }}
+					</a>
+				}
+				@if (canValidate(fault)) {
+					<button
+						type="button"
+						class="lum-btn lum-btn--tertiary lum-btn--sm"
+						data-action="validate"
+						(click)="validateFault(fault)"
+					>
+						{{ t('fault.validate') }}
+					</button>
+				}
+				@if (canReject(fault)) {
+					<button
+						type="button"
+						class="lum-btn lum-btn--tertiary lum-btn--sm"
+						data-action="reject"
+						(click)="rejectFault(fault)"
+					>
+						{{ t('fault.reject') }}
+					</button>
+				}
+				@if (canClose(fault)) {
+					<button
+						type="button"
+						class="lum-btn lum-btn--tertiary lum-btn--sm"
+						data-action="close"
+						(click)="closeFault(fault)"
+					>
+						{{ t('fault.close') }}
+					</button>
+				}
+				@if (abilities().deleteFault) {
+					<button
+						type="button"
+						class="lum-btn lum-btn--tertiary lum-btn--sm"
+						data-action="delete"
+						(click)="deleteFault(fault)"
+					>
+						{{ t('fault.delete') }}
+					</button>
+				}
+			</div>
+		</ng-template>
+	</lumen-table>
+</section>

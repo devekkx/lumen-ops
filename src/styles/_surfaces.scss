@@ -106,6 +106,33 @@
 	}
 }
 
+/* The one dialog surface (confirm, dirty-exit) opened through ModalService.
+   CDK Overlay positions and centers it and supplies the backdrop; this only
+   styles the panel itself. */
+.lum-modal {
+	width: min(420px, calc(100vw - 2 * var(--space-lg)));
+	padding: var(--space-lg);
+
+	&__title {
+		margin: 0 0 var(--space-sm);
+		font: var(--type-title-md);
+		color: var(--color-ink);
+	}
+
+	&__body {
+		margin: 0 0 var(--space-lg);
+		font: var(--type-body-sm);
+		color: var(--color-body);
+		text-wrap: pretty;
+	}
+
+	&__actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: var(--space-sm);
+	}
+}
+
 .lum-spinner {
 	width: 18px;
 	height: 18px;

@@ -16,6 +16,7 @@ import {
 
 import { routes } from './app.routes';
 import { AuthService } from './core/auth/auth.service';
+import { ModalService } from './core/overlay/modal.service';
 import { apiErrorInterceptor } from './core/api/api-error.interceptor';
 import { authInterceptor } from './core/http/auth.interceptor';
 import { languageInterceptor } from './core/http/language.interceptor';
@@ -42,6 +43,16 @@ export const appConfig: ApplicationConfig = {
 			loader: TranslocoHttpLoader
 		}),
 		provideAppInitializer(() => inject(AuthService).initializeUser()),
+		/* Forces ModalService's constructor to run at bootstrap, before any
+		   route or @Confirmable-decorated method can call ModalService.instance.
+		   Without this, the static instance is only set the first time some
+		   component happens to inject it — which a CONTRACTOR-only session that
+		   never opens the fault form might never do, so ModalService.instance
+		   would throw the first time @Confirmable ran, silently no-opping a
+		   destructive action's confirm step instead of running it. */
+		provideAppInitializer(() => {
+			inject(ModalService);
+		}),
 		provideRouter(
 			routes,
 			withHashLocation(),
