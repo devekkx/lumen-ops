@@ -193,7 +193,11 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 				   overflow: hidden (the fix that keeps the sidebar from
 				   scrolling away) -- without this the tooltip clips the
 				   moment it would extend past the chart's own box. */
-				tooltip: { trigger: 'axis', appendToBody: true },
+				/* confine: with appendToBody, ECharts confines the tooltip to
+				   the browser viewport rather than the chart's own box -- so
+				   a point near the page edge shifts the tooltip back onto
+				   screen instead of letting it run off and get cut short. */
+				tooltip: { trigger: 'axis', appendToBody: true, confine: true },
 				grid: { left: 48, right: 16, top: 24, bottom: 32 },
 				xAxis: {
 					type: 'category',
@@ -227,7 +231,11 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
 		this.lampChart.setOption(
 			{
-				tooltip: { trigger: 'axis', appendToBody: true },
+				/* confine: with appendToBody, ECharts confines the tooltip to
+				   the browser viewport rather than the chart's own box -- so
+				   a point near the page edge shifts the tooltip back onto
+				   screen instead of letting it run off and get cut short. */
+				tooltip: { trigger: 'axis', appendToBody: true, confine: true },
 				grid: { left: 48, right: 16, top: 24, bottom: 32 },
 				xAxis: {
 					type: 'category',
@@ -259,7 +267,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
 		this.severityChart.setOption(
 			{
-				tooltip: { trigger: 'item', appendToBody: true },
+				tooltip: { trigger: 'item', appendToBody: true, confine: true },
 				legend: { bottom: 0 },
 				series: [
 					{
@@ -280,7 +288,9 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
 	private formatBucket(t: number, bucketHours: number, locale: string): string {
 		const options: Intl.DateTimeFormatOptions =
-			bucketHours <= 1 ? { hour: '2-digit', minute: '2-digit' } : { day: 'numeric', month: 'short' };
+			bucketHours <= 1
+				? { hour: '2-digit', minute: '2-digit' }
+				: { day: 'numeric', month: 'short' };
 		return new Intl.DateTimeFormat(locale, options).format(new Date(t));
 	}
 
