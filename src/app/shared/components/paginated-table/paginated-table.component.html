@@ -1,0 +1,110 @@
+<div class="lum-table-card" *transloco="let t">
+	<div class="lum-table-card__rail">
+		@if (loading) {
+			<div class="lum-table-card__rail-fill"></div>
+		}
+	</div>
+
+	<div class="lum-table-card__scroll">
+		<table class="lum-table">
+			<caption>{{ t(caption) }}</caption>
+			<thead>
+				<tr>
+					@for (column of columns; track column.key) {
+						<th>
+							@if (column.sortable) {
+								<button
+									type="button"
+									class="lum-table__heading lum-table__sort"
+									[class.lum-table__sort--active]="sortProperty === column.key"
+									(click)="sort.emit(column.key)"
+								>
+									{{ t(column.label) }}
+									@if (sortProperty === column.key) {
+										<span class="lum-table__arrow">{{ sortDirection === 'ASC' ? '▲' : '▼' }}</span>
+									}
+								</button>
+							} @else {
+								<span class="lum-table__heading">{{ t(column.label) }}</span>
+							}
+						</th>
+					}
+				</tr>
+			</thead>
+			<tbody>
+				@if (loading && !page?.data?.length) {
+					@for (row of [0, 1, 2, 3, 4]; track row) {
+						<tr>
+							@for (column of columns; track column.key) {
+								<td class="lum-table__skeleton-cell"><span class="lum-skeleton"></span></td>
+							}
+						</tr>
+					}
+				} @else {
+					@for (item of page?.data ?? []; track item.id) {
+						<tr class="lum-table__row--clickable" (click)="rowSelected.emit(item)">
+							@for (column of columns; track column.key) {
+								<td>{{ item[column.key] }}</td>
+							}
+						</tr>
+					}
+				}
+			</tbody>
+		</table>
+	</div>
+
+	@if (error) {
+		<div class="lum-state">
+			<p class="lum-state__title">{{ t('table.error') }}</p>
+			<button type="button" class="lum-btn lum-btn--secondary lum-btn--sm" (click)="retry.emit()">
+				{{ t('table.retry') }}
+			</button>
+		</div>
+	} @else if (!loading && !page?.data?.length) {
+		<div class="lum-state">
+			<p class="lum-state__title">{{ t('table.empty') }}</p>
+			<p class="lum-state__body">{{ t('table.emptyHint') }}</p>
+		</div>
+	}
+
+	<div class="lum-table-card__footer">
+		<span class="lum-table__count">
+			{{ t('table.showing', { a: rangeStart(), b: rangeEnd(), total: page?.total ?? 0 }) }}
+		</span>
+
+		<div class="lum-table__pager">
+			<button
+				type="button"
+				class="lum-btn lum-btn--secondary lum-btn--sm"
+				[disabled]="!page || page.currentPage === 1"
+				(click)="pageChange.emit((page?.currentPage ?? 1) - 1)"
+			>
+				{{ t('table.prev') }}
+			</button>
+			<span class="lum-table__page-label">
+				{{ t('table.page', { page: page?.currentPage ?? 1, last: page?.lastPage ?? 1 }) }}
+			</span>
+			<button
+				type="button"
+				class="lum-btn lum-btn--secondary lum-btn--sm"
+				[disabled]="!page || page.currentPage === page.lastPage"
+				(click)="pageChange.emit((page?.currentPage ?? 1) + 1)"
+			>
+				{{ t('table.next') }}
+			</button>
+		</div>
+
+		<label class="lum-table__per-page">
+			{{ t('table.perPage') }}
+			<select
+				class="lum-field__control lum-field__control--sm"
+				[value]="page?.perPage ?? 20"
+				(change)="perPageChange.emit(+$any($event.target).value)"
+			>
+				@for (option of perPageOptions; track option) {
+					<option [value]="option">{{ option }}</option>
+				}
+			</select>
+		</label>
+	</div>
+</div>

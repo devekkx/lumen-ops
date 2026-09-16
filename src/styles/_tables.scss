@@ -122,6 +122,37 @@
 	}
 }
 
+/* The count/pager/per-page row beneath the table. Wraps on narrow screens
+   rather than forcing horizontal scroll on the footer alone. */
+.lum-table-card__footer {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-md);
+	padding: var(--space-md) var(--space-base);
+	border-top: 1px solid var(--color-hairline-soft);
+	font: var(--type-body-sm);
+	color: var(--color-muted);
+}
+
+.lum-table__pager {
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+}
+
+.lum-table__page-label {
+	white-space: nowrap;
+}
+
+.lum-table__per-page {
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+	white-space: nowrap;
+}
+
 .lum-skeleton {
 	display: block;
 	height: 12px;
