@@ -99,14 +99,16 @@ export const routes: Routes = [
 				data: { breadcrumb: 'nav.orders', roles: ROLE_GROUPS.CONTRACTOR },
 				canActivate: [someRoleGuard],
 				loadComponent: () =>
-					import('./features/placeholder-page.component').then((m) => m.PlaceholderPageComponent)
+					import('./features/work-orders/work-orders-page.component').then(
+						(m) => m.WorkOrdersPageComponent
+					)
 			},
 			{
 				path: 'cuadrillas',
 				data: { breadcrumb: 'nav.crews', roles: ROLE_GROUPS.CONTRACTOR },
 				canActivate: [someRoleGuard],
 				loadComponent: () =>
-					import('./features/placeholder-page.component').then((m) => m.PlaceholderPageComponent)
+					import('./features/crews/crews-page.component').then((m) => m.CrewsPageComponent)
 			},
 			{
 				path: 'mapa',
