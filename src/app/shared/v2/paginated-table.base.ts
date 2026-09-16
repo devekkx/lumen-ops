@@ -98,7 +98,21 @@ export abstract class PaginatedTableBaseV2<T> {
 
 		this.dataResource = resource({
 			request: () => this.debouncedRequest(),
-			loader: ({ request, abortSignal }) => this.fetch(request, abortSignal),
+			/* `request!`, not a real nullability hole: with strictNullChecks on,
+			   ResourceLoaderParams<R>['request'] is documented (and typed) as
+			   `Exclude<R, undefined>`, but verified against the actual
+			   @angular/core 19.2 types (see zzz-repro-style check run for this
+			   survey), `Exclude<NoInfer<R>, undefined>` does not distribute over
+			   `R = PageRequest | undefined` here and the inferred parameter type
+			   still includes `undefined` — a TypeScript inference gap in
+			   `NoInfer`'s interaction with `Exclude`, not something this file can
+			   fix. resource() itself only ever invokes `loader` once its `request`
+			   reactive function has produced a defined value (an undefined
+			   request means status Idle, no fetch — same as v1 never firing its
+			   first combineLatest emission before debounceTime elapses); the `!`
+			   asserts that real, structural guarantee rather than papering over a
+			   genuine gap. */
+			loader: ({ request, abortSignal }) => this.fetch(request!, abortSignal),
 			defaultValue: emptyPageFor<T>(this.rawRequest())
 		});
 
