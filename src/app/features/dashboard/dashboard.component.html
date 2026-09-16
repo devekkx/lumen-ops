@@ -1,0 +1,94 @@
+<section class="dash" *transloco="let t">
+	<lumen-page-header [title]="t('dash.title')" [subtitle]="t('dash.subtitle')" />
+
+	<div class="dash-kpis">
+		@for (tile of kpiTiles(); track tile.key) {
+			<div class="lum-card dash-kpi">
+				<span class="dash-kpi__label">{{ t('kpi.' + tile.key) }}</span>
+				<span class="dash-kpi__value">
+					{{ tile.value | lumenNumber: tile.digits }}{{ tile.suffix ?? '' }}
+					@if (tile.unitKey) {
+						{{ t(tile.unitKey) }}
+					}
+				</span>
+			</div>
+		}
+	</div>
+
+	<div class="lum-panel dash-range">
+		<span class="lum-field__label">{{ t('chart.range') }}</span>
+		<div class="dash-range__group" role="group" [attr.aria-label]="t('chart.range')">
+			@for (option of ranges; track option.key) {
+				<button
+					type="button"
+					class="lum-chip"
+					[class.lum-chip--on]="range() === option.key"
+					[attr.aria-pressed]="range() === option.key"
+					[disabled]="loading()"
+					(click)="selectRange(option.key)"
+				>
+					{{ t(option.labelKey) }}
+				</button>
+			}
+		</div>
+	</div>
+
+	<div class="row g-3 dash-charts">
+		<div class="col-12">
+			<div class="lum-card dash-chart">
+				<h2 class="dash-chart__title">{{ t('chart.consumption') }}</h2>
+				<div class="dash-chart__body">
+					@if (loading()) {
+						<div class="lum-state">
+							<span class="lum-spinner" aria-hidden="true"></span>
+							<p class="lum-state__body">{{ t('common.loading') }}</p>
+						</div>
+					} @else if (!hasEnergyData()) {
+						<div class="lum-state">
+							<p class="lum-state__body">{{ t('chart.empty') }}</p>
+						</div>
+					}
+					<div #energy class="dash-chart__canvas" [hidden]="loading() || !hasEnergyData()"></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-6">
+			<div class="lum-card dash-chart">
+				<h2 class="dash-chart__title">{{ t('chart.byLampType') }}</h2>
+				<div class="dash-chart__body">
+					@if (loading()) {
+						<div class="lum-state">
+							<span class="lum-spinner" aria-hidden="true"></span>
+							<p class="lum-state__body">{{ t('common.loading') }}</p>
+						</div>
+					} @else if (!hasLampData()) {
+						<div class="lum-state">
+							<p class="lum-state__body">{{ t('chart.empty') }}</p>
+						</div>
+					}
+					<div #lamp class="dash-chart__canvas" [hidden]="loading() || !hasLampData()"></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-6">
+			<div class="lum-card dash-chart">
+				<h2 class="dash-chart__title">{{ t('chart.bySeverity') }}</h2>
+				<div class="dash-chart__body">
+					@if (loading()) {
+						<div class="lum-state">
+							<span class="lum-spinner" aria-hidden="true"></span>
+							<p class="lum-state__body">{{ t('common.loading') }}</p>
+						</div>
+					} @else if (!hasSeverityData()) {
+						<div class="lum-state">
+							<p class="lum-state__body">{{ t('chart.empty') }}</p>
+						</div>
+					}
+					<div #severity class="dash-chart__canvas" [hidden]="loading() || !hasSeverityData()"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
