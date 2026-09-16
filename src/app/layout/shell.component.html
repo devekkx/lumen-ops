@@ -127,6 +127,7 @@
 						#menuTrigger
 						[attr.aria-expanded]="menuOpen()"
 						aria-haspopup="menu"
+						aria-controls="shell-user-menu"
 						[attr.aria-label]="s.name"
 						(click)="toggleMenu()"
 					>
@@ -154,7 +155,12 @@
 
 					@if (menuOpen()) {
 						<div class="shell__menu-scrim" (click)="closeMenu()"></div>
-						<div class="shell__menu" role="menu" (keydown)="onMenuKeydown($event, menuTrigger)">
+						<div
+							class="shell__menu"
+							id="shell-user-menu"
+							role="menu"
+							(keydown)="onMenuKeydown($event, menuTrigger)"
+						>
 							<div class="shell__menu-head">
 								<span class="shell__menu-name">{{ s.name }}</span>
 								<span class="shell__menu-email">{{ s.email }}</span>
@@ -171,6 +177,8 @@
 								<button
 									class="lum-btn lum-btn--secondary lum-btn--sm lum-btn--block"
 									type="button"
+									role="menuitem"
+									#menuFirstFocusable
 									(click)="logout()"
 								>
 									{{ t('shell.logout') }}

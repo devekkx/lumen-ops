@@ -48,7 +48,7 @@
 							<p class="lum-state__body">{{ t('chart.empty') }}</p>
 						</div>
 					}
-					<div #energy class="dash-chart__canvas" [hidden]="loading() || !hasEnergyData()"></div>
+					<div #energy class="dash-chart__canvas" role="img" [attr.aria-label]="t('chart.consumption')" [hidden]="loading() || !hasEnergyData()"></div>
 				</div>
 			</div>
 		</div>
@@ -67,7 +67,7 @@
 							<p class="lum-state__body">{{ t('chart.empty') }}</p>
 						</div>
 					}
-					<div #lamp class="dash-chart__canvas" [hidden]="loading() || !hasLampData()"></div>
+					<div #lamp class="dash-chart__canvas" role="img" [attr.aria-label]="t('chart.byLampType')" [hidden]="loading() || !hasLampData()"></div>
 				</div>
 			</div>
 		</div>
@@ -86,7 +86,7 @@
 							<p class="lum-state__body">{{ t('chart.empty') }}</p>
 						</div>
 					}
-					<div #severity class="dash-chart__canvas" [hidden]="loading() || !hasSeverityData()"></div>
+					<div #severity class="dash-chart__canvas" role="img" [attr.aria-label]="t('chart.bySeverity')" [hidden]="loading() || !hasSeverityData()"></div>
 				</div>
 			</div>
 		</div>
