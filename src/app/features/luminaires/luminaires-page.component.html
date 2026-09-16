@@ -1,0 +1,80 @@
+<section *transloco="let t">
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<div>
+			<p class="text-uppercase text-secondary small mb-1">{{ t('nav.luminaires') }}</p>
+			<h1>{{ t('lum.title') }}</h1>
+		</div>
+		<button type="button" class="lum-btn lum-btn--secondary" (click)="refresh()">
+			{{ t('table.retry') }}
+		</button>
+	</div>
+
+	<div class="lum-panel mb-3">
+		<label class="lum-field mb-3">
+			<span class="lum-field__label">{{ t('table.search') }}</span>
+			<input
+				class="lum-field__control lum-field__control--sm"
+				type="search"
+				[placeholder]="t('table.searchPlaceholder')"
+				(input)="setSearch($any($event.target).value)"
+			/>
+		</label>
+
+		<div class="mb-3">
+			<span class="lum-field__label d-block mb-2">{{ t('lum.status') }}</span>
+			<div class="d-flex flex-wrap gap-2">
+				@for (status of statuses; track status) {
+					<button
+						type="button"
+						class="lum-chip"
+						[class.lum-chip--on]="isStatusOn(status)"
+						[attr.aria-pressed]="isStatusOn(status)"
+						(click)="toggleStatus(status, !isStatusOn(status))"
+					>
+						{{ t('status.' + status) }}
+					</button>
+				}
+			</div>
+		</div>
+
+		<div>
+			<span class="lum-field__label d-block mb-2">{{ t('lum.lampType') }}</span>
+			<div class="d-flex flex-wrap gap-2">
+				@for (lampType of lampTypes; track lampType) {
+					<button
+						type="button"
+						class="lum-chip"
+						[class.lum-chip--on]="isLampTypeOn(lampType)"
+						[attr.aria-pressed]="isLampTypeOn(lampType)"
+						(click)="toggleLampType(lampType, !isLampTypeOn(lampType))"
+					>
+						{{ t('lamp.' + lampType) }}
+					</button>
+				}
+			</div>
+		</div>
+	</div>
+
+	<details class="lum-panel mb-3">
+		<summary>{{ t('table.dsl') }}</summary>
+		@if (dslLines().length) {
+			<pre class="mb-0 mt-2">{{ dslLines().join('\n') }}</pre>
+		} @else {
+			<p class="text-secondary small mb-0 mt-2">{{ t('table.dslEmpty') }}</p>
+		}
+	</details>
+
+	<lumen-table
+		[caption]="'lum.title'"
+		[columns]="columns"
+		[page]="page$ | async"
+		[loading]="(loading | async) ?? false"
+		[error]="error | async"
+		[sortProperty]="sortProperty"
+		[sortDirection]="sortDirection"
+		(sort)="sortBy($event)"
+		(pageChange)="setPage($event)"
+		(perPageChange)="setPerPage($event)"
+		(retry)="refresh()"
+	/>
+</section>
