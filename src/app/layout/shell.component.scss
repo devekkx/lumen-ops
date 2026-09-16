@@ -159,8 +159,15 @@
 		display: flex;
 		flex-direction: column;
 		/* The one scrolling region — __aside stays put because it never has
-		   to scroll to begin with, not because it is pinned in place. */
+		   to scroll to begin with, not because it is pinned in place.
+		   overflow-x: hidden is load-bearing here, not decorative: setting
+		   only overflow-y forces the browser to compute overflow-x as auto
+		   too (the CSS overflow spec's rule for a lone non-visible axis), so
+		   a raw Bootstrap .row's negative gutter margins — invisible before,
+		   when the whole document just scrolled past them — surfaced as a
+		   real horizontal scrollbar on this box instead. */
 		overflow-y: auto;
+		overflow-x: hidden;
 	}
 
 	&__header {
