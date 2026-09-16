@@ -9,8 +9,8 @@
 	</span>
 
 	<div class="lum-table-card__scroll">
-		<table class="lum-table" [attr.aria-busy]="loading">
-			<caption>{{ t(caption) }}</caption>
+		<table class="table table-hover lum-table" [attr.aria-busy]="loading">
+			<caption class="visually-hidden">{{ t(caption) }}</caption>
 			<thead>
 				<tr>
 					@for (column of columns; track column.key) {
@@ -75,7 +75,7 @@
 													{{ t(pillColumns[column.key] + '.' + item[column.key]) }}
 												</span>
 											} @else {
-												{{ item[column.key] }}
+												<span data-bs-toggle="tooltip" [title]="item[column.key] + ''">{{ item[column.key] }}</span>
 											}
 										</button>
 									} @else if (pillColumns[column.key]) {
@@ -83,7 +83,7 @@
 											{{ t(pillColumns[column.key] + '.' + item[column.key]) }}
 										</span>
 									} @else {
-										{{ item[column.key] }}
+										<span data-bs-toggle="tooltip" [title]="item[column.key] + ''">{{ item[column.key] }}</span>
 									}
 								</td>
 							}
