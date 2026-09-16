@@ -12,12 +12,16 @@ The agent that produced most of this audit was given a working tree that
 turned out not to be at `feat/fault-form`'s tip (it had no shell/git access to
 fix that itself), so its findings on `dashboard.component.ts` and
 `luminaire-map.component.ts` were against the pre-rewrite stubs rather than
-PRs #9/#10. Those two branches are **siblings** of `feat/fault-form` — all
-three fork independently from `feat/paginated-table` — so `feat/fault-form`
-never had the PR #9/#10 rewrites to begin with, and the stub-based fixes
-below turned out to apply here cleanly rather than needing to be discarded.
-They will need re-reconciling whenever `feat/luminaires-map`/`feat/energy-
-dashboard` and this branch eventually merge into one tree.
+PRs #9/#10. By the time this branch was rebased onto `feat/paginated-table`
+(which by then had #9/#10/#11 merged into it sequentially), those two files'
+stub-based edits were discarded and re-checked against the real rewrites:
+`luminaire-map.component.html` already had a heading, a `role="img"`
+aria-label on the map canvas, and a text legend for the status colours (all
+from PR #9 itself); `dashboard.component.html` had a heading and a labelled
+range-selector group but no text alternative on the three chart canvases —
+that gap is what this branch actually adds (`role="img"` + `aria-label` per
+chart, matching the map's own pattern), rather than the fuller
+hidden-data-table alternative floated in an earlier draft of this pass.
 
 **Still not audited, and a real gap**: the faults CRUD flow itself — the
 create/edit form, the luminaire-picker typeahead, and the confirm modal
