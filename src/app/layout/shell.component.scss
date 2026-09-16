@@ -1,7 +1,12 @@
 @use '../../styles/variables' as *;
 
 .shell {
-	min-height: 100vh;
+	/* height, not min-height, plus overflow: hidden here — the document
+	   itself never scrolls. Without this the aside is just a normal flex
+	   item and scrolls away with a long table exactly like the rest of the
+	   page, instead of staying put while __main scrolls on its own. */
+	height: 100vh;
+	overflow: hidden;
 	display: flex;
 	background: var(--color-surface-soft);
 
@@ -141,6 +146,9 @@
 		min-width: 0;
 		display: flex;
 		flex-direction: column;
+		/* The one scrolling region — __aside stays put because it never has
+		   to scroll to begin with, not because it is pinned in place. */
+		overflow-y: auto;
 	}
 
 	&__header {
