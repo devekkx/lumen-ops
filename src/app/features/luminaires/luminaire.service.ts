@@ -11,7 +11,12 @@ export type LampType = 'SODIUM' | 'LED' | 'METAL_HALIDE';
 export type LuminaireStatus = 'OK' | 'FAULT' | 'MAINTENANCE' | 'OFFLINE';
 
 export const LAMP_TYPES: readonly LampType[] = ['SODIUM', 'LED', 'METAL_HALIDE'];
-export const LUMINAIRE_STATUSES: readonly LuminaireStatus[] = ['OK', 'FAULT', 'MAINTENANCE', 'OFFLINE'];
+export const LUMINAIRE_STATUSES: readonly LuminaireStatus[] = [
+	'OK',
+	'FAULT',
+	'MAINTENANCE',
+	'OFFLINE'
+];
 
 export interface Luminaire {
 	id: string;

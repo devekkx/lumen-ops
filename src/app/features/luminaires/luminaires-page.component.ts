@@ -2,7 +2,10 @@ import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { PaginatedTableBase } from '@shared/components/paginated-table/paginated-table.base';
-import { PaginatedTableComponent, TableColumn } from '@shared/components/paginated-table/paginated-table.component';
+import {
+	PaginatedTableComponent,
+	TableColumn
+} from '@shared/components/paginated-table/paginated-table.component';
 import { FilterRecord } from '@shared/models/filter';
 import { pillClass } from '@shared/models/status-tone';
 import { buildFilterConditions, describeFilter, flattenFilters } from '@shared/utils/filters';
@@ -70,7 +73,9 @@ export class LuminairesPageComponent extends PaginatedTableBase<Luminaire> {
 	   is actually being sent. */
 	dslLines(): string[] {
 		const built = buildFilterConditions(this.filters);
-		return flattenFilters(built).map((filter) => '  '.repeat(filter.depth) + describeFilter(filter));
+		return flattenFilters(built).map(
+			(filter) => '  '.repeat(filter.depth) + describeFilter(filter)
+		);
 	}
 
 	tone(value: string): string {
