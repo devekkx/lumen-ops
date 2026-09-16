@@ -64,4 +64,6 @@ export class ConfirmDialogComponent {
    with their own defaults, so "declining" (backdrop click, Escape, or the
    cancel button) reads as `false` in exactly one place. */
 export const confirmDialog = (modal: ModalService, data: ConfirmDialogData): Promise<boolean> =>
-	modal.open<ConfirmDialogComponent, boolean>(ConfirmDialogComponent, data).then((result) => !!result);
+	modal
+		.open<ConfirmDialogComponent, boolean>(ConfirmDialogComponent, data)
+		.then((result) => !!result);

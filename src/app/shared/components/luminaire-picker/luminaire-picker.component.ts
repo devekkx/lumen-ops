@@ -2,7 +2,15 @@ import { Component, forwardRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { Subject, catchError, debounceTime, distinctUntilChanged, finalize, of, switchMap } from 'rxjs';
+import {
+	Subject,
+	catchError,
+	debounceTime,
+	distinctUntilChanged,
+	finalize,
+	of,
+	switchMap
+} from 'rxjs';
 import { ApiService } from '@core/api/api.service';
 
 /* Just enough of the luminaire shape to label a suggestion — reimplemented

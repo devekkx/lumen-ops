@@ -11,7 +11,13 @@ import {
 } from '@shared/components/paginated-table/paginated-table.component';
 import { PaginatedTableBase } from '@shared/components/paginated-table/paginated-table.base';
 import { FilterRecord } from '@shared/models/filter';
-import { FAULT_SEARCH_KEYS, FAULT_STATUSES, Fault, FaultService, SEVERITIES } from './fault.service';
+import {
+	FAULT_SEARCH_KEYS,
+	FAULT_STATUSES,
+	Fault,
+	FaultService,
+	SEVERITIES
+} from './fault.service';
 
 @Component({
 	selector: 'lumen-faults-page',
@@ -86,7 +92,10 @@ export class FaultsPageComponent extends PaginatedTableBase<Fault> {
 
 	rejectFault(fault: Fault): void {
 		this.collection.transition(fault.id, 'REJECTED').subscribe(() => {
-			this.toast.show(this.transloco.translate('fault.rejected', { code: fault.code }), 'attention');
+			this.toast.show(
+				this.transloco.translate('fault.rejected', { code: fault.code }),
+				'attention'
+			);
 			this.refresh();
 		});
 	}

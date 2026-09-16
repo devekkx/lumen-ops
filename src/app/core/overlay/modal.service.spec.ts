@@ -8,7 +8,9 @@ interface TestData {
 
 @Component({
 	standalone: true,
-	template: `<button class="confirm" type="button" (click)="ref.close(true)">{{ data.label }}</button>`
+	template: `<button class="confirm" type="button" (click)="ref.close(true)">
+		{{ data.label }}
+	</button>`
 })
 class TestModalComponent {
 	readonly ref = inject<ModalRef<boolean>>(MODAL_REF);
