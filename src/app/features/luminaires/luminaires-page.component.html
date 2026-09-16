@@ -9,7 +9,7 @@
 		</button>
 	</div>
 
-	<div class="lum-panel mb-3">
+	<div class="card card-body mb-3">
 		<label class="lum-field mb-3">
 			<span class="lum-field__label">{{ t('table.search') }}</span>
 			<input
@@ -55,7 +55,7 @@
 		</div>
 	</div>
 
-	<details class="lum-panel mb-3">
+	<details class="card card-body mb-3">
 		<summary>{{ t('table.dsl') }}</summary>
 		@if (dslLines().length) {
 			<pre class="mb-0 mt-2">{{ dslLines().join('\n') }}</pre>

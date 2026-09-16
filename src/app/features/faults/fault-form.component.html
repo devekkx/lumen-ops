@@ -5,7 +5,7 @@
 	@if (loading()) {
 		<p class="text-secondary">{{ t('common.loading') }}</p>
 	} @else {
-		<form class="lum-card" [formGroup]="form" (ngSubmit)="save()">
+		<form class="card card-body" [formGroup]="form" (ngSubmit)="save()">
 			<label class="lum-field mb-3" [class.lum-field--invalid]="fieldError('luminaireId')">
 				<span class="lum-field__label">{{ t('fault.picker') }}</span>
 				<lumen-luminaire-picker formControlName="luminaireId" />

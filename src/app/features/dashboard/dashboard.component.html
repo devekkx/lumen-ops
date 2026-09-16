@@ -3,7 +3,7 @@
 
 	<div class="dash-kpis">
 		@for (tile of kpiTiles(); track tile.key) {
-			<div class="lum-card dash-kpi">
+			<div class="card card-body dash-kpi">
 				<span class="dash-kpi__label">{{ t('kpi.' + tile.key) }}</span>
 				<span class="dash-kpi__value">
 					{{ tile.value | lumenNumber: tile.digits }}{{ tile.suffix ?? '' }}
@@ -15,8 +15,8 @@
 		}
 	</div>
 
-	<div class="lum-panel dash-range">
-		<span class="lum-field__label">{{ t('chart.range') }}</span>
+	<div class="card card-body dash-range">
+		<span class="form-label">{{ t('chart.range') }}</span>
 		<div class="dash-range__group" role="group" [attr.aria-label]="t('chart.range')">
 			@for (option of ranges; track option.key) {
 				<button
@@ -35,7 +35,7 @@
 
 	<div class="row g-3 dash-charts">
 		<div class="col-12">
-			<div class="lum-card dash-chart">
+			<div class="card card-body dash-chart">
 				<h2 class="dash-chart__title">{{ t('chart.consumption') }}</h2>
 				<div class="dash-chart__body">
 					@if (loading()) {
@@ -54,7 +54,7 @@
 		</div>
 
 		<div class="col-md-6">
-			<div class="lum-card dash-chart">
+			<div class="card card-body dash-chart">
 				<h2 class="dash-chart__title">{{ t('chart.byLampType') }}</h2>
 				<div class="dash-chart__body">
 					@if (loading()) {
@@ -73,7 +73,7 @@
 		</div>
 
 		<div class="col-md-6">
-			<div class="lum-card dash-chart">
+			<div class="card card-body dash-chart">
 				<h2 class="dash-chart__title">{{ t('chart.bySeverity') }}</h2>
 				<div class="dash-chart__body">
 					@if (loading()) {
