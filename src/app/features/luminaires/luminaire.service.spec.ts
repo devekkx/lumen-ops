@@ -35,4 +35,23 @@ describe('LuminaireService', () => {
 		service.get('lum-0001').subscribe();
 		http.expectOne('/api/luminaires/lum-0001').flush({ id: 'lum-0001' });
 	});
+
+	it('POSTs to /api/luminaires/geo and reads back a plain array, not a page', () => {
+		let result: unknown;
+		service.geo({ searchTerm: 'LUM-0001' }).subscribe((response) => (result = response));
+
+		const testRequest = http.expectOne('/api/luminaires/geo');
+		expect(testRequest.request.method).toBe('POST');
+		expect(testRequest.request.body).toEqual({ searchTerm: 'LUM-0001' });
+		testRequest.flush([{ id: 'lum-0001' }]);
+
+		expect(result).toEqual([{ id: 'lum-0001' }]);
+	});
+
+	it('defaults the geo request body to {} — an empty request means "everything"', () => {
+		service.geo().subscribe();
+		const testRequest = http.expectOne('/api/luminaires/geo');
+		expect(testRequest.request.body).toEqual({});
+		testRequest.flush([]);
+	});
 });
