@@ -62,7 +62,13 @@ const samplePage: Page<Fault> = {
 
 /* Renders the page against a stubbed AuthService/FaultService and lets the
    base class's 250ms debounce elapse so the (stubbed) page actually loads —
-   asserting against an empty, still-loading table would prove nothing. */
+   asserting against an empty, still-loading table would prove nothing.
+   The v2 (resource()) base needs one more beat than v1 did here: `tick(250)`
+   plus a `detectChanges()` flushes the debounce and starts resource()'s
+   loadEffect, but that effect is `async` — even a synchronous `of(samplePage)`
+   resolves through a microtask, which only a *subsequent* `tick()` drains
+   (nothing after this point re-enters the fake clock to drain it otherwise).
+   The final `detectChanges()` then re-renders against the now-resolved page. */
 const render = (abilities: Abilities) => {
 	TestBed.resetTestingModule();
 	TestBed.configureTestingModule({
@@ -77,6 +83,8 @@ const render = (abilities: Abilities) => {
 	const fixture = TestBed.createComponent(FaultsPageComponent);
 	fixture.detectChanges();
 	tick(250);
+	fixture.detectChanges();
+	tick();
 	fixture.detectChanges();
 	return fixture;
 };
