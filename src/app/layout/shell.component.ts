@@ -70,8 +70,13 @@ export class ShellComponent {
 	/* Points toward what the click does: left/"collapse" while open, right/
 	   "expand" while closed — never the hamburger glyph the design has no use
 	   for on a control that always has an open-or-closed aside to describe. */
+	/* collapsed(), not asideOpen() — asideOpen() is hardcoded true on desktop
+	   (it only tracks the narrow-screen drawer's open/closed state), so the
+	   icon never changed on a normal-width screen even though the button's
+	   position correctly did. collapsed() is what actually varies in both
+	   modes and is what the icon needs to track. */
 	readonly toggleIconPath = computed(() =>
-		this.asideOpen() ? 'M14.5 6.5 9 12l5.5 5.5' : 'M9.5 6.5 15 12l-5.5 5.5'
+		!this.collapsed() ? 'M14.5 6.5 9 12l5.5 5.5' : 'M9.5 6.5 15 12l-5.5 5.5'
 	);
 
 	private readonly navigation = toSignal(
