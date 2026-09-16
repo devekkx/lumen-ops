@@ -72,6 +72,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 	private readonly dashboard = inject(DashboardService);
 	private readonly transloco = inject(TranslocoService);
 	private readonly language = inject(LanguageService);
+	private readonly hostRef = inject(ElementRef<HTMLElement>);
 
 	@ViewChild('energy') private readonly energyRef!: ElementRef<HTMLElement>;
 	@ViewChild('lamp') private readonly lampRef!: ElementRef<HTMLElement>;
@@ -119,6 +120,14 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 		this.severityChart?.resize();
 	};
 
+	/* A window resize is the only thing the old listener alone caught — but
+	   collapsing the sidebar changes this component's own width without the
+	   browser window changing size at all, so charts sat at their stale
+	   width until the user happened to resize the actual window. Observing
+	   the host element directly catches any reason its box changes,
+	   sidebar toggle included. */
+	private resizeObserver?: ResizeObserver;
+
 	constructor() {
 		/* Re-renders on new data *and* on a language change: the axis labels,
 		   legend names and number formatting are all baked into the echarts
@@ -134,11 +143,14 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
 	ngAfterViewInit(): void {
 		window.addEventListener('resize', this.onResize);
+		this.resizeObserver = new ResizeObserver(() => this.onResize());
+		this.resizeObserver.observe(this.hostRef.nativeElement);
 		this.load();
 	}
 
 	ngOnDestroy(): void {
 		window.removeEventListener('resize', this.onResize);
+		this.resizeObserver?.disconnect();
 		this.energyChart?.dispose();
 		this.lampChart?.dispose();
 		this.severityChart?.dispose();
@@ -175,6 +187,18 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 		this.renderEnergy(data);
 		this.renderLampType(data);
 		this.renderSeverity(data);
+
+		/* A chart's canvas is [hidden] (display: none, zero width) until its
+		   data actually arrives, so echarts.init() can measure a stale 0px
+		   width if it runs in the same tick the [hidden] binding is lifted,
+		   before the browser has actually painted the now-visible container.
+		   One resize() after the next paint corrects it to the card's real
+		   width rather than leaving the chart narrower than its card. */
+		requestAnimationFrame(() => {
+			this.energyChart?.resize();
+			this.lampChart?.resize();
+			this.severityChart?.resize();
+		});
 	}
 
 	private renderEnergy(data: DashboardSnapshot): void {
@@ -188,7 +212,16 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
 		this.energyChart.setOption(
 			{
-				tooltip: { trigger: 'axis' },
+				/* appendToBody: ECharts otherwise appends the tooltip node
+				   inside the chart's own container, which sits under .shell's
+				   overflow: hidden (the fix that keeps the sidebar from
+				   scrolling away) -- without this the tooltip clips the
+				   moment it would extend past the chart's own box. */
+				/* confine: with appendToBody, ECharts confines the tooltip to
+				   the browser viewport rather than the chart's own box -- so
+				   a point near the page edge shifts the tooltip back onto
+				   screen instead of letting it run off and get cut short. */
+				tooltip: { trigger: 'axis', appendToBody: true, confine: true },
 				grid: { left: 48, right: 16, top: 24, bottom: 32 },
 				xAxis: {
 					type: 'category',
@@ -222,7 +255,11 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
 		this.lampChart.setOption(
 			{
-				tooltip: { trigger: 'axis' },
+				/* confine: with appendToBody, ECharts confines the tooltip to
+				   the browser viewport rather than the chart's own box -- so
+				   a point near the page edge shifts the tooltip back onto
+				   screen instead of letting it run off and get cut short. */
+				tooltip: { trigger: 'axis', appendToBody: true, confine: true },
 				grid: { left: 48, right: 16, top: 24, bottom: 32 },
 				xAxis: {
 					type: 'category',
@@ -254,7 +291,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
 		this.severityChart.setOption(
 			{
-				tooltip: { trigger: 'item' },
+				tooltip: { trigger: 'item', appendToBody: true, confine: true },
 				legend: { bottom: 0 },
 				series: [
 					{
@@ -275,7 +312,9 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
 	private formatBucket(t: number, bucketHours: number, locale: string): string {
 		const options: Intl.DateTimeFormatOptions =
-			bucketHours <= 1 ? { hour: '2-digit', minute: '2-digit' } : { day: 'numeric', month: 'short' };
+			bucketHours <= 1
+				? { hour: '2-digit', minute: '2-digit' }
+				: { day: 'numeric', month: 'short' };
 		return new Intl.DateTimeFormat(locale, options).format(new Date(t));
 	}
 

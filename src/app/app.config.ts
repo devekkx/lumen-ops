@@ -38,7 +38,14 @@ export const appConfig: ApplicationConfig = {
            shows Spanish copy rather than a raw key in the UI. */
 				missingHandler: { useFallbackTranslation: true },
 				reRenderOnLangChange: true,
-				prodMode: true
+				prodMode: true,
+				/* Every string in en.json/es.json is written with single-brace
+				   params — 'Showing {a}–{b} of {total}', 'Fault {code} saved' —
+				   but Transloco's own default is double braces ('{{a}}'). Left at
+				   the default, every parameterised translation in the app renders
+				   its placeholders literally instead of substituting them; this
+				   is what actually matches the dictionaries. */
+				interpolation: ['{', '}']
 			},
 			loader: TranslocoHttpLoader
 		}),

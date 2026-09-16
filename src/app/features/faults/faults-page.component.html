@@ -77,6 +77,7 @@
 		(perPageChange)="setPerPage($event)"
 		(retry)="refresh()"
 	>
+		@if (hasRowActions()) {
 		<ng-template #rowActions let-fault>
 			<div class="d-flex flex-wrap gap-2">
 				@if (abilities().editFault) {
@@ -130,5 +131,6 @@
 				}
 			</div>
 		</ng-template>
+		}
 	</lumen-table>
 </section>

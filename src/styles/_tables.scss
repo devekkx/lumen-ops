@@ -152,6 +152,15 @@
 	color: var(--color-muted);
 }
 
+/* Per-page and the pager share one visual group on the right of the footer
+   row, per the design — not two separate groups spread across it. */
+.lum-table__pager-group {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	flex-wrap: wrap;
+}
+
 .lum-table__pager {
 	display: flex;
 	align-items: center;
