@@ -188,7 +188,12 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
 		this.energyChart.setOption(
 			{
-				tooltip: { trigger: 'axis' },
+				/* appendToBody: ECharts otherwise appends the tooltip node
+				   inside the chart's own container, which sits under .shell's
+				   overflow: hidden (the fix that keeps the sidebar from
+				   scrolling away) -- without this the tooltip clips the
+				   moment it would extend past the chart's own box. */
+				tooltip: { trigger: 'axis', appendToBody: true },
 				grid: { left: 48, right: 16, top: 24, bottom: 32 },
 				xAxis: {
 					type: 'category',
@@ -222,7 +227,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
 		this.lampChart.setOption(
 			{
-				tooltip: { trigger: 'axis' },
+				tooltip: { trigger: 'axis', appendToBody: true },
 				grid: { left: 48, right: 16, top: 24, bottom: 32 },
 				xAxis: {
 					type: 'category',
@@ -254,7 +259,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
 		this.severityChart.setOption(
 			{
-				tooltip: { trigger: 'item' },
+				tooltip: { trigger: 'item', appendToBody: true },
 				legend: { bottom: 0 },
 				series: [
 					{
