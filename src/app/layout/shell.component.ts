@@ -52,24 +52,45 @@ export class ShellComponent {
 	/* The toggle is a floating disc that straddles the aside's current right
 	   edge (half over the aside, half over the content) rather than a fixed
 	   corner button — it has to move as the aside's own width changes. On a
-	   narrow screen with the drawer closed there is no rail edge to straddle,
-	   so it becomes a flush tab at the very left edge instead. */
+	   narrow screen the drawer is an overlay, not a layout column — nothing
+	   sits at a "current edge" to straddle in either state — so the button
+	   stays in one fixed spot (the flush left-edge tab) whether the drawer
+	   is open or closed, instead of jumping between two positions. */
 	readonly toggleLeft = computed(() => {
-		if (this.narrow()) return this.asideOpen() ? ASIDE_WIDTH - TOGGLE_RADIUS : 0;
+		if (this.narrow()) return 0;
 		return (this.collapsed() ? ASIDE_WIDTH_COLLAPSED : ASIDE_WIDTH) - TOGGLE_RADIUS;
 	});
 
 	readonly toggleTop = computed(() =>
-		this.narrow() && !this.asideOpen() ? Math.max(120, Math.round(window.innerHeight / 2) - 23) : 90
+		this.narrow() ? Math.max(120, Math.round(window.innerHeight / 2) - 23) : 90
 	);
 
-	readonly toggleFlushTab = computed(() => this.narrow() && !this.asideOpen());
+	readonly toggleFlushTab = computed(() => this.narrow());
+
+	/* The scrim behind the user menu sits above the aside in stacking order
+	   (z-index 39 vs. 30), so inset: 0 would blur/dim the sidebar along with
+	   the content it's actually meant to dim — harmless while it was fully
+	   invisible, visible now that it carries a blur. On a normal-width
+	   screen the aside is a permanent column, not an overlay, so the scrim
+	   should only ever cover what's actually behind the menu: the content
+	   area to its right. On a narrow screen the aside is already its own
+	   overlay above everything else, so there is nothing wrong with the
+	   scrim covering the full width there too. */
+	readonly menuScrimLeft = computed(() => {
+		if (this.narrow()) return 0;
+		return this.collapsed() ? ASIDE_WIDTH_COLLAPSED : ASIDE_WIDTH;
+	});
 
 	/* Points toward what the click does: left/"collapse" while open, right/
 	   "expand" while closed — never the hamburger glyph the design has no use
 	   for on a control that always has an open-or-closed aside to describe. */
+	/* collapsed(), not asideOpen() — asideOpen() is hardcoded true on desktop
+	   (it only tracks the narrow-screen drawer's open/closed state), so the
+	   icon never changed on a normal-width screen even though the button's
+	   position correctly did. collapsed() is what actually varies in both
+	   modes and is what the icon needs to track. */
 	readonly toggleIconPath = computed(() =>
-		this.asideOpen() ? 'M14.5 6.5 9 12l5.5 5.5' : 'M9.5 6.5 15 12l-5.5 5.5'
+		!this.collapsed() ? 'M14.5 6.5 9 12l5.5 5.5' : 'M9.5 6.5 15 12l-5.5 5.5'
 	);
 
 	private readonly navigation = toSignal(

@@ -63,6 +63,7 @@ export class LuminaireMapComponent implements AfterViewInit, OnDestroy {
 	@ViewChild('mapHost') private readonly mapHost!: ElementRef<HTMLElement>;
 
 	private map?: OlMap;
+	private vectorLayer?: VectorLayer<ClusterSource>;
 	private readonly vectorSource = new VectorSource<Feature<Point>>();
 	private readonly clusterSource = new ClusterSource({
 		distance: CLUSTER_DISTANCE,
@@ -100,18 +101,28 @@ export class LuminaireMapComponent implements AfterViewInit, OnDestroy {
 		   keeps working regardless. */
 		osmSource.on('tileloaderror', () => this.tilesOffline.set(true));
 
-		const vectorLayer = new VectorLayer({
+		this.vectorLayer = new VectorLayer({
 			source: this.clusterSource,
 			style: (feature) => this.styleFor(feature as Feature<Point>)
 		});
 
 		this.map = new OlMap({
 			target: this.mapHost.nativeElement,
-			layers: [new TileLayer({ source: osmSource }), vectorLayer],
+			layers: [new TileLayer({ source: osmSource }), this.vectorLayer],
 			view: new View({ center: fromLonLat(MAP_CENTER), zoom: MAP_ZOOM })
 		});
 
 		this.map.on('singleclick', (event) => this.handleClick(event));
+
+		/* The only visible sign a point is hoverable at all, short of a full
+		   highlight-on-hover style: the cursor itself. Standard OpenLayers
+		   idiom — forEachFeatureAtPixel on pointermove rather than a DOM
+		   hover, since the "points" are canvas pixels, not real elements. */
+		this.map.on('pointermove', (event) => {
+			if (event.dragging) return;
+			const hasFeature = !!this.map?.forEachFeatureAtPixel(event.pixel, () => true);
+			this.mapHost.nativeElement.style.cursor = hasFeature ? 'pointer' : '';
+		});
 
 		this.loadFeatures();
 	}
@@ -167,13 +178,13 @@ export class LuminaireMapComponent implements AfterViewInit, OnDestroy {
 
 		const clicked = map.forEachFeatureAtPixel(event.pixel, (feature) => feature as Feature<Point>);
 		if (!clicked) {
-			this.selected.set(null);
+			this.select(null);
 			return;
 		}
 
 		const members = (clicked.get('features') as Feature<Point>[] | undefined) ?? [clicked];
 		if (members.length === 1) {
-			this.selected.set(members[0].get('lamp') as Luminaire);
+			this.select(members[0].get('lamp') as Luminaire);
 			return;
 		}
 
@@ -185,15 +196,46 @@ export class LuminaireMapComponent implements AfterViewInit, OnDestroy {
 			members.map((member) => (member.getGeometry() as Point).getCoordinates())
 		);
 		map.getView().fit(extent, { padding: [48, 48, 48, 48], maxZoom: 18, duration: 250 });
-		this.selected.set(null);
+		this.select(null);
+	}
+
+	/* styleFor reads this.selected() to decide whether a point is highlighted,
+	   but OpenLayers has no idea an Angular signal changed underneath it — a
+	   plain this.selected.set(...) updates the side panel (it's a template
+	   binding) but leaves every point on the canvas exactly as it was
+	   rendered. vectorLayer.changed() is what makes OL re-invoke styleFor for
+	   every feature, which is what actually puts a highlight on the map. */
+	private select(lamp: Luminaire | null): void {
+		this.selected.set(lamp);
+		this.vectorLayer?.changed();
 	}
 
 	private styleFor(feature: Feature<Point>): Style {
 		const members = feature.get('features') as Feature<Point>[];
 		if (members.length === 1) {
-			return this.pointStyle((members[0].get('lamp') as Luminaire).status);
+			const lamp = members[0].get('lamp') as Luminaire;
+			if (this.selected()?.id === lamp.id) return this.selectedPointStyle(lamp.status);
+			return this.pointStyle(lamp.status);
 		}
 		return this.clusterStyle(members);
+	}
+
+	/* Not cached like pointStyle/clusterStyle — at most one feature ever
+	   wears this at a time, so there is nothing to gain by memoizing per
+	   status, and doing so would risk two differently-selected features
+	   sharing a style object across renders. */
+	private selectedPointStyle(status: LuminaireStatus): Style {
+		return new Style({
+			image: new Circle({
+				radius: 9,
+				fill: new Fill({ color: toneInk(status) }),
+				stroke: new Stroke({ color: '#fff', width: 3 })
+			}),
+			/* The halo is what actually reads as "selected" against a busy map —
+			   a thicker white ring alone is easy to miss next to unselected
+			   points that already carry one, just thinner. */
+			zIndex: 10
+		});
 	}
 
 	/* toneInk() reads a CSS custom property, so the four possible results are

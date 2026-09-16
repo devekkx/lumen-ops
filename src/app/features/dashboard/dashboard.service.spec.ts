@@ -49,7 +49,7 @@ describe('DashboardService', () => {
 	it('omits zoneId from the query string rather than sending it as "undefined"', () => {
 		service.snapshot({ from: 'a', to: 'b' }).subscribe();
 
-		const request = http.expectOne('/api/dashboard');
+		const request = http.expectOne((req) => req.url === '/api/dashboard');
 		expect(request.request.params.has('zoneId')).toBe(false);
 		request.flush(SNAPSHOT);
 	});
@@ -57,7 +57,7 @@ describe('DashboardService', () => {
 	it('forwards zoneId when the caller narrows to one zone', () => {
 		service.snapshot({ from: 'a', to: 'b', zoneId: 'Z01' }).subscribe();
 
-		const request = http.expectOne('/api/dashboard');
+		const request = http.expectOne((req) => req.url === '/api/dashboard');
 		expect(request.request.params.get('zoneId')).toBe('Z01');
 		request.flush(SNAPSHOT);
 	});
@@ -66,7 +66,7 @@ describe('DashboardService', () => {
 		let result: DashboardSnapshot | undefined;
 		service.snapshot({ from: 'a', to: 'b' }).subscribe((value) => (result = value));
 
-		http.expectOne('/api/dashboard').flush(SNAPSHOT);
+		http.expectOne((req) => req.url === '/api/dashboard').flush(SNAPSHOT);
 
 		expect(result).toEqual(SNAPSHOT);
 	});
