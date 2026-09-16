@@ -175,6 +175,18 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 		this.renderEnergy(data);
 		this.renderLampType(data);
 		this.renderSeverity(data);
+
+		/* A chart's canvas is [hidden] (display: none, zero width) until its
+		   data actually arrives, so echarts.init() can measure a stale 0px
+		   width if it runs in the same tick the [hidden] binding is lifted,
+		   before the browser has actually painted the now-visible container.
+		   One resize() after the next paint corrects it to the card's real
+		   width rather than leaving the chart narrower than its card. */
+		requestAnimationFrame(() => {
+			this.energyChart?.resize();
+			this.lampChart?.resize();
+			this.severityChart?.resize();
+		});
 	}
 
 	private renderEnergy(data: DashboardSnapshot): void {
