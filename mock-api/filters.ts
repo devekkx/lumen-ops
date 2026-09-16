@@ -57,7 +57,7 @@ const isEmpty = (value: unknown) => value === null || value === undefined || val
  * The app's buildFilterConditions already drops these before serialising, so in
  * normal use none arrive. The server drops them too, deliberately: `IN []`
  * evaluated literally means "in the empty set" and silently returns zero rows,
- * which is the failure the brief singles out as the worst kind — the user is
+ * which is the failure the brief singles out as the worst kind - the user is
  * shown the wrong records rather than an error. Two independent
  * implementations of the same rule is the point, not duplication. */
 const isInert = (filter: Filter): boolean => {
@@ -114,7 +114,7 @@ const evaluateCondition = (item: unknown, filter: Filter): boolean => {
 export const evaluateFilters = (item: unknown, filters?: Filters): boolean => {
 	if (!filters?.length) return true;
 
-	/* Inert conditions are removed before grouping, not evaluated as false —
+	/* Inert conditions are removed before grouping, not evaluated as false -
 	   otherwise an unfilled control would still break the AND/OR chain it sits
 	   in. A group left empty by this is satisfied, not failed. */
 	const live = filters.filter((entry) => (Array.isArray(entry) ? entry.length > 0 : !isInert(entry)));

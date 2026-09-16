@@ -20,7 +20,7 @@ describe('Confirmable', () => {
 		TestBed.configureTestingModule({});
 		/* TestBed.inject constructs the real ModalService through Angular's DI,
 		   which is exactly what provideAppInitializer does at real app
-		   bootstrap — it is what sets ModalService's static instance the
+		   bootstrap - it is what sets ModalService's static instance the
 		   decorator reaches through. */
 		const modal = TestBed.inject(ModalService);
 		openSpy = spyOn(modal, 'open');

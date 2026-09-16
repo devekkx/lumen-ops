@@ -28,7 +28,7 @@ const flatten = (value, prefix = '', out = {}) => {
 const read = (file) => flatten(JSON.parse(readFileSync(file, 'utf8')));
 
 /* Each directory under public/i18n is a lazily-loaded scope and is checked as
-   its own bundle — a scope is exactly where drift hides, since a missing key
+   its own bundle - a scope is exactly where drift hides, since a missing key
    there only shows up once that feature is opened. */
 const bundles = () => {
 	const groups = [{ name: 'root', dir: ROOT }];
@@ -49,7 +49,7 @@ for (const { name, dir } of bundles()) {
 		try {
 			dictionaries[locale] = read(file);
 		} catch (error) {
-			findings.push({ bundle: name, key: '—', issue: `cannot read ${relative(ROOT, file)}` });
+			findings.push({ bundle: name, key: '-', issue: `cannot read ${relative(ROOT, file)}` });
 		}
 	}
 	if (Object.keys(dictionaries).length !== LOCALES.length) continue;
@@ -75,10 +75,10 @@ for (const [bundle, per] of Object.entries(counts)) {
 }
 
 if (!findings.length) {
-	console.log('\ni18n OK — every bundle matches across locales, no empty values.');
+	console.log('\ni18n OK - every bundle matches across locales, no empty values.');
 	process.exit(0);
 }
 
 console.error(`\n${findings.length} finding${findings.length === 1 ? '' : 's'}:`);
-for (const { bundle, key, issue } of findings) console.error(`  [${bundle}] ${key} — ${issue}`);
+for (const { bundle, key, issue } of findings) console.error(`  [${bundle}] ${key} - ${issue}`);
 process.exit(1);

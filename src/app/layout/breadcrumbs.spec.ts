@@ -36,7 +36,7 @@ describe('crumbsFrom', () => {
 		);
 		const crumbs = crumbsFrom(tree);
 
-		expect(crumbs.length).toBe(2);
+		expect(crumbs).toHaveSize(2);
 		expect(crumbs[0].href).toBe('/luminarias');
 		expect(crumbs[0].literal).toBe(false);
 	});
@@ -55,7 +55,7 @@ describe('crumbsFrom', () => {
 		expect(crumbs[crumbs.length - 1].href).toBeNull();
 	});
 
-	/* A resolved label like a luminaire code is not a translation key — looking
+	/* A resolved label like a luminaire code is not a translation key - looking
 	   it up would render "LUM-0312" as a missing key. */
 	it('marks a resolved label as literal so it is not translated', () => {
 		const tree = node([], {}, node(['lum-0312'], { breadcrumbLabel: 'LUM-0312' }));

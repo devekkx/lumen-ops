@@ -24,6 +24,15 @@
 		font: var(--type-display-md);
 		color: var(--color-ink);
 	}
+
+	&__skeleton-label {
+		width: 70px;
+	}
+
+	&__skeleton-value {
+		width: 90px;
+		height: 26px;
+	}
 }
 
 .dash-range {

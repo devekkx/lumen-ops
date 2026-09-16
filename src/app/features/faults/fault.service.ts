@@ -7,7 +7,7 @@ import { MatchMode } from '@shared/models/filter';
 import { condition } from '@shared/utils/filters';
 
 /* Mirrors mock-api/seed.ts's Fault shape independently rather than importing
-   it — same convention as luminaire.service.ts: the contract is the wire
+   it - same convention as luminaire.service.ts: the contract is the wire
    payload, not shared code across the mock/app boundary. */
 export type Severity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 export type FaultStatus = 'REPORTED' | 'VALIDATED' | 'IN_PROGRESS' | 'CLOSED' | 'REJECTED';
@@ -49,8 +49,8 @@ export class FaultService implements GenericCollectionService<Fault> {
 		return this.api.post<Page<Fault>>('/api/faults/paged', request);
 	}
 
-	/* There is no GET /api/faults/:id on the mock — only luminaires got that
-	   single-record route — so the edit form's lookup goes through the same
+	/* There is no GET /api/faults/:id on the mock - only luminaires got that
+	   single-record route - so the edit form's lookup goes through the same
 	   paged endpoint everything else uses, filtered down to one id. */
 	get(id: string): Observable<Fault> {
 		const request: PageRequest = createPageRequest([], { property: 'code', direction: 'ASC' });
@@ -66,7 +66,7 @@ export class FaultService implements GenericCollectionService<Fault> {
 		);
 	}
 
-	/* POST for a new fault (no id yet), PUT to update an existing one — the
+	/* POST for a new fault (no id yet), PUT to update an existing one - the
 	   mock's two routes mirror that split exactly, so there is no need for a
 	   third "upsert" endpoint on the server. */
 	save(model: Fault): Observable<Fault> {
@@ -80,7 +80,7 @@ export class FaultService implements GenericCollectionService<Fault> {
 		return this.api.delete<void>(`/api/faults/${id}`);
 	}
 
-	/* Not part of GenericCollectionService — validate/reject/close are lifecycle
+	/* Not part of GenericCollectionService - validate/reject/close are lifecycle
 	   moves, not a generic save, and the mock models them as their own route so
 	   validating can create a work order server-side as a side effect. */
 	transition(id: string, status: FaultStatus): Observable<Fault> {

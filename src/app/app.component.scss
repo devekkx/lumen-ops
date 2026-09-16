@@ -1,6 +1,6 @@
 /* Shown while provideAppInitializer resolves the session. Without it, a reload
    on a deep route renders the login screen for one frame before the token is
-   decoded — which looks like being logged out at random. */
+   decoded - which looks like being logged out at random. */
 .boot {
 	min-height: 100vh;
 	display: grid;

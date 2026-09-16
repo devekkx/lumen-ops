@@ -1,20 +1,19 @@
 <section *transloco="let t">
 	<div class="d-flex justify-content-between align-items-center mb-4">
 		<div>
-			<p class="text-uppercase text-secondary small mb-1">{{ t('nav.orders') }}</p>
 			<h1>{{ t('order.title') }}</h1>
 			<p class="text-secondary mb-0">{{ t('order.subtitle') }}</p>
 		</div>
-		<button type="button" class="lum-btn lum-btn--secondary" (click)="refresh()">
-			{{ t('table.retry') }}
+		<button type="button" class="btn btn-outline-secondary" (click)="refresh()">
+			{{ t('table.refresh') }}
 		</button>
 	</div>
 
-	<div class="lum-panel mb-3">
-		<label class="lum-field mb-3">
-			<span class="lum-field__label">{{ t('table.search') }}</span>
+	<div class="card card-body mb-3">
+		<label class="d-block mb-3">
+			<span class="form-label">{{ t('table.search') }}</span>
 			<input
-				class="lum-field__control lum-field__control--sm"
+				class="form-control form-control-sm"
 				type="search"
 				[placeholder]="t('table.searchOrders')"
 				(input)="setSearch($any($event.target).value)"
@@ -22,7 +21,7 @@
 		</label>
 
 		<div>
-			<span class="lum-field__label d-block mb-2">{{ t('order.status') }}</span>
+			<span class="form-label d-block mb-2">{{ t('order.status') }}</span>
 			<div class="d-flex flex-wrap gap-2">
 				@for (status of statuses; track status) {
 					<button
@@ -43,6 +42,7 @@
 		[caption]="'order.title'"
 		[columns]="columns"
 		[pillColumns]="pillColumns"
+		[dateColumns]="dateColumns"
 		[page]="displayPage$ | async"
 		[loading]="(loading | async) ?? false"
 		[error]="error | async"
@@ -55,35 +55,52 @@
 	>
 		@if (hasRowActions()) {
 		<ng-template #rowActions let-order>
-			<div class="d-flex flex-wrap gap-2">
+			<div class="d-flex flex-wrap gap-1">
 				@if (canAssign(order)) {
 					<button
 						type="button"
-						class="lum-btn lum-btn--tertiary lum-btn--sm"
+						class="btn btn-sm btn-link p-1"
 						data-action="assign"
+						data-bs-toggle="tooltip"
+						[title]="t('order.assign')"
+						[attr.aria-label]="t('order.assign')"
 						(click)="assignCrew(order)"
 					>
-						{{ t('order.assign') }}
+						<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<circle cx="12" cy="8" r="3.5" />
+							<path d="M4.5 20c.7-3.9 3.8-6.5 7.5-6.5s6.8 2.6 7.5 6.5" />
+						</svg>
 					</button>
 				}
 				@if (canStart(order)) {
 					<button
 						type="button"
-						class="lum-btn lum-btn--tertiary lum-btn--sm"
+						class="btn btn-sm btn-link p-1"
 						data-action="start"
+						data-bs-toggle="tooltip"
+						[title]="t('order.start')"
+						[attr.aria-label]="t('order.start')"
 						(click)="startOrder(order)"
 					>
-						{{ t('order.start') }}
+						<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<path d="M7 4.5v15l12-7.5-12-7.5Z" />
+						</svg>
 					</button>
 				}
 				@if (canComplete(order)) {
 					<button
 						type="button"
-						class="lum-btn lum-btn--tertiary lum-btn--sm"
+						class="btn btn-sm btn-link p-1"
 						data-action="complete"
+						data-bs-toggle="tooltip"
+						[title]="t('order.complete')"
+						[attr.aria-label]="t('order.complete')"
 						(click)="completeOrder(order)"
 					>
-						{{ t('order.complete') }}
+						<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<circle cx="12" cy="12" r="10" />
+							<path d="m8 12 3 3 5-6" />
+						</svg>
 					</button>
 				}
 			</div>

@@ -9,7 +9,7 @@ const encode = (value: object) =>
 	btoa(unescape(encodeURIComponent(JSON.stringify(value))))
 		.replace(/\+/g, '-')
 		.replace(/\//g, '_')
-		.replace(/=+$/, '');
+		.replaceAll('=', '');
 
 const tokenFor = (secondsFromNow: number, roles = ['COUNCIL']) =>
 	`${encode({ alg: 'HS256' })}.${encode({
@@ -48,7 +48,7 @@ describe('AuthService', () => {
 
 	describe('initializeUser', () => {
 		/* The whole point of the exercise: this must never reject. A rejected
-		   app initializer leaves Angular with nothing bootstrapped — no login
+		   app initializer leaves Angular with nothing bootstrapped - no login
 		   screen, no error, just a blank document. */
 		it('resolves rather than rejecting on an expired token', async () => {
 			localStorage.setItem(TOKEN_KEY, tokenFor(-60));
@@ -84,7 +84,7 @@ describe('AuthService', () => {
 			expect(service.failure()).toBeNull();
 		});
 
-		/* A first-time visitor has no token and therefore no problem — reporting
+		/* A first-time visitor has no token and therefore no problem - reporting
 		   a failure here would show "your session expired" to someone who never
 		   had one. */
 		it('reports no failure when there was nothing to resolve', async () => {

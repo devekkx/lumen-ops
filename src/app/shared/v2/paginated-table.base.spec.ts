@@ -25,8 +25,8 @@ const pageOf = (label: string): Page<Row> => ({
 	perPage: 20
 });
 
-/* A collection whose page() is a "real" Observable — a bare setTimeout, not
-   `of(...).pipe(delay(...))` — so unsubscribing it early is observable: 'slow' only ever reaches
+/* A collection whose page() is a "real" Observable - a bare setTimeout, not
+   `of(...).pipe(delay(...))` - so unsubscribing it early is observable: 'slow' only ever reaches
    `completed` if nothing tore it down first. That is the thing v1's spec didn't need to prove
    (switchMap's unsubscribe is automatic on any Observable) and v2's does: resource()'s own
    cancellation is a state-level guarantee, not a request-level one (see the second `it` below). */
@@ -76,7 +76,7 @@ describe('PaginatedTableBaseV2', () => {
 
 	/* The v2 equivalent of v1's "switchMap beats mergeMap" proof: fire a slow request, then a fast
 	   one that supersedes it before the slow one would resolve, and confirm the slow response
-	   never reaches the screen — AND that the slow request was actually torn down rather than
+	   never reaches the screen - AND that the slow request was actually torn down rather than
 	   left running to complete in the background, wastefully, only to be discarded. The second
 	   assertion is the one resource() does not give for free; see `fetch()` in
 	   paginated-table.base.ts for the abortSignal wiring that earns it. */
@@ -98,7 +98,7 @@ describe('PaginatedTableBaseV2', () => {
 		tick(50); // 'fast' resolves (50ms)
 		fixture.detectChanges();
 
-		/* 100 + 250 + 50 = 400ms since 'slow' started — under its 500ms delay. Advancing well past that
+		/* 100 + 250 + 50 = 400ms since 'slow' started - under its 500ms delay. Advancing well past that
 		   proves its late arrival is discarded rather than merely not-yet-checked. */
 		tick(500);
 		fixture.detectChanges();
@@ -142,7 +142,7 @@ describe('PaginatedTableBaseV2', () => {
 
 		expect(res.value()).toBe('fast');
 
-		tick(500); // 'slow's own 500ms timer fires here — its resolution must still be ignored
+		tick(500); // 'slow's own 500ms timer fires here - its resolution must still be ignored
 		TestBed.flushEffects();
 
 		expect(res.value()).toBe('fast');
@@ -173,12 +173,12 @@ describe('PaginatedTableBaseV2', () => {
 		expect(table.page().data[0].label).toBe('anything');
 	}));
 
-	/* An error must not leave the previous page's rows on screen with no indication — the base
+	/* An error must not leave the previous page's rows on screen with no indication - the base
 	   swaps in an empty page (shaped to the request that failed) and a translation key, same
 	   contract as v1. */
 	it('surfaces a translated error and an empty page rather than a stale one', fakeAsync(() => {
 		const failing: GenericCollectionService<Row> = {
-			page: (request) =>
+			page: () =>
 				new Observable((subscriber) => {
 					const timer = setTimeout(() => subscriber.error(new Error('boom')), 10);
 					return () => clearTimeout(timer);

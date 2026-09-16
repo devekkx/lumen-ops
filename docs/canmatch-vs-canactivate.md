@@ -1,7 +1,8 @@
 # `canMatch` vs `canActivate`
 
-Exercise 2.2 calls this the single most useful thing in the day, and it is,
-because the two look interchangeable in the docs and are not.
+Exercise 2.2 calls this the single most useful thing in the day, and I agree
+with it, because the two look interchangeable in the docs and, I will not
+lie to you, they are not.
 
 ## The difference in one sentence
 
@@ -10,8 +11,8 @@ because the two look interchangeable in the docs and are not.
 
 ## Why only `canMatch` can drive the home-page pattern
 
-`/` has to mean four different things. The natural shape is four routes sharing
-the empty path, each claiming it for a different role:
+`/` has to mean four different things for me. The natural shape is four
+routes sharing the empty path, each claiming it for a different role:
 
 ```ts
 { path: '', pathMatch: 'full', canMatch: [councilNotAdmin],    redirectTo: 'averias' },
@@ -21,17 +22,18 @@ the empty path, each claiming it for a different role:
 { path: '', pathMatch: 'full',                                 redirectTo: 'luminarias' }
 ```
 
-With `canMatch`, a `false` means *this is not the route* — the router discards
-that candidate and carries on down the list until one matches. Five routes can
-therefore share a path and exactly one wins.
+With `canMatch`, a `false` means *this is not the route* - the router
+discards that candidate and carries on down the list until one matches.
+Five routes can therefore share a path and exactly one wins.
 
-Swap those for `canActivate` and the chain collapses. Route matching happens
-first and is purely structural: `path: ''` with `pathMatch: 'full'` matches, so
-**the first entry wins immediately** and the router commits to it. The guard
-then runs and returns false. The result is a failed navigation, not a fallthrough
-— the four later routes are never even considered, because matching is over.
+Swap those for `canActivate` and the chain collapses on me. Route matching
+happens first and is purely structural: `path: ''` with `pathMatch: 'full'`
+matches, so **the first entry wins immediately** and the router commits to
+it. The guard then runs and returns false. The result is a failed
+navigation, not a fallthrough - the four later routes never even get
+considered, because matching is already over by then.
 
-So:
+So, as I see it:
 
 | | `canMatch` | `canActivate` |
 | --- | --- | --- |
@@ -40,38 +42,40 @@ So:
 | Siblings on the same path | each gets a turn | only the first is ever tried |
 | Right for | choosing between candidates | protecting a chosen route |
 
-## What that costs
+## What that costs me
 
 `canMatch` guards run on **every** match attempt, including ones the router
-discards, so they must be cheap and free of side effects. Reading a signal is
-fine. Firing an HTTP request, or navigating, is not: it may run for a route the
-user never lands on.
+discards, so I have to keep them cheap and free of side effects. Reading a
+signal is fine by me. Firing an HTTP request, or navigating, is not: it may
+run for a route the user never actually lands on.
 
-`canMatch` also cannot redirect. It only says yes or no — which is why denial
-here has to be expressed as a later route that *does* match, and why
-`/unauthorized` is reached from `canActivate` rather than from `canMatch`.
+`canMatch` also cannot redirect. It only says yes or no - which is why I
+have to express denial here as a later route that *does* match, and why I
+reach `/unauthorized` from `canActivate` rather than from `canMatch`.
 
 ## Order matters, and exclusions are why
 
-The guards are not merely "has this role" but "has this role **and not** a
+My guards are not merely "has this role" but "has this role **and not** a
 broader one":
 
 ```ts
 hasRoleAndNot(['COUNCIL'], ['ADMIN'])
 ```
 
-Without the exclusion, a user holding `ADMIN` *and* `COUNCIL` matches the first
-entry and lands on `averias`, never reaching the dashboard. ADMIN in the seeded
-data holds only one role, so the bug would not show up in manual testing at all
-— which is exactly why there is a spec for it
-(`auth.guards.spec.ts`, "does not let a multi-role admin match an earlier entry").
+Without the exclusion, a user holding `ADMIN` *and* `COUNCIL` would match
+the first entry and land on `averias`, never reaching the dashboard. ADMIN
+in my seeded data holds only one role, so this bug would not show up in
+manual testing at all - which is exactly why I wrote a spec for it
+(`auth.guards.spec.ts`, "does not let a multi-role admin match an earlier
+entry"). I would rather catch it in a spec than have someone stumble on it
+in production, small small, a year from now.
 
-The last entry deliberately has **no** `canMatch`, so it always matches and the
-chain can never fall through to a 404.
+The last entry deliberately has **no** `canMatch`, so it always matches and
+the chain can never fall through to a 404 on me.
 
 ## Verified
 
-Logging in as each seeded user and resolving the chain against the token the
+I logged in as each seeded user and resolved the chain against the token the
 mock actually issued:
 
 | User | Roles | Home |
@@ -81,4 +85,4 @@ mock actually issued:
 | `contrata@lumen.madrid` | `CONTRACTOR` | `/ordenes-trabajo` |
 | `consulta@lumen.madrid` | `VIEWER` | `/luminarias` |
 | (hypothetical) | `ADMIN, COUNCIL, CONTRACTOR` | `/panel` |
-| none | — | `/luminarias` |
+| none | - | `/luminarias` |

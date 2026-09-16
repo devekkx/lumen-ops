@@ -61,6 +61,7 @@
 		"loading": "Cargando…",
 		"error": "No se pudo cargar la tabla",
 		"retry": "Reintentar",
+		"refresh": "Actualizar",
 		"actions": "Acciones",
 		"dsl": "Inspector del DSL de filtros",
 		"dslEmpty": "Sin condiciones: filtros vacíos no generan condición.",
@@ -235,7 +236,7 @@
 		"401": "Tu sesión no es válida. Vuelve a entrar.",
 		"403": "No tienes permiso para esta operación.",
 		"404": "No encontramos ese registro. Puede que otro usuario lo haya eliminado.",
-		"500": "El servidor falló al procesar la petición. Vuelve a intentarlo en un minuto.",
+		"500": "El servidor falló al procesar la petición. Reintenta en un minuto.",
 		"offline": "Sin conexión con el mock API. Reintenta cuando vuelva la red.",
 		"timeout": "La petición tardó demasiado y se ha cancelado."
 	},
@@ -254,7 +255,7 @@
 		"back": "Volver",
 		"close": "Cerrar",
 		"of": "de",
-		"none": "—",
+		"none": "-",
 		"loading": "Cargando…",
 		"role": "Rol",
 		"org": "Organización"

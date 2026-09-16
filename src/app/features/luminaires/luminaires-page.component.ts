@@ -36,6 +36,9 @@ export class LuminairesPageComponent extends PaginatedTableBase<Luminaire> {
 		{ key: 'status', label: 'lum.status', sortable: true }
 	];
 
+	readonly pillColumns = { status: 'status' };
+	readonly dateColumns = ['installedAt'];
+
 	readonly statuses = LUMINAIRE_STATUSES;
 	readonly lampTypes = LAMP_TYPES;
 

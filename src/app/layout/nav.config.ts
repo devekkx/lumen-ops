@@ -5,7 +5,7 @@ export interface NavItem {
 	path: string;
 	label: string;
 	/* A Bootstrap Icons glyph name (the part after `bi-`), rendered as
-	   `<i class="bi bi-{{icon}}">` — `currentColor` still carries through (the
+	   `<i class="bi bi-{{icon}}">` - `currentColor` still carries through (the
 	   icon font glyph is drawn in the element's own `color`), so it inherits
 	   the active/hover colour the same way the hand-drawn SVGs used to. */
 	icon: string;
@@ -17,7 +17,7 @@ export interface NavGroup {
 	items: readonly NavItem[];
 }
 
-/* Grouped the way the canvas groups them — what you do, then what you look up. */
+/* Grouped the way the canvas groups them - what you do, then what you look up. */
 export const NAV_GROUPS: readonly NavGroup[] = [
 	{
 		label: 'nav.section.operation',

@@ -20,7 +20,7 @@ export const AssignmentType = {
 export type AssignmentType = (typeof AssignmentType)[keyof typeof AssignmentType];
 
 /* Match modes, grouped by the kind of operand they take. The grouping is not
-   decoration — MODES_BY_OPERAND is what stops a filter UI from offering
+   decoration - MODES_BY_OPERAND is what stops a filter UI from offering
    GT on a status string. */
 export const MatchMode = {
 	EQUAL: 'EQUAL',
@@ -61,7 +61,7 @@ export const MODES_BY_OPERAND = Object.freeze({
 	null: [MatchMode.IS_NULL, MatchMode.IS_NOT_NULL]
 }) satisfies Record<string, readonly MatchMode[]>;
 
-export type FilterValue = string | number | boolean | Array<string | number>;
+export type FilterValue = string | number | boolean | (string | number)[];
 
 export interface Operand {
 	type: AssignmentType;
@@ -79,7 +79,7 @@ export interface Filter {
 }
 
 /* Nesting expresses precedence: an inner array is one parenthesised group. */
-export type Filters = Array<Filter | Filter[]>;
+export type Filters = (Filter | Filter[])[];
 
 /* Explicit sentinels for the null checks.
  *

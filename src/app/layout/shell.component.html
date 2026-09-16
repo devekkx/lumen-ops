@@ -52,7 +52,8 @@
 						[routerLink]="item.path"
 						[attr.aria-current]="isActive(item.path) ? 'page' : null"
 						data-bs-toggle="tooltip"
-						[title]="t(item.label)"
+						[title]="showLabels() ? '' : t(item.label)"
+						placement="right"
 						(click)="closeAside()"
 					>
 						<i class="bi shell__link-icon" [class]="'bi-' + item.icon" aria-hidden="true"></i>
@@ -138,6 +139,7 @@
 							class="shell__menu"
 							id="shell-user-menu"
 							role="menu"
+							tabindex="-1"
 							(keydown)="onMenuKeydown($event, menuTrigger)"
 						>
 							<div class="shell__menu-head">

@@ -14,7 +14,7 @@ import {
 import { ApiService } from '@core/api/api.service';
 import { LumenTooltipDirective } from '@shared/directives/tooltip.directive';
 
-/* Just enough of the luminaire shape to label a suggestion — reimplemented
+/* Just enough of the luminaire shape to label a suggestion - reimplemented
    locally rather than importing @features/luminaires' Luminaire, the same
    "wire contract, not shared code" convention as luminaire.service.ts and
    fault.service.ts, and it keeps this shared component free of a dependency
@@ -28,7 +28,7 @@ interface PickerLuminaire {
 
 /* A typeahead ControlValueAccessor over `GET /api/luminaires/search`. The
  * form value is the luminaire's id (a plain string), matching
- * Fault.luminaireId — this component owns turning that id into a label and
+ * Fault.luminaireId - this component owns turning that id into a label and
  * back, so the form around it never has to know the luminaire's code or
  * street, only its id.
  */
@@ -49,7 +49,13 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 	private readonly api = inject(ApiService);
 
 	private static nextId = 0;
-	readonly listboxId = `luminaire-picker-listbox-${LuminairePickerComponent.nextId++}`;
+	private readonly uid = LuminairePickerComponent.nextId++;
+	readonly listboxId = `luminaire-picker-listbox-${this.uid}`;
+	/* Exposed so a parent template's <label [attr.for]="picker.inputId"> can
+	   associate with this component's internal <input> - a plain wrapping
+	   <label> only auto-associates with a native form element, not a custom
+	   component. */
+	readonly inputId = `luminaire-picker-${this.uid}`;
 
 	readonly query = signal('');
 	readonly suggestions = signal<PickerLuminaire[]>([]);
@@ -60,7 +66,11 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 	readonly selected = signal<PickerLuminaire | null>(null);
 
 	private readonly searchTerms = new Subject<string>();
+	/* ControlValueAccessor requires a callable default before Angular Forms
+	   installs the real ones via registerOnChange/registerOnTouched below. */
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	private onChange: (value: string | null) => void = () => {};
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	private onTouched: () => void = () => {};
 
 	constructor() {
@@ -103,7 +113,7 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 				this.query.set(this.labelFor(luminaire));
 			},
 			/* The id on the form no longer resolves (deleted luminaire, stale
-			   fixture) — show an empty picker rather than throwing, the field's
+			   fixture) - show an empty picker rather than throwing, the field's
 			   own required validator is what surfaces the problem. */
 			error: () => {
 				this.selected.set(null);
@@ -134,7 +144,7 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 		this.query.set(value);
 		this.open.set(true);
 
-		/* Typing over a previously chosen label un-chooses it — the form value
+		/* Typing over a previously chosen label un-chooses it - the form value
 		   must not keep pointing at a luminaire whose code the user is in the
 		   middle of erasing. */
 		const current = this.selected();
