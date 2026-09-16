@@ -67,6 +67,20 @@ export class ShellComponent {
 
 	readonly toggleFlushTab = computed(() => this.narrow());
 
+	/* The scrim behind the user menu sits above the aside in stacking order
+	   (z-index 39 vs. 30), so inset: 0 would blur/dim the sidebar along with
+	   the content it's actually meant to dim — harmless while it was fully
+	   invisible, visible now that it carries a blur. On a normal-width
+	   screen the aside is a permanent column, not an overlay, so the scrim
+	   should only ever cover what's actually behind the menu: the content
+	   area to its right. On a narrow screen the aside is already its own
+	   overlay above everything else, so there is nothing wrong with the
+	   scrim covering the full width there too. */
+	readonly menuScrimLeft = computed(() => {
+		if (this.narrow()) return 0;
+		return this.collapsed() ? ASIDE_WIDTH_COLLAPSED : ASIDE_WIDTH;
+	});
+
 	/* Points toward what the click does: left/"collapse" while open, right/
 	   "expand" while closed — never the hamburger glyph the design has no use
 	   for on a control that always has an open-or-closed aside to describe. */
