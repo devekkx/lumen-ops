@@ -46,6 +46,8 @@
 	"table": {
 		"searchPlaceholder": "Search by code or street",
 		"searchFaults": "Search by code, street or description",
+		"searchOrders": "Search by order, fault or luminaire code",
+		"searchCrews": "Search by code, name, contractor or district",
 		"search": "Search",
 		"filters": "Filters",
 		"clear": "Clear",
@@ -155,6 +157,7 @@
 		"contractor": "Contractor",
 		"members": "Operatives",
 		"zone": "Home district",
+		"shift": "Shift",
 		"load": "Load",
 		"openOrders": "{n} open orders"
 	},
@@ -225,7 +228,8 @@
 		"no": "Cancel",
 		"deleteFault": "Fault {code} will be deleted. This cannot be undone.",
 		"validateFault": "Fault {code} will be validated and its work order created.",
-		"closeFault": "Fault {code} will be closed and its order completed."
+		"closeFault": "Fault {code} will be closed and its order completed.",
+		"completeOrder": "Order {code} will be marked complete. Its fault closes with it."
 	},
 	"error": {
 		"401": "Your session is not valid. Sign in again.",
@@ -289,5 +293,9 @@
 		"COUNCIL": "City council",
 		"CONTRACTOR": "Contractor",
 		"VIEWER": "Read only"
+	},
+	"shift": {
+		"DAY": "Day",
+		"NIGHT": "Night"
 	}
 }

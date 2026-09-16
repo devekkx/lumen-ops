@@ -46,6 +46,8 @@
 	"table": {
 		"searchPlaceholder": "Buscar por código o calle",
 		"searchFaults": "Buscar por código, calle o descripción",
+		"searchOrders": "Buscar por código de orden, avería o luminaria",
+		"searchCrews": "Buscar por código, nombre, contrata o distrito",
 		"search": "Búsqueda",
 		"filters": "Filtros",
 		"clear": "Limpiar",
@@ -155,6 +157,7 @@
 		"contractor": "Contrata",
 		"members": "Operarios",
 		"zone": "Distrito base",
+		"shift": "Turno",
 		"load": "Carga",
 		"openOrders": "{n} órdenes abiertas"
 	},
@@ -225,7 +228,8 @@
 		"no": "Cancelar",
 		"deleteFault": "Se eliminará la avería {code}. La acción no se puede deshacer.",
 		"validateFault": "Se validará la avería {code} y se creará su orden de trabajo.",
-		"closeFault": "Se cerrará la avería {code} y su orden quedará completada."
+		"closeFault": "Se cerrará la avería {code} y su orden quedará completada.",
+		"completeOrder": "Se marcará la orden {code} como completada. Su avería se cierra con ella."
 	},
 	"error": {
 		"401": "Tu sesión no es válida. Vuelve a entrar.",
@@ -289,5 +293,9 @@
 		"COUNCIL": "Ayuntamiento",
 		"CONTRACTOR": "Contrata",
 		"VIEWER": "Consulta"
+	},
+	"shift": {
+		"DAY": "Día",
+		"NIGHT": "Noche"
 	}
 }

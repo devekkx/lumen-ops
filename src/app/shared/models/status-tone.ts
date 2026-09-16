@@ -32,6 +32,10 @@ export const LUMEN_TONES: Readonly<Record<string, StatusTone>> = Object.freeze({
 	ASSIGNED: 'queued',
 	DONE: 'healthy',
 
+	/* Crew shift */
+	DAY: 'healthy',
+	NIGHT: 'deep',
+
 	/* Fault severity */
 	LOW: 'neutral',
 	MEDIUM: 'queued',
