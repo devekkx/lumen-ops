@@ -80,19 +80,19 @@ describe('DashboardComponent', () => {
 
 	it('re-requests a narrower window for the 24-hour range', () => {
 		const fixture = render();
-		http.expectOne('/api/dashboard').flush(SNAPSHOT);
+		http.expectOne((req) => req.url === '/api/dashboard').flush(SNAPSHOT);
 
 		fixture.componentInstance.selectRange('1');
 		fixture.detectChanges();
 
-		const request = http.expectOne('/api/dashboard');
+		const request = http.expectOne((req) => req.url === '/api/dashboard');
 		expect(request.request.params.get('from')).toBe('2026-09-15T12:00:00.000Z');
 		request.flush(SNAPSHOT);
 	});
 
 	it('does not re-request when the active range is clicked again', () => {
 		const fixture = render();
-		http.expectOne('/api/dashboard').flush(SNAPSHOT);
+		http.expectOne((req) => req.url === '/api/dashboard').flush(SNAPSHOT);
 
 		fixture.componentInstance.selectRange('7');
 		fixture.detectChanges();
@@ -102,7 +102,7 @@ describe('DashboardComponent', () => {
 
 	it('reports a chart as having no data when every value in it is zero', () => {
 		const fixture = render();
-		http.expectOne('/api/dashboard').flush({
+		http.expectOne((req) => req.url === '/api/dashboard').flush({
 			...SNAPSHOT,
 			bySeverity: SNAPSHOT.bySeverity.map((item) => ({ ...item, count: 0 }))
 		});
@@ -115,7 +115,7 @@ describe('DashboardComponent', () => {
 
 	it('treats a genuinely empty series the same as an all-zero one', () => {
 		const fixture = render();
-		http.expectOne('/api/dashboard').flush({ ...SNAPSHOT, series: [] });
+		http.expectOne((req) => req.url === '/api/dashboard').flush({ ...SNAPSHOT, series: [] });
 		fixture.detectChanges();
 
 		expect(fixture.componentInstance.hasEnergyData()).toBe(false);
@@ -123,7 +123,7 @@ describe('DashboardComponent', () => {
 
 	it('falls back to the empty state and stops loading when the request fails', () => {
 		const fixture = render();
-		http.expectOne('/api/dashboard').flush('boom', { status: 500, statusText: 'Server error' });
+		http.expectOne((req) => req.url === '/api/dashboard').flush('boom', { status: 500, statusText: 'Server error' });
 		fixture.detectChanges();
 
 		expect(fixture.componentInstance.loading()).toBe(false);
@@ -133,7 +133,7 @@ describe('DashboardComponent', () => {
 
 	it('builds one KPI tile per response metric', () => {
 		const fixture = render();
-		http.expectOne('/api/dashboard').flush(SNAPSHOT);
+		http.expectOne((req) => req.url === '/api/dashboard').flush(SNAPSHOT);
 		fixture.detectChanges();
 
 		const tiles = fixture.componentInstance.kpiTiles();
@@ -150,7 +150,7 @@ describe('DashboardComponent', () => {
 
 	it('survives a language switch without throwing', () => {
 		const fixture = render();
-		http.expectOne('/api/dashboard').flush(SNAPSHOT);
+		http.expectOne((req) => req.url === '/api/dashboard').flush(SNAPSHOT);
 		fixture.detectChanges();
 
 		expect(() => {
@@ -161,7 +161,7 @@ describe('DashboardComponent', () => {
 
 	it('disposes every chart instance on destroy', () => {
 		const fixture = render();
-		http.expectOne('/api/dashboard').flush(SNAPSHOT);
+		http.expectOne((req) => req.url === '/api/dashboard').flush(SNAPSHOT);
 		fixture.detectChanges();
 
 		expect(() => fixture.destroy()).not.toThrow();
