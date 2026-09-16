@@ -1,10 +1,86 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { PaginatedTableComponent } from '@shared/components/paginated-table/paginated-table.component';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { PaginatedTableBase } from '@shared/components/paginated-table/paginated-table.base';
-import { Luminaire, LuminaireService } from './luminaire.service';
-import { LuminaireMapComponent } from './luminaire-map.component';
+import { PaginatedTableComponent, TableColumn } from '@shared/components/paginated-table/paginated-table.component';
+import { FilterRecord } from '@shared/models/filter';
+import { pillClass } from '@shared/models/status-tone';
+import { buildFilterConditions, describeFilter, flattenFilters } from '@shared/utils/filters';
+import {
+	LAMP_TYPES,
+	LUMINAIRE_SEARCH_KEYS,
+	LUMINAIRE_STATUSES,
+	Luminaire,
+	LuminaireService
+} from './luminaire.service';
 
-@Component({ standalone: true, imports: [AsyncPipe, FormsModule, PaginatedTableComponent, LuminaireMapComponent], template: `<section><div class="d-flex justify-content-between align-items-center mb-4"><div><p class="text-uppercase text-secondary small mb-1">Asset register</p><h1>Luminaires</h1></div><button class="btn btn-lumen" (click)="refresh()">Refresh</button></div><div class="card mb-3"><lumen-map /></div><input #search class="form-control mb-3" placeholder="Search code or street" (input)="setSearch(search.value)" aria-label="Search luminaires">@if (error | async; as message) { <p class="alert alert-danger">{{ message }}</p> }<lumen-table [columns]="columns" [page]="page$ | async" [loading]="loading | async" (pageChange)="setPage($event)" (sort)="sortBy($event)" /></section>` })
-export class LuminairesPageComponent extends PaginatedTableBase<Luminaire> { protected readonly collection = inject(LuminaireService); readonly columns: { key: Extract<keyof Luminaire, string>; label: string }[] = [{ key: 'code', label: 'Code' }, { key: 'street', label: 'Street' }, { key: 'lampType', label: 'Lamp type' }, { key: 'wattage', label: 'Watts' }, { key: 'status', label: 'Status' }]; }
+@Component({
+	selector: 'lumen-luminaires-page',
+	standalone: true,
+	imports: [AsyncPipe, TranslocoDirective, PaginatedTableComponent],
+	templateUrl: './luminaires-page.component.html'
+})
+export class LuminairesPageComponent extends PaginatedTableBase<Luminaire> {
+	protected readonly collection = inject(LuminaireService);
+
+	readonly columns: TableColumn<Luminaire>[] = [
+		{ key: 'code', label: 'lum.code', sortable: true },
+		{ key: 'street', label: 'lum.street', sortable: true },
+		{ key: 'zone', label: 'lum.zone', sortable: true },
+		{ key: 'lampType', label: 'lum.lampType', sortable: true },
+		{ key: 'wattage', label: 'lum.wattage', sortable: true },
+		{ key: 'installedAt', label: 'lum.installedAt', sortable: true },
+		{ key: 'status', label: 'lum.status', sortable: true }
+	];
+
+	readonly statuses = LUMINAIRE_STATUSES;
+	readonly lampTypes = LAMP_TYPES;
+
+	private statusFilter: string[] = [];
+	private lampTypeFilter: string[] = [];
+
+	constructor() {
+		super([...LUMINAIRE_SEARCH_KEYS], { property: 'code', direction: 'ASC' });
+	}
+
+	toggleStatus(value: string, checked: boolean): void {
+		this.statusFilter = checked
+			? [...this.statusFilter, value]
+			: this.statusFilter.filter((entry) => entry !== value);
+		this.applyFilters();
+	}
+
+	toggleLampType(value: string, checked: boolean): void {
+		this.lampTypeFilter = checked
+			? [...this.lampTypeFilter, value]
+			: this.lampTypeFilter.filter((entry) => entry !== value);
+		this.applyFilters();
+	}
+
+	isStatusOn(value: string): boolean {
+		return this.statusFilter.includes(value);
+	}
+
+	isLampTypeOn(value: string): boolean {
+		return this.lampTypeFilter.includes(value);
+	}
+
+	/* Rebuilds the readable DSL lines straight from the same builder the
+	   request itself goes through, so the inspector can never drift from what
+	   is actually being sent. */
+	dslLines(): string[] {
+		const built = buildFilterConditions(this.filters);
+		return flattenFilters(built).map((filter) => '  '.repeat(filter.depth) + describeFilter(filter));
+	}
+
+	tone(value: string): string {
+		return pillClass(value);
+	}
+
+	private applyFilters(): void {
+		const record: FilterRecord = {};
+		if (this.statusFilter.length) record['status'] = this.statusFilter;
+		if (this.lampTypeFilter.length) record['lampType'] = this.lampTypeFilter;
+		this.setFilters(record);
+	}
+}
