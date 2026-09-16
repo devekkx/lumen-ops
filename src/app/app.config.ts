@@ -16,6 +16,7 @@ import {
 
 import { routes } from './app.routes';
 import { AuthService } from './core/auth/auth.service';
+import { apiErrorInterceptor } from './core/api/api-error.interceptor';
 import { authInterceptor } from './core/http/auth.interceptor';
 import { languageInterceptor } from './core/http/language.interceptor';
 import { DEFAULT_LOCALE, LOCALES } from './core/i18n/language.service';
@@ -24,7 +25,9 @@ import { TranslocoHttpLoader } from './core/i18n/transloco.loader';
 export const appConfig: ApplicationConfig = {
 	providers: [
 		provideZoneChangeDetection({ eventCoalescing: true }),
-		provideHttpClient(withInterceptors([authInterceptor, languageInterceptor])),
+		provideHttpClient(
+			withInterceptors([authInterceptor, languageInterceptor, apiErrorInterceptor])
+		),
 		provideTransloco({
 			config: {
 				availableLangs: [...LOCALES],

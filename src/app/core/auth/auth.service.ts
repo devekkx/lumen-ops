@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { contextFor } from '../api/api-options';
 import { Abilities, Role, SessionFailure, SessionUser, abilitiesFor } from './auth.models';
 import { userFromToken } from './jwt';
 
@@ -40,8 +41,12 @@ export class AuthService {
 	readonly abilities = computed<Abilities>(() => abilitiesFor(this.userState()));
 
 	async login(credentials: Credentials): Promise<void> {
+		/* Silent: a rejected login already surfaces its own inline message below,
+		   so the generic error toast would only repeat it. */
 		const response = await firstValueFrom(
-			this.http.post<LoginResponse>('/api/auth/login', credentials)
+			this.http.post<LoginResponse>('/api/auth/login', credentials, {
+				context: contextFor({ silent: true })
+			})
 		);
 		this.adopt(response.token);
 	}
