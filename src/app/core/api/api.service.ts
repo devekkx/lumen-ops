@@ -12,8 +12,15 @@ import { HttpParamsInput, buildHttpParams } from './http-params';
 export class ApiService {
 	private readonly http = inject(HttpClient);
 
-	get<T = unknown>(path: string, params?: HttpParamsInput, options?: ApiCallOptions): Observable<T> {
-		return this.http.get<T>(path, { params: buildHttpParams(params), context: contextFor(options) });
+	get<T = unknown>(
+		path: string,
+		params?: HttpParamsInput,
+		options?: ApiCallOptions
+	): Observable<T> {
+		return this.http.get<T>(path, {
+			params: buildHttpParams(params),
+			context: contextFor(options)
+		});
 	}
 
 	post<T = unknown>(
@@ -34,7 +41,10 @@ export class ApiService {
 		params?: HttpParamsInput,
 		options?: ApiCallOptions
 	): Observable<T> {
-		return this.http.put<T>(path, body, { params: buildHttpParams(params), context: contextFor(options) });
+		return this.http.put<T>(path, body, {
+			params: buildHttpParams(params),
+			context: contextFor(options)
+		});
 	}
 
 	patch<T = unknown>(
@@ -49,8 +59,15 @@ export class ApiService {
 		});
 	}
 
-	delete<T = unknown>(path: string, params?: HttpParamsInput, options?: ApiCallOptions): Observable<T> {
-		return this.http.delete<T>(path, { params: buildHttpParams(params), context: contextFor(options) });
+	delete<T = unknown>(
+		path: string,
+		params?: HttpParamsInput,
+		options?: ApiCallOptions
+	): Observable<T> {
+		return this.http.delete<T>(path, {
+			params: buildHttpParams(params),
+			context: contextFor(options)
+		});
 	}
 
 	/* The export path from exercise 5.3 reads a file rather than JSON, so it

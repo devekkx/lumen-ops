@@ -93,7 +93,9 @@ describe('apiErrorInterceptor', () => {
 	   even though the method itself is idempotent. */
 	it('never retries a 404 GET, only a transient-looking failure', () => {
 		http.get('/api/luminaires/does-not-exist').subscribe({ error: () => undefined });
-		httpMock.expectOne('/api/luminaires/does-not-exist').flush(null, { status: 404, statusText: 'Not found' });
+		httpMock
+			.expectOne('/api/luminaires/does-not-exist')
+			.flush(null, { status: 404, statusText: 'Not found' });
 	});
 
 	it('honours SKIP_RETRY on an otherwise-idempotent GET', () => {
