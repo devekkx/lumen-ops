@@ -17,23 +17,35 @@
 		background: var(--scrim);
 	}
 
-	/* Fixed rather than in-flow so it does not shift when the aside collapses,
-	   and so it stays reachable when the aside is an overlay. */
+	/* A floating disc that straddles the aside's current right edge — top/left
+	   are set inline per state (they move as the aside's own width changes),
+	   not fixed here. Fixed positioning rather than in-flow so it stays put
+	   as the aside collapses and stays reachable when the aside is an
+	   overlay. */
 	&__aside-toggle {
 		position: fixed;
 		z-index: 31;
-		top: 14px;
-		left: 12px;
 		width: 34px;
 		height: 34px;
 		display: grid;
 		place-items: center;
 		border: 1px solid var(--color-hairline);
-		border-radius: var(--radius-sm);
+		border-radius: var(--radius-full);
 		background: var(--color-canvas);
 		box-shadow: var(--shadow-card);
 		color: var(--color-muted);
 		cursor: pointer;
+		transition: left 140ms ease, top 140ms ease;
+
+		/* Below the breakpoint with the drawer closed there is no rail edge to
+		   straddle, so it becomes a flush tab at the screen's left edge
+		   instead of a floating disc. */
+		&--tab {
+			width: 22px;
+			height: 46px;
+			border-radius: 0 var(--radius-full) var(--radius-full) 0;
+			border-left: none;
+		}
 
 		&:hover {
 			color: var(--color-ink);
@@ -349,7 +361,6 @@
 		flex: 1;
 		min-width: 0;
 		width: 100%;
-		max-width: 1520px;
 		padding: var(--space-lg) 20px 56px;
 		display: flex;
 		flex-direction: column;
