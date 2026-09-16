@@ -5,6 +5,7 @@
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
     "strict": false,
+    "strictNullChecks": true,
     "baseUrl": "./src",
     "paths": {
       "@core/*": ["app/core/*"],
