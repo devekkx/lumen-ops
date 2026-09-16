@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from '@core/auth/auth.service';
@@ -34,6 +34,22 @@ export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 	private readonly transloco = inject(TranslocoService);
 
 	readonly abilities = this.auth.abilities;
+
+	/* Every write action is individually ability-gated inside #rowActions
+	   already, but that leaves an empty Actions column for a read-only user
+	   — the header still renders, the cell is just blank. This gates the
+	   whole projected template so the column doesn't exist at all unless
+	   there is at least one action it could ever show. */
+	readonly hasRowActions = computed(() => {
+		const abilities = this.abilities();
+		return (
+			abilities.editFault ||
+			abilities.validateFault ||
+			abilities.rejectFault ||
+			abilities.closeFault ||
+			abilities.deleteFault
+		);
+	});
 
 	readonly columns: TableColumn<Fault>[] = [
 		{ key: 'code', label: 'fault.code', sortable: true },

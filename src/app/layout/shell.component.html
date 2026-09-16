@@ -3,14 +3,17 @@
 	<lumen-toast-host />
 
 	@if (showBackdrop()) {
-		<div class="shell__backdrop" (click)="closeAside()"></div>
+		<button aria-label="Close Aside" class="shell__backdrop" (click)="closeAside()"></button>
 	}
 
 	<button
 		class="shell__aside-toggle"
+		[class.shell__aside-toggle--tab]="toggleFlushTab()"
 		type="button"
 		#asideToggle
 		data-bs-toggle="tooltip"
+		[style.left.px]="toggleLeft()"
+		[style.top.px]="toggleTop()"
 		[attr.aria-label]="t(collapsed() ? 'shell.expand' : 'shell.collapse')"
 		[title]="t(collapsed() ? 'shell.expand' : 'shell.collapse')"
 		[attr.aria-expanded]="asideOpen()"
@@ -125,7 +128,11 @@
 					</button>
 
 					@if (menuOpen()) {
-						<div class="shell__menu-scrim" (click)="closeMenu()"></div>
+						<button
+							aria-label="Close Menu"
+							class="shell__menu-scrim"
+							(click)="closeMenu()"
+						></button>
 						<div
 							class="shell__menu"
 							id="shell-user-menu"

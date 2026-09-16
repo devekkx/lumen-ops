@@ -104,3 +104,17 @@ $table-border-color: #ebebeb; // --color-hairline-soft
 $table-hover-bg: #f7f7f7; // --color-surface-soft
 
 @import '../../node_modules/bootstrap/scss/bootstrap';
+
+// Bootstrap's own color-contrast() picks button text per variant against
+// $min-contrast-ratio (4.5 by default); $primary (#ff385c) only clears 3.52
+// against white, so it picked black instead. The design's actual on-primary
+// colour (--color-on-primary in _tokens.scss) is white — forced here, scoped
+// to .btn-primary only, rather than lowering $min-contrast-ratio globally
+// (that would also touch $success/$info/$danger/$warning, none of which are
+// wrong today).
+.btn-primary {
+	--bs-btn-color: #ffffff; // --color-on-primary
+	--bs-btn-hover-color: #ffffff;
+	--bs-btn-active-color: #ffffff;
+	--bs-btn-disabled-color: #ffffff;
+}

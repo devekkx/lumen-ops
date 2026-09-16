@@ -1,7 +1,12 @@
 @use '../../styles/variables' as *;
 
 .shell {
-	min-height: 100vh;
+	/* height, not min-height, plus overflow: hidden here — the document
+	   itself never scrolls. Without this the aside is just a normal flex
+	   item and scrolls away with a long table exactly like the rest of the
+	   page, instead of staying put while __main scrolls on its own. */
+	height: 100vh;
+	overflow: hidden;
 	display: flex;
 	background: var(--color-surface-soft);
 
@@ -12,23 +17,35 @@
 		background: var(--scrim);
 	}
 
-	/* Fixed rather than in-flow so it does not shift when the aside collapses,
-	   and so it stays reachable when the aside is an overlay. */
+	/* A floating disc that straddles the aside's current right edge — top/left
+	   are set inline per state (they move as the aside's own width changes),
+	   not fixed here. Fixed positioning rather than in-flow so it stays put
+	   as the aside collapses and stays reachable when the aside is an
+	   overlay. */
 	&__aside-toggle {
 		position: fixed;
 		z-index: 31;
-		top: 14px;
-		left: 12px;
 		width: 34px;
 		height: 34px;
 		display: grid;
 		place-items: center;
 		border: 1px solid var(--color-hairline);
-		border-radius: var(--radius-sm);
+		border-radius: var(--radius-full);
 		background: var(--color-canvas);
 		box-shadow: var(--shadow-card);
 		color: var(--color-muted);
 		cursor: pointer;
+		transition: left 140ms ease, top 140ms ease;
+
+		/* Below the breakpoint with the drawer closed there is no rail edge to
+		   straddle, so it becomes a flush tab at the screen's left edge
+		   instead of a floating disc. */
+		&--tab {
+			width: 22px;
+			height: 46px;
+			border-radius: 0 var(--radius-full) var(--radius-full) 0;
+			border-left: none;
+		}
 
 		&:hover {
 			color: var(--color-ink);
@@ -152,6 +169,16 @@
 		min-width: 0;
 		display: flex;
 		flex-direction: column;
+		/* The one scrolling region — __aside stays put because it never has
+		   to scroll to begin with, not because it is pinned in place.
+		   overflow-x: hidden is load-bearing here, not decorative: setting
+		   only overflow-y forces the browser to compute overflow-x as auto
+		   too (the CSS overflow spec's rule for a lone non-visible axis), so
+		   a raw Bootstrap .row's negative gutter margins — invisible before,
+		   when the whole document just scrolled past them — surfaced as a
+		   real horizontal scrollbar on this box instead. */
+		overflow-y: auto;
+		overflow-x: hidden;
 	}
 
 	&__header {
@@ -358,7 +385,6 @@
 		flex: 1;
 		min-width: 0;
 		width: 100%;
-		max-width: 1520px;
 		padding: var(--space-lg) 20px 56px;
 		display: flex;
 		flex-direction: column;

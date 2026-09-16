@@ -7,7 +7,6 @@ import {
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideTransloco } from '@jsverse/transloco';
 import {
-	PreloadAllModules,
 	provideRouter,
 	withComponentInputBinding,
 	withHashLocation,
@@ -17,6 +16,7 @@ import {
 import { routes } from './app.routes';
 import { AuthService } from './core/auth/auth.service';
 import { ModalService } from './core/overlay/modal.service';
+import { SelectivePreloadingStrategy } from './core/routing/selective-preload.strategy';
 import { apiErrorInterceptor } from './core/api/api-error.interceptor';
 import { authInterceptor } from './core/http/auth.interceptor';
 import { languageInterceptor } from './core/http/language.interceptor';
@@ -38,7 +38,14 @@ export const appConfig: ApplicationConfig = {
            shows Spanish copy rather than a raw key in the UI. */
 				missingHandler: { useFallbackTranslation: true },
 				reRenderOnLangChange: true,
-				prodMode: true
+				prodMode: true,
+				/* Every string in en.json/es.json is written with single-brace
+				   params — 'Showing {a}–{b} of {total}', 'Fault {code} saved' —
+				   but Transloco's own default is double braces ('{{a}}'). Left at
+				   the default, every parameterised translation in the app renders
+				   its placeholders literally instead of substituting them; this
+				   is what actually matches the dictionaries. */
+				interpolation: ['{', '}']
 			},
 			loader: TranslocoHttpLoader
 		}),
@@ -57,7 +64,11 @@ export const appConfig: ApplicationConfig = {
 			routes,
 			withHashLocation(),
 			withComponentInputBinding(),
-			withPreloading(PreloadAllModules)
+			/* SelectivePreloadingStrategy, not PreloadAllModules — see its doc
+			   comment and app.routes.ts's `data.preload` flags. Every lazy route
+			   is still preloaded except the two measured-heavy ones (dashboard,
+			   map), which load on demand instead. */
+			withPreloading(SelectivePreloadingStrategy)
 		)
 	]
 };

@@ -55,7 +55,11 @@ export const routes: Routes = [
 
 			{
 				path: 'panel',
-				data: { breadcrumb: 'nav.dashboard', roles: ROLE_GROUPS.COUNCIL },
+				/* preload: false — see SelectivePreloadingStrategy. ~572kB raw
+				   (ECharts) and ADMIN/COUNCIL-only; preloading it for every
+				   session would fetch it for CONTRACTOR/VIEWER users who can
+				   never open it. */
+				data: { breadcrumb: 'nav.dashboard', roles: ROLE_GROUPS.COUNCIL, preload: false },
 				canActivate: [someRoleGuard],
 				loadComponent: () =>
 					import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent)
@@ -106,7 +110,10 @@ export const routes: Routes = [
 			},
 			{
 				path: 'mapa',
-				data: { breadcrumb: 'nav.map' },
+				/* preload: false — see SelectivePreloadingStrategy. ~321kB raw
+				   (OpenLayers), the second-heaviest lazy chunk in the app;
+				   deferred until a session actually navigates here. */
+				data: { breadcrumb: 'nav.map', preload: false },
 				loadComponent: () =>
 					import('./features/luminaires/luminaire-map.component').then(
 						(m) => m.LuminaireMapComponent
