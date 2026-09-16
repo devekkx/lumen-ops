@@ -60,7 +60,13 @@ module.exports = function (config) {
 		customLaunchers: {
 			ChromeHeadlessCI: {
 				base: 'ChromeHeadless',
-				flags: ['--no-sandbox', '--disable-gpu']
+				/* --window-size matters, not just cosmetic: ShellComponent's specs
+				   assume a desktop-width viewport (window.innerWidth >= 920,
+				   ShellComponent's MOBILE_WIDTH), and headless Chrome's default
+				   window is narrower than that -- without this, `narrow()`
+				   initialises true in every spec, which is not what any test in
+				   this file is actually about. */
+				flags: ['--no-sandbox', '--disable-gpu', '--window-size=1400,900']
 			}
 		},
 		restartOnFileChange: true
