@@ -1,0 +1,69 @@
+<section *transloco="let t">
+	<p class="text-uppercase text-secondary small mb-1">{{ t('nav.faults') }}</p>
+	<h1 class="mb-4">{{ t(mode() === 'edit' ? 'fault.edit' : 'fault.new') }}</h1>
+
+	@if (loading()) {
+		<p class="text-secondary">{{ t('common.loading') }}</p>
+	} @else {
+		<form class="lum-card" [formGroup]="form" (ngSubmit)="save()">
+			<label class="lum-field mb-3" [class.lum-field--invalid]="fieldError('luminaireId')">
+				<span class="lum-field__label">{{ t('fault.picker') }}</span>
+				<lumen-luminaire-picker formControlName="luminaireId" />
+				@if (fieldError('luminaireId'); as err) {
+					<span class="lum-field__error">{{ t(err.key, err.params) }}</span>
+				}
+			</label>
+
+			<label class="lum-field mb-3" [class.lum-field--invalid]="fieldError('severity')">
+				<span class="lum-field__label">{{ t('fault.severity') }}</span>
+				<select class="lum-field__control" formControlName="severity">
+					@for (severity of severities; track severity) {
+						<option [value]="severity">{{ t('severity.' + severity) }}</option>
+					}
+				</select>
+				@if (fieldError('severity'); as err) {
+					<span class="lum-field__error">{{ t(err.key, err.params) }}</span>
+				}
+			</label>
+
+			<label class="lum-field mb-3" [class.lum-field--invalid]="fieldError('description')">
+				<span class="lum-field__label">{{ t('fault.description') }}</span>
+				<textarea
+					class="lum-field__control lum-field__control--textarea"
+					formControlName="description"
+					[placeholder]="t('fault.descriptionPlaceholder')"
+				></textarea>
+				@if (fieldError('description'); as err) {
+					<span class="lum-field__error">{{ t(err.key, err.params) }}</span>
+				}
+			</label>
+
+			<div class="d-flex gap-3 mb-3">
+				<label class="lum-field flex-fill" [class.lum-field--invalid]="fieldError('reportedAt')">
+					<span class="lum-field__label">{{ t('fault.reportedAt') }}</span>
+					<input class="lum-field__control" type="date" formControlName="reportedAt" />
+					@if (fieldError('reportedAt'); as err) {
+						<span class="lum-field__error">{{ t(err.key, err.params) }}</span>
+					}
+				</label>
+
+				<label class="lum-field flex-fill" [class.lum-field--invalid]="fieldError('dueAt')">
+					<span class="lum-field__label">{{ t('fault.dueAt') }}</span>
+					<input class="lum-field__control" type="date" formControlName="dueAt" />
+					@if (fieldError('dueAt'); as err) {
+						<span class="lum-field__error">{{ t(err.key, err.params) }}</span>
+					}
+				</label>
+			</div>
+
+			<div class="d-flex justify-content-end gap-2">
+				<button type="button" class="lum-btn lum-btn--secondary" (click)="cancel()">
+					{{ t('fault.cancel') }}
+				</button>
+				<button type="submit" class="lum-btn lum-btn--primary" [disabled]="saving()">
+					{{ t('fault.save') }}
+				</button>
+			</div>
+		</form>
+	}
+</section>
