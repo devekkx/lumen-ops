@@ -115,4 +115,22 @@ describe('PaginatedTableBase', () => {
 
 		expect(collection.requests.at(-1)?.page).toBe(1);
 	}));
+
+	/* Regression: refresh() used to re-emit { ...params.value } — a new object
+	   with identical contents — which distinctUntilChanged's JSON.stringify
+	   comparison treated as no change at all, so a refetch with the same
+	   params (exactly what every write action in the faults list relies on
+	   after a validate/reject/close/delete) silently never happened. */
+	it('genuinely refetches on refresh(), even with identical params', fakeAsync(() => {
+		const collection = new FakeCollection();
+		const table = new TestTable(collection);
+		table.page$.subscribe();
+		tick(260);
+
+		const before = collection.requests.length;
+		table.refresh();
+		tick(260);
+
+		expect(collection.requests.length).toBe(before + 1);
+	}));
 });

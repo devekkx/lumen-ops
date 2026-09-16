@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { ROLE_GROUPS } from './core/auth/auth.models';
 import { authGuard, hasRole, hasRoleAndNot, someRoleGuard } from './core/auth/auth.guards';
+import { dirtyFormGuard } from './shared/guards/dirty-form.guard';
 import { ShellComponent } from './layout/shell.component';
 
 /* Route segments are Spanish while the code is English — the real app mixes the
@@ -54,7 +55,11 @@ export const routes: Routes = [
 
 			{
 				path: 'panel',
-				data: { breadcrumb: 'nav.dashboard', roles: ROLE_GROUPS.COUNCIL },
+				/* preload: false — see SelectivePreloadingStrategy. ~572kB raw
+				   (ECharts) and ADMIN/COUNCIL-only; preloading it for every
+				   session would fetch it for CONTRACTOR/VIEWER users who can
+				   never open it. */
+				data: { breadcrumb: 'nav.dashboard', roles: ROLE_GROUPS.COUNCIL, preload: false },
 				canActivate: [someRoleGuard],
 				loadComponent: () =>
 					import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent)
@@ -71,7 +76,23 @@ export const routes: Routes = [
 				path: 'averias',
 				data: { breadcrumb: 'nav.faults' },
 				loadComponent: () =>
-					import('./features/placeholder-page.component').then((m) => m.PlaceholderPageComponent)
+					import('./features/faults/faults-page.component').then((m) => m.FaultsPageComponent)
+			},
+			{
+				path: 'averias/nueva',
+				data: { breadcrumb: 'fault.new', roles: ROLE_GROUPS.COUNCIL },
+				canActivate: [someRoleGuard],
+				canDeactivate: [dirtyFormGuard],
+				loadComponent: () =>
+					import('./features/faults/fault-form.component').then((m) => m.FaultFormComponent)
+			},
+			{
+				path: 'averias/:id/editar',
+				data: { breadcrumb: 'fault.edit', roles: ROLE_GROUPS.COUNCIL },
+				canActivate: [someRoleGuard],
+				canDeactivate: [dirtyFormGuard],
+				loadComponent: () =>
+					import('./features/faults/fault-form.component').then((m) => m.FaultFormComponent)
 			},
 			{
 				path: 'ordenes-trabajo',
@@ -89,7 +110,10 @@ export const routes: Routes = [
 			},
 			{
 				path: 'mapa',
-				data: { breadcrumb: 'nav.map' },
+				/* preload: false — see SelectivePreloadingStrategy. ~321kB raw
+				   (OpenLayers), the second-heaviest lazy chunk in the app;
+				   deferred until a session actually navigates here. */
+				data: { breadcrumb: 'nav.map', preload: false },
 				loadComponent: () =>
 					import('./features/luminaires/luminaire-map.component').then(
 						(m) => m.LuminaireMapComponent

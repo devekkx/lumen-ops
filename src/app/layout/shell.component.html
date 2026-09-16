@@ -3,13 +3,16 @@
 	<lumen-toast-host />
 
 	@if (showBackdrop()) {
-		<div class="shell__backdrop" (click)="closeAside()"></div>
+		<button aria-label="Close Aside" class="shell__backdrop" (click)="closeAside()"></button>
 	}
 
 	<button
 		class="shell__aside-toggle"
+		[class.shell__aside-toggle--tab]="toggleFlushTab()"
 		type="button"
 		#asideToggle
+		[style.left.px]="toggleLeft()"
+		[style.top.px]="toggleTop()"
 		[attr.aria-label]="t(collapsed() ? 'shell.expand' : 'shell.collapse')"
 		[title]="t(collapsed() ? 'shell.expand' : 'shell.collapse')"
 		[attr.aria-expanded]="asideOpen()"
@@ -27,7 +30,7 @@
 			stroke-linejoin="round"
 			aria-hidden="true"
 		>
-			<path [attr.d]="collapsed() ? 'M4 6h16M4 12h16M4 18h16' : 'M15 6l-6 6 6 6'" />
+			<path [attr.d]="toggleIconPath()" />
 		</svg>
 	</button>
 
@@ -127,6 +130,7 @@
 						#menuTrigger
 						[attr.aria-expanded]="menuOpen()"
 						aria-haspopup="menu"
+						aria-controls="shell-user-menu"
 						[attr.aria-label]="s.name"
 						(click)="toggleMenu()"
 					>
@@ -153,8 +157,17 @@
 					</button>
 
 					@if (menuOpen()) {
-						<div class="shell__menu-scrim" (click)="closeMenu()"></div>
-						<div class="shell__menu" role="menu" (keydown)="onMenuKeydown($event, menuTrigger)">
+						<button
+							aria-label="Close Menu"
+							class="shell__menu-scrim"
+							(click)="closeMenu()"
+						></button>
+						<div
+							class="shell__menu"
+							id="shell-user-menu"
+							role="menu"
+							(keydown)="onMenuKeydown($event, menuTrigger)"
+						>
 							<div class="shell__menu-head">
 								<span class="shell__menu-name">{{ s.name }}</span>
 								<span class="shell__menu-email">{{ s.email }}</span>
@@ -171,6 +184,8 @@
 								<button
 									class="lum-btn lum-btn--secondary lum-btn--sm lum-btn--block"
 									type="button"
+									role="menuitem"
+									#menuFirstFocusable
 									(click)="logout()"
 								>
 									{{ t('shell.logout') }}

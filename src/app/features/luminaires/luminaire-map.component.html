@@ -1,0 +1,76 @@
+<section class="lum-map" *transloco="let t">
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<div>
+			<p class="text-uppercase text-secondary small mb-1">{{ t('nav.map') }}</p>
+			<h1>{{ t('map.title') }}</h1>
+			<p class="text-secondary small mb-0">{{ t('map.subtitle') }}</p>
+		</div>
+	</div>
+
+	<div class="lum-map__layout">
+		<div class="lum-map__canvas-wrap">
+			<div #mapHost class="lum-map__canvas" role="img" [attr.aria-label]="t('map.title')"></div>
+
+			@if (tilesOffline()) {
+				<p class="lum-map__banner">{{ t('map.offline') }}</p>
+			}
+
+			@if (loading()) {
+				<div class="lum-map__overlay">
+					<span class="lum-spinner" aria-hidden="true"></span>
+					<span>{{ t('map.loading') }}</span>
+				</div>
+			} @else if (apiError()) {
+				<div class="lum-map__overlay">
+					<p class="lum-state__title mb-2">{{ t('table.error') }}</p>
+					<button type="button" class="lum-btn lum-btn--secondary lum-btn--sm" (click)="retry()">
+						{{ t('table.retry') }}
+					</button>
+				</div>
+			}
+		</div>
+
+		<aside class="lum-map__side">
+			<div class="lum-panel">
+				<label class="lum-map__cluster-toggle">
+					<input
+						type="checkbox"
+						[checked]="clustered()"
+						(change)="toggleCluster($any($event.target).checked)"
+					/>
+					{{ t('map.cluster') }}
+				</label>
+				<p class="lum-state__body small mb-0 mt-1">{{ t('map.clusterHint') }}</p>
+			</div>
+
+			<div class="lum-panel">
+				<p class="lum-field__label mb-2">{{ t('map.legend') }}</p>
+				<ul class="lum-map__legend">
+					@for (status of statuses; track status) {
+						<li><span [class]="tone(status)">{{ t('status.' + status) }}</span></li>
+					}
+				</ul>
+			</div>
+
+			<div class="lum-panel">
+				<p class="lum-field__label mb-2">{{ t('map.selected') }}</p>
+				@if (selected(); as lamp) {
+					<dl class="lum-map__detail">
+						<dt>{{ t('lum.code') }}</dt>
+						<dd>{{ lamp.code }}</dd>
+						<dt>{{ t('lum.street') }}</dt>
+						<dd>{{ lamp.street }} {{ lamp.streetNumber }}</dd>
+						<dt>{{ t('lum.zone') }}</dt>
+						<dd>{{ lamp.zone }}</dd>
+						<dt>{{ t('lum.status') }}</dt>
+						<dd><span [class]="tone(lamp.status)">{{ t('status.' + lamp.status) }}</span></dd>
+					</dl>
+				} @else {
+					<p class="lum-state__body small mb-0">{{ t('map.none') }}</p>
+				}
+			</div>
+
+			<p class="text-secondary small mb-0">{{ t('map.features', { n: count() }) }}</p>
+		</aside>
+	</div>
+</section>

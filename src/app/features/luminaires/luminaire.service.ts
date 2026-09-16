@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '@core/api/api.service';
 import { GenericCollectionService } from '@shared/services/generic-collection.service';
+import { Filters } from '@shared/models/filter';
 import { Page, PageRequest } from '@shared/models/pagination';
 
 /* Mirrors the seed's shape independently rather than importing it — the
@@ -37,6 +38,16 @@ export interface Luminaire {
 
 export const LUMINAIRE_SEARCH_KEYS = ['code', 'street', 'zone'] as const;
 
+/* The map's request: the same search/filter vocabulary as the table, but no
+   page or ordination, because /geo has no pagination envelope — it always
+   answers with every matching luminaire. Every field is optional; an empty
+   body means "everything". */
+export interface GeoRequest {
+	searchTerm?: string;
+	searchKeys?: string[];
+	filters?: Filters;
+}
+
 @Injectable({ providedIn: 'root' })
 export class LuminaireService implements GenericCollectionService<Luminaire> {
 	private readonly api = inject(ApiService);
@@ -47,5 +58,11 @@ export class LuminaireService implements GenericCollectionService<Luminaire> {
 
 	get(id: string): Observable<Luminaire> {
 		return this.api.get<Luminaire>(`/api/luminaires/${id}`);
+	}
+
+	/* /api/luminaires/geo returns a plain array, not a Page — the map draws
+	   every matching feature at once rather than one page of them. */
+	geo(request: GeoRequest = {}): Observable<Luminaire[]> {
+		return this.api.post<Luminaire[]>('/api/luminaires/geo', request);
 	}
 }

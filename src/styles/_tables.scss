@@ -94,6 +94,22 @@
 		cursor: pointer;
 	}
 
+	/* The one real interactive element a selectable row offers — inherits the
+	   cell's text styling so it reads like a plain cell, but is a genuine
+	   <button> underneath so it is reachable and activatable by keyboard. */
+	&__row-open {
+		display: block;
+		width: 100%;
+		padding: 13px var(--space-base);
+		margin: -13px calc(var(--space-base) * -1);
+		border: none;
+		background: none;
+		font: inherit;
+		color: inherit;
+		text-align: inherit;
+		cursor: pointer;
+	}
+
 	td {
 		padding: 13px var(--space-base);
 		max-width: 280px;
@@ -134,6 +150,15 @@
 	border-top: 1px solid var(--color-hairline-soft);
 	font: var(--type-body-sm);
 	color: var(--color-muted);
+}
+
+/* Per-page and the pager share one visual group on the right of the footer
+   row, per the design — not two separate groups spread across it. */
+.lum-table__pager-group {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	flex-wrap: wrap;
 }
 
 .lum-table__pager {

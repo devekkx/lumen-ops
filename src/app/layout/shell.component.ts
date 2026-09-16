@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, ElementRef, ViewChild, computed, effect, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs';
@@ -12,6 +12,12 @@ import { crumbsFrom } from './breadcrumbs';
 
 const COLLAPSED_KEY = 'lumen.sidebar.collapsed';
 const MOBILE_WIDTH = 920;
+/* Keep in sync with $aside-width / $aside-width-collapsed in
+   shell.component.scss — the toggle's floating position is computed off
+   these same widths so it always sits straddling the aside's current edge. */
+const ASIDE_WIDTH = 248;
+const ASIDE_WIDTH_COLLAPSED = 72;
+const TOGGLE_RADIUS = 17; // half of the 34px disc, so it straddles the edge
 
 @Component({
 	selector: 'lumen-shell',
@@ -29,6 +35,8 @@ export class ShellComponent {
 	readonly activeLocale = this.language.current;
 	readonly user = this.auth.user;
 
+	@ViewChild('menuFirstFocusable') private menuFirstFocusable?: ElementRef<HTMLElement>;
+
 	readonly collapsed = signal(this.restoreCollapsed());
 	readonly menuOpen = signal(false);
 	readonly narrow = signal(window.innerWidth < MOBILE_WIDTH);
@@ -40,6 +48,29 @@ export class ShellComponent {
 	readonly asideOpen = computed(() => (this.narrow() ? !this.collapsed() : true));
 	readonly showBackdrop = computed(() => this.narrow() && this.asideOpen());
 	readonly showLabels = computed(() => this.narrow() || !this.collapsed());
+
+	/* The toggle is a floating disc that straddles the aside's current right
+	   edge (half over the aside, half over the content) rather than a fixed
+	   corner button — it has to move as the aside's own width changes. On a
+	   narrow screen with the drawer closed there is no rail edge to straddle,
+	   so it becomes a flush tab at the very left edge instead. */
+	readonly toggleLeft = computed(() => {
+		if (this.narrow()) return this.asideOpen() ? ASIDE_WIDTH - TOGGLE_RADIUS : 0;
+		return (this.collapsed() ? ASIDE_WIDTH_COLLAPSED : ASIDE_WIDTH) - TOGGLE_RADIUS;
+	});
+
+	readonly toggleTop = computed(() =>
+		this.narrow() && !this.asideOpen() ? Math.max(120, Math.round(window.innerHeight / 2) - 23) : 90
+	);
+
+	readonly toggleFlushTab = computed(() => this.narrow() && !this.asideOpen());
+
+	/* Points toward what the click does: left/"collapse" while open, right/
+	   "expand" while closed — never the hamburger glyph the design has no use
+	   for on a control that always has an open-or-closed aside to describe. */
+	readonly toggleIconPath = computed(() =>
+		this.asideOpen() ? 'M14.5 6.5 9 12l5.5 5.5' : 'M9.5 6.5 15 12l-5.5 5.5'
+	);
 
 	private readonly navigation = toSignal(
 		this.router.events.pipe(
@@ -103,8 +134,15 @@ export class ShellComponent {
 		if (this.narrow()) this.collapsed.set(true);
 	}
 
+	/* Opening the menu with the keyboard (Enter/Space on the trigger) should
+	   land focus inside it — otherwise a keyboard user hears "menu opened" and
+	   is left exactly where they were, with no obvious way to reach it. */
 	toggleMenu(): void {
-		this.menuOpen.update((open) => !open);
+		const next = !this.menuOpen();
+		this.menuOpen.set(next);
+		if (next) {
+			setTimeout(() => this.menuFirstFocusable?.nativeElement.focus());
+		}
 	}
 
 	closeMenu(): void {

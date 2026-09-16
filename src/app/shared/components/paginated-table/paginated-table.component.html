@@ -4,6 +4,9 @@
 			<div class="lum-table-card__rail-fill"></div>
 		}
 	</div>
+	<span class="visually-hidden" aria-live="polite">
+		{{ loading ? t('table.loading') : '' }}
+	</span>
 
 	<div class="lum-table-card__scroll">
 		<table class="lum-table" [attr.aria-busy]="loading">
@@ -39,6 +42,9 @@
 							}
 						</th>
 					}
+					@if (actionsTemplate) {
+						<th><span class="lum-table__heading">{{ t('table.actions') }}</span></th>
+					}
 				</tr>
 			</thead>
 			<tbody>
@@ -48,13 +54,46 @@
 							@for (column of columns; track column.key) {
 								<td class="lum-table__skeleton-cell"><span class="lum-skeleton"></span></td>
 							}
+							@if (actionsTemplate) {
+								<td class="lum-table__skeleton-cell"><span class="lum-skeleton"></span></td>
+							}
 						</tr>
 					}
 				} @else {
 					@for (item of page?.data ?? []; track item.id) {
-						<tr class="lum-table__row--clickable" (click)="rowSelected.emit(item)">
-							@for (column of columns; track column.key) {
-								<td>{{ item[column.key] }}</td>
+						<tr [class.lum-table__row--clickable]="rowSelected.observed">
+							@for (column of columns; track column.key; let first = $first) {
+								<td>
+									@if (first && rowSelected.observed) {
+										<button
+											type="button"
+											class="lum-table__row-open"
+											(click)="rowSelected.emit(item)"
+										>
+											@if (pillColumns[column.key]) {
+												<span [class]="pillClassFor(item[column.key])">
+													{{ t(pillColumns[column.key] + '.' + item[column.key]) }}
+												</span>
+											} @else {
+												{{ item[column.key] }}
+											}
+										</button>
+									} @else if (pillColumns[column.key]) {
+										<span [class]="pillClassFor(item[column.key])">
+											{{ t(pillColumns[column.key] + '.' + item[column.key]) }}
+										</span>
+									} @else {
+										{{ item[column.key] }}
+									}
+								</td>
+							}
+							@if (actionsTemplate) {
+								<td (click)="$event.stopPropagation()">
+									<ng-container
+										[ngTemplateOutlet]="actionsTemplate"
+										[ngTemplateOutletContext]="{ $implicit: item }"
+									/>
+								</td>
 							}
 						</tr>
 					}
@@ -64,57 +103,62 @@
 	</div>
 
 	@if (error) {
-		<div class="lum-state">
+		<div class="lum-state" role="alert">
 			<p class="lum-state__title">{{ t('table.error') }}</p>
 			<button type="button" class="lum-btn lum-btn--secondary lum-btn--sm" (click)="retry.emit()">
 				{{ t('table.retry') }}
 			</button>
 		</div>
 	} @else if (!loading && !page?.data?.length) {
-		<div class="lum-state">
+		<div class="lum-state" aria-live="polite">
 			<p class="lum-state__title">{{ t('table.empty') }}</p>
 			<p class="lum-state__body">{{ t('table.emptyHint') }}</p>
 		</div>
 	}
 
 	<div class="lum-table-card__footer">
-		<span class="lum-table__count">
+		<span class="lum-table__count" aria-live="polite" aria-atomic="true">
 			{{ t('table.showing', { a: rangeStart(), b: rangeEnd(), total: page?.total ?? 0 }) }}
 		</span>
 
-		<div class="lum-table__pager">
-			<button
-				type="button"
-				class="lum-btn lum-btn--secondary lum-btn--sm"
-				[disabled]="!page || page.currentPage === 1"
-				(click)="pageChange.emit((page?.currentPage ?? 1) - 1)"
-			>
-				{{ t('table.prev') }}
-			</button>
-			<span class="lum-table__page-label">
-				{{ t('table.page', { page: page?.currentPage ?? 1, last: page?.lastPage ?? 1 }) }}
-			</span>
-			<button
-				type="button"
-				class="lum-btn lum-btn--secondary lum-btn--sm"
-				[disabled]="!page || page.currentPage === page.lastPage"
-				(click)="pageChange.emit((page?.currentPage ?? 1) + 1)"
-			>
-				{{ t('table.next') }}
-			</button>
-		</div>
+		<!-- Per-page and pagination share one group on the right, per the
+		     design: per-page on the left of this group, prev/page/next on
+		     the right of it — not two separate groups spread across the row. -->
+		<div class="lum-table__pager-group">
+			<label class="lum-table__per-page">
+				{{ t('table.perPage') }}
+				<select
+					class="lum-field__control lum-field__control--sm"
+					[value]="page?.perPage ?? 20"
+					(change)="perPageChange.emit(+$any($event.target).value)"
+				>
+					@for (option of perPageOptions; track option) {
+						<option [value]="option">{{ option }}</option>
+					}
+				</select>
+			</label>
 
-		<label class="lum-table__per-page">
-			{{ t('table.perPage') }}
-			<select
-				class="lum-field__control lum-field__control--sm"
-				[value]="page?.perPage ?? 20"
-				(change)="perPageChange.emit(+$any($event.target).value)"
-			>
-				@for (option of perPageOptions; track option) {
-					<option [value]="option">{{ option }}</option>
-				}
-			</select>
-		</label>
+			<div class="lum-table__pager">
+				<button
+					type="button"
+					class="lum-btn lum-btn--secondary lum-btn--sm"
+					[disabled]="!page || page.currentPage === 1"
+					(click)="pageChange.emit((page?.currentPage ?? 1) - 1)"
+				>
+					{{ t('table.prev') }}
+				</button>
+				<span class="lum-table__page-label">
+					{{ t('table.page', { page: page?.currentPage ?? 1, last: page?.lastPage ?? 1 }) }}
+				</span>
+				<button
+					type="button"
+					class="lum-btn lum-btn--secondary lum-btn--sm"
+					[disabled]="!page || page.currentPage === page.lastPage"
+					(click)="pageChange.emit((page?.currentPage ?? 1) + 1)"
+				>
+					{{ t('table.next') }}
+				</button>
+			</div>
+		</div>
 	</div>
 </div>

@@ -12,7 +12,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
 	template: `
 		<div class="unauth" *transloco="let t">
 			<span class="unauth__mark" aria-hidden="true">!</span>
-			<h2 class="unauth__title">{{ t('unauth.title') }}</h2>
+			<h1 class="unauth__title">{{ t('unauth.title') }}</h1>
 			<p class="unauth__body">{{ t('unauth.body') }}</p>
 			<button class="lum-btn lum-btn--primary lum-btn--sm" type="button" (click)="home()">
 				{{ t('unauth.back') }}

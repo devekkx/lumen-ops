@@ -1,0 +1,59 @@
+<div class="lum-picker" *transloco="let t">
+	<div class="lum-picker__row">
+		<input
+			type="text"
+			role="combobox"
+			class="lum-field__control"
+			autocomplete="off"
+			aria-autocomplete="list"
+			aria-haspopup="listbox"
+			[attr.aria-expanded]="open()"
+			[attr.aria-controls]="listboxId"
+			[attr.aria-activedescendant]="activeIndex() >= 0 ? listboxId + '-opt-' + activeIndex() : null"
+			[placeholder]="t('fault.pickerPlaceholder')"
+			[value]="query()"
+			[disabled]="disabled()"
+			(input)="onInput($any($event.target).value)"
+			(focus)="onFocus()"
+			(blur)="onBlur()"
+			(keydown)="onKeydown($event)"
+		/>
+		@if (selected()) {
+			<button
+				type="button"
+				class="lum-icon-btn lum-icon-btn--plain lum-icon-btn--sm"
+				[attr.aria-label]="t('fault.pickerClear')"
+				[disabled]="disabled()"
+				(click)="clear()"
+			>
+				&times;
+			</button>
+		}
+	</div>
+
+	<p class="lum-picker__hint">{{ t('fault.pickerHint') }}</p>
+
+	@if (open()) {
+		<ul class="lum-picker__list" role="listbox" [id]="listboxId">
+			@if (loading()) {
+				<li class="lum-picker__status">{{ t('common.loading') }}</li>
+			} @else if (!suggestions().length) {
+				<li class="lum-picker__status">{{ t('fault.pickerEmpty') }}</li>
+			} @else {
+				@for (option of suggestions(); track option.id; let i = $index) {
+					<li
+						[id]="listboxId + '-opt-' + i"
+						role="option"
+						class="lum-picker__option"
+						[class.lum-picker__option--active]="i === activeIndex()"
+						[attr.aria-selected]="i === activeIndex()"
+						(mousedown)="select(option)"
+					>
+						<span class="lum-picker__option-code">{{ option.code }}</span>
+						<span class="lum-picker__option-street">{{ option.street }} · {{ option.zone }}</span>
+					</li>
+				}
+			}
+		</ul>
+	}
+</div>
