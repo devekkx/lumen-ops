@@ -1,9 +1,194 @@
-<a class="skip-link" href="#main-content">Skip to content</a>
-<div class="shell" [class.collapsed]="collapsed()">
-  <aside aria-label="Primary navigation">
-    <div class="brand">Lumen Ops</div>
-    <button class="btn btn-sm btn-outline-light" type="button" (click)="toggle()" [attr.aria-expanded]="!collapsed()">Toggle menu</button>
-    <nav><a routerLink="/dashboard" routerLinkActive="active">Dashboard</a><a routerLink="/luminarias" routerLinkActive="active">Luminaires</a><a routerLink="/averias" routerLinkActive="active">Faults</a><a routerLink="/ordenes-trabajo" routerLinkActive="active">Work orders</a><a routerLink="/cuadrillas" routerLinkActive="active">Crews</a></nav>
-  </aside>
-  <section class="content"><header><span>Municipal lighting operations</span><div><span class="me-3">{{ auth.user()?.sub }}</span><a routerLink="/auth/login" (click)="logout()">Sign out</a></div></header><main id="main-content"><router-outlet /></main><footer>© Lumen Ops</footer></section>
+<div class="shell" *transloco="let t" [class.shell--narrow]="narrow()">
+	<a class="lum-skip-link" href="#main">{{ t('shell.skip') }}</a>
+	<lumen-toast-host />
+
+	@if (showBackdrop()) {
+		<div class="shell__backdrop" (click)="closeAside()"></div>
+	}
+
+	<button
+		class="shell__aside-toggle"
+		type="button"
+		#asideToggle
+		[attr.aria-label]="t(collapsed() ? 'shell.expand' : 'shell.collapse')"
+		[title]="t(collapsed() ? 'shell.expand' : 'shell.collapse')"
+		[attr.aria-expanded]="asideOpen()"
+		aria-controls="lumen-aside"
+		(click)="toggleAside()"
+	>
+		<svg
+			viewBox="0 0 24 24"
+			width="18"
+			height="18"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="1.8"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			aria-hidden="true"
+		>
+			<path [attr.d]="collapsed() ? 'M4 6h16M4 12h16M4 18h16' : 'M15 6l-6 6 6 6'" />
+		</svg>
+	</button>
+
+	<nav
+		class="shell__aside"
+		id="lumen-aside"
+		[class.shell__aside--collapsed]="!showLabels()"
+		[class.shell__aside--open]="asideOpen()"
+		[attr.aria-label]="t('shell.menu')"
+	>
+		<div class="shell__brand">
+			<span class="shell__brand-mark" aria-hidden="true">L</span>
+			@if (showLabels()) {
+				<span class="shell__brand-text">
+					<span class="shell__brand-name">{{ t('app.name') }}</span>
+					<span class="shell__brand-tagline">{{ t('app.tagline') }}</span>
+				</span>
+			}
+		</div>
+
+		@for (group of groups(); track group.label) {
+			<div class="shell__group">
+				@if (showLabels()) {
+					<span class="shell__group-label">{{ t(group.label) }}</span>
+				}
+				@for (item of group.items; track item.path) {
+					<a
+						class="shell__link"
+						[class.shell__link--active]="isActive(item.path)"
+						[routerLink]="item.path"
+						[attr.aria-current]="isActive(item.path) ? 'page' : null"
+						[title]="t(item.label)"
+						(click)="closeAside()"
+					>
+						<svg
+							viewBox="0 0 24 24"
+							width="20"
+							height="20"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.6"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<path [attr.d]="item.d" />
+						</svg>
+						@if (showLabels()) {
+							<span class="shell__link-label">{{ t(item.label) }}</span>
+						}
+					</a>
+				}
+			</div>
+		}
+	</nav>
+
+	<div class="shell__main">
+		<header class="shell__header" role="banner">
+			<nav class="shell__crumbs" [attr.aria-label]="t('shell.homeCrumb')">
+				@for (crumb of crumbs(); track crumb.label; let last = $last) {
+					<span class="shell__crumb">
+						@if (crumb.href) {
+							<a class="shell__crumb-link" [routerLink]="crumb.href">
+								{{ crumb.literal ? crumb.label : t(crumb.label) }}
+							</a>
+						} @else {
+							<span class="shell__crumb-current" aria-current="page">
+								{{ crumb.literal ? crumb.label : t(crumb.label) }}
+							</span>
+						}
+						@if (!last) {
+							<span class="shell__crumb-divider" aria-hidden="true">/</span>
+						}
+					</span>
+				}
+			</nav>
+
+			<div class="shell__langs" role="group" [attr.aria-label]="t('shell.language')">
+				@for (locale of locales; track locale) {
+					<button
+						class="shell__lang"
+						type="button"
+						[class.shell__lang--on]="activeLocale() === locale"
+						[attr.aria-pressed]="activeLocale() === locale"
+						(click)="use(locale)"
+					>
+						{{ locale.toUpperCase() }}
+					</button>
+				}
+			</div>
+
+			@if (session(); as s) {
+				<div class="shell__session">
+					<button
+						class="shell__chip"
+						type="button"
+						#menuTrigger
+						[attr.aria-expanded]="menuOpen()"
+						aria-haspopup="menu"
+						[attr.aria-label]="s.name"
+						(click)="toggleMenu()"
+					>
+						<span class="shell__avatar" [class]="'lum-pill--' + s.tone">{{ s.initials }}</span>
+						@if (!narrow()) {
+							<span class="shell__chip-text">
+								<span class="shell__chip-name">{{ s.name }}</span>
+								<span class="shell__chip-role">{{ t('role.' + s.role) }}</span>
+							</span>
+						}
+						<svg
+							viewBox="0 0 24 24"
+							width="16"
+							height="16"
+							fill="none"
+							stroke="var(--color-muted)"
+							stroke-width="1.8"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<path [attr.d]="menuOpen() ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6'" />
+						</svg>
+					</button>
+
+					@if (menuOpen()) {
+						<div class="shell__menu-scrim" (click)="closeMenu()"></div>
+						<div class="shell__menu" role="menu" (keydown)="onMenuKeydown($event, menuTrigger)">
+							<div class="shell__menu-head">
+								<span class="shell__menu-name">{{ s.name }}</span>
+								<span class="shell__menu-email">{{ s.email }}</span>
+							</div>
+							<div class="shell__menu-block">
+								<span class="shell__menu-key">{{ t('common.role') }}</span>
+								<span class="lum-pill" [class]="'lum-pill lum-pill--' + s.tone">
+									{{ t('role.' + s.role) }}
+								</span>
+								<span class="shell__menu-key shell__menu-key--spaced">{{ t('common.org') }}</span>
+								<span class="shell__menu-value">{{ s.org }}</span>
+							</div>
+							<div class="shell__menu-block shell__menu-block--last">
+								<button
+									class="lum-btn lum-btn--secondary lum-btn--sm lum-btn--block"
+									type="button"
+									(click)="logout()"
+								>
+									{{ t('shell.logout') }}
+								</button>
+							</div>
+						</div>
+					}
+				</div>
+			}
+		</header>
+
+		<main class="shell__content" id="main" role="main">
+			<router-outlet />
+		</main>
+
+		<footer class="shell__footer" role="contentinfo">
+			<span class="shell__footer-left">{{ t('app.tagline') }}</span>
+			<span class="shell__footer-right">Angular 19.2 · Lumen Ops</span>
+		</footer>
+	</div>
 </div>
