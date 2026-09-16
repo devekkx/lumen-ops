@@ -1,5 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { Component, ContentChild, EventEmitter, Input, Output, TemplateRef } from '@angular/core';
 import { TranslocoDirective } from '@jsverse/transloco';
+import { pillClass } from '../../models/status-tone';
 import { Page } from '../../models/pagination';
 
 export interface TableColumn<T> {
@@ -16,7 +18,7 @@ export interface TableColumn<T> {
 @Component({
 	selector: 'lumen-table',
 	standalone: true,
-	imports: [TranslocoDirective],
+	imports: [TranslocoDirective, NgTemplateOutlet],
 	templateUrl: './paginated-table.component.html'
 })
 export class PaginatedTableComponent<T extends { id: string }> {
@@ -33,6 +35,10 @@ export class PaginatedTableComponent<T extends { id: string }> {
 	@Input() error: string | null = null;
 	@Input() sortProperty: string | null = null;
 	@Input() sortDirection: 'ASC' | 'DESC' = 'ASC';
+	/* Column key -> i18n prefix for a column that should render as a status
+	   tone pill (`status.OK`, `severity.HIGH`, ...) instead of raw text —
+	   opt-in, so a plain column stays a plain column. */
+	@Input() pillColumns: Readonly<Record<string, string>> = {};
 
 	@Output() readonly sort = new EventEmitter<string>();
 	@Output() readonly pageChange = new EventEmitter<number>();
@@ -40,7 +46,18 @@ export class PaginatedTableComponent<T extends { id: string }> {
 	@Output() readonly rowSelected = new EventEmitter<T>();
 	@Output() readonly retry = new EventEmitter<void>();
 
+	/* Optional per-row actions, projected in from the page that owns the
+	   write abilities (`<ng-template #rowActions let-item>...</ng-template>`
+	   passed as content) — the table itself never decides which actions a
+	   row gets, only where they render. Absent entirely for a read-only table
+	   like luminaires', which passes none. */
+	@ContentChild('rowActions') actionsTemplate: TemplateRef<{ $implicit: T }> | null = null;
+
 	readonly perPageOptions = [10, 20, 50, 100];
+
+	pillClassFor(value: unknown): string {
+		return pillClass(value == null ? null : String(value));
+	}
 
 	rangeStart(): number {
 		if (!this.page || this.page.total === 0) return 0;

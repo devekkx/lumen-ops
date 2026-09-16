@@ -29,6 +29,9 @@
 							}
 						</th>
 					}
+					@if (actionsTemplate) {
+						<th><span class="lum-table__heading">{{ t('table.actions') }}</span></th>
+					}
 				</tr>
 			</thead>
 			<tbody>
@@ -38,13 +41,32 @@
 							@for (column of columns; track column.key) {
 								<td class="lum-table__skeleton-cell"><span class="lum-skeleton"></span></td>
 							}
+							@if (actionsTemplate) {
+								<td class="lum-table__skeleton-cell"><span class="lum-skeleton"></span></td>
+							}
 						</tr>
 					}
 				} @else {
 					@for (item of page?.data ?? []; track item.id) {
 						<tr class="lum-table__row--clickable" (click)="rowSelected.emit(item)">
 							@for (column of columns; track column.key) {
-								<td>{{ item[column.key] }}</td>
+								<td>
+									@if (pillColumns[column.key]) {
+										<span [class]="pillClassFor(item[column.key])">
+											{{ t(pillColumns[column.key] + '.' + item[column.key]) }}
+										</span>
+									} @else {
+										{{ item[column.key] }}
+									}
+								</td>
+							}
+							@if (actionsTemplate) {
+								<td (click)="$event.stopPropagation()">
+									<ng-container
+										[ngTemplateOutlet]="actionsTemplate"
+										[ngTemplateOutletContext]="{ $implicit: item }"
+									/>
+								</td>
 							}
 						</tr>
 					}
