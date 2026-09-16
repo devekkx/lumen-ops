@@ -1,6 +1,6 @@
 /* Four seeded users and a JWT-shaped token.
  *
- * The signature is not real and does not need to be — the app decodes the
+ * The signature is not real and does not need to be - the app decodes the
  * payload on day 2, it never verifies it. What has to be right is the *shape*:
  * three dot-separated base64url segments carrying sub, roles and exp.
  */
@@ -25,7 +25,7 @@ export const USERS: readonly SeededUser[] = [
 
 const base64Url = (text: string) => Buffer.from(text, 'utf8').toString('base64url');
 
-/* A negative TTL is not an accident — the login screen offers an
+/* A negative TTL is not an accident - the login screen offers an
    already-expired token on purpose, so the app-initializer failure path in
    exercise 2.1 can be triggered from the UI rather than by editing storage. */
 export const signToken = (user: SeededUser, ttlMinutes = 60): string => {

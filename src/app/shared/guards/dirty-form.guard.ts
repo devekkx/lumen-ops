@@ -1,6 +1,6 @@
 import { CanDeactivateFn } from '@angular/router';
 
-/* Any reactive-form page that wants the exit prompt implements this — just
+/* Any reactive-form page that wants the exit prompt implements this - just
    "is there unsaved work" and "ask the user about it", not a form-specific
    contract, so the guard stays reusable past the fault form. */
 export interface DirtyFormHost {

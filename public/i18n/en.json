@@ -61,6 +61,7 @@
 		"loading": "Loading…",
 		"error": "The table could not be loaded",
 		"retry": "Retry",
+		"refresh": "Refresh",
 		"actions": "Actions",
 		"dsl": "Filter DSL inspector",
 		"dslEmpty": "No conditions: empty filters produce no condition at all.",
@@ -235,7 +236,7 @@
 		"401": "Your session is not valid. Sign in again.",
 		"403": "You do not have permission for this operation.",
 		"404": "That record was not found. Another user may have deleted it.",
-		"500": "The server failed to process the request. Try again in a minute.",
+		"500": "The server failed to process the request. Retry in a minute.",
 		"offline": "No connection to the mock API. Retry when the network is back.",
 		"timeout": "The request took too long and was cancelled."
 	},
@@ -254,7 +255,7 @@
 		"back": "Back",
 		"close": "Close",
 		"of": "of",
-		"none": "—",
+		"none": "-",
 		"loading": "Loading…",
 		"role": "Role",
 		"org": "Organisation"

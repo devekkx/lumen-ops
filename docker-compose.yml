@@ -1,6 +1,6 @@
 # `docker compose up --build` from a clean clone: builds the Angular app and
 # the mock API from the same Dockerfile (via `target:`) and wires them
-# together the way `npm run dev` does locally — except here nginx, not the
+# together the way `npm run dev` does locally - except here nginx, not the
 # Angular dev-server proxy (src/proxy.conf.json), is what forwards /api to
 # the mock API, since a production image has no dev server to carry that
 # proxy config. See the Dockerfile and deploy/nginx.conf for the rest of that

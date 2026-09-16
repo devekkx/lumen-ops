@@ -19,7 +19,7 @@ import {
 	SEVERITIES
 } from './fault.service';
 
-/* Migrated to the v2 (signal + resource()) base — see docs/table-v1-vs-v2.md. Luminaires stays on v1
+/* Migrated to the v2 (signal + resource()) base - see docs/table-v1-vs-v2.md. Luminaires stays on v1
    deliberately, so both are live side by side as the comparison. */
 @Component({
 	selector: 'lumen-faults-page',
@@ -37,7 +37,7 @@ export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 
 	/* Every write action is individually ability-gated inside #rowActions
 	   already, but that leaves an empty Actions column for a read-only user
-	   — the header still renders, the cell is just blank. This gates the
+	   - the header still renders, the cell is just blank. This gates the
 	   whole projected template so the column doesn't exist at all unless
 	   there is at least one action it could ever show. */
 	readonly hasRowActions = computed(() => {
@@ -62,6 +62,7 @@ export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 	];
 
 	readonly pillColumns = { severity: 'severity', status: 'status' };
+	readonly dateColumns = ['reportedAt', 'dueAt'];
 
 	readonly severities = SEVERITIES;
 	readonly statuses = FAULT_STATUSES;

@@ -109,7 +109,7 @@ describe('ShellComponent', () => {
 			const labels = Array.from(html().querySelectorAll('.shell__group-label')).map((node) =>
 				node.textContent?.trim()
 			);
-			expect(labels.length).toBe(2);
+			expect(labels).toHaveSize(2);
 		});
 	});
 
@@ -193,8 +193,8 @@ describe('ShellComponent', () => {
 			const buttons = Array.from(html().querySelectorAll('.shell__lang'));
 			const pressed = buttons.filter((button) => button.getAttribute('aria-pressed') === 'true');
 
-			expect(buttons.length).toBe(2);
-			expect(pressed.length).toBe(1);
+			expect(buttons).toHaveSize(2);
+			expect(pressed).toHaveSize(1);
 			expect(pressed[0].textContent?.trim()).toBe('ES');
 		});
 

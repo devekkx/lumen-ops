@@ -10,7 +10,7 @@ const STORAGE_KEY = 'lumen.language';
 /* The one place that knows the current language.
 
    Nothing else in the app reads localStorage for it and nothing else calls
-   TranslocoService.setActiveLang — the Accept-Language interceptor, the header
+   TranslocoService.setActiveLang - the Accept-Language interceptor, the header
    switcher and the Intl formatters all read `current` from here. That is the
    whole point of the exercise: the real repo touches localStorage in eleven
    files, and a language that lives in eleven places drifts. */

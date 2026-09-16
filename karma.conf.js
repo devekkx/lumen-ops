@@ -36,12 +36,12 @@ module.exports = function (config) {
 			 * in, so `ng test` has never actually executed here and there is no
 			 * measured baseline to set a real threshold from. These numbers are
 			 * a conservative floor chosen from the shape of the suite (every
-			 * pure-logic module — the filter DSL, guards, pipes, validators,
-			 * the two table bases — has a thorough spec; several components with
+			 * pure-logic module - the filter DSL, guards, pipes, validators,
+			 * the two table bases - has a thorough spec; several components with
 			 * real branching, like the fault form and the OL/ECharts wrappers,
 			 * do not), not a target measured and then padded down. `check.global`
 			 * fails the `ng test` run under threshold rather than merely
-			 * reporting it, which is deliberate — a badge nobody enforces is not
+			 * reporting it, which is deliberate - a badge nobody enforces is not
 			 * a gate. Whoever runs this suite for the first time for real should
 			 * treat these as provisional and tighten (or loosen, if they turn out
 			 * optimistic) them once an actual number exists.

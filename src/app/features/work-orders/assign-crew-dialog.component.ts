@@ -8,7 +8,7 @@ export interface AssignCrewDialogData {
 	crews: readonly Crew[];
 }
 
-/* A small, single-purpose picker rather than a whole form component — the
+/* A small, single-purpose picker rather than a whole form component - the
    only input is "which crew", which is exactly what a <select> already
    models. Shaped like ConfirmDialogComponent (same ModalService, same
    MODAL_REF/MODAL_DATA tokens, same resolve-a-promise contract) because
@@ -29,12 +29,9 @@ export interface AssignCrewDialogData {
 			<h2 [id]="titleId" class="lum-modal__title">
 				{{ t('order.assignTitle', { code: data.code }) }}
 			</h2>
-			<label class="lum-field mb-3">
-				<span class="lum-field__label">{{ t('order.crew') }}</span>
-				<select
-					class="lum-field__control"
-					(change)="selected.set($any($event.target).value)"
-				>
+			<label class="d-block mb-3">
+				<span class="form-label">{{ t('order.crew') }}</span>
+				<select class="form-select" (change)="selected.set($any($event.target).value)">
 					<option value="">{{ t('order.unassigned') }}</option>
 					@for (crew of data.crews; track crew.id) {
 						<option [value]="crew.id">{{ crew.code }} · {{ crew.name }}</option>
@@ -42,15 +39,10 @@ export interface AssignCrewDialogData {
 				</select>
 			</label>
 			<div class="lum-modal__actions">
-				<button type="button" class="lum-btn lum-btn--secondary" (click)="cancel()">
+				<button type="button" class="btn btn-outline-secondary" (click)="cancel()">
 					{{ t('confirm.no') }}
 				</button>
-				<button
-					type="button"
-					class="lum-btn lum-btn--primary"
-					[disabled]="!selected()"
-					(click)="confirm()"
-				>
+				<button type="button" class="btn btn-primary" [disabled]="!selected()" (click)="confirm()">
 					{{ t('order.assign') }}
 				</button>
 			</div>
@@ -76,7 +68,7 @@ export class AssignCrewDialogComponent {
 }
 
 /* The one place that opens an AssignCrewDialogComponent, mirroring
-   confirmDialog() in confirm-dialog.component.ts — resolves with the chosen
+   confirmDialog() in confirm-dialog.component.ts - resolves with the chosen
    crew id, or undefined if the picker was dismissed without one. */
 export const assignCrewDialog = (
 	modal: ModalService,

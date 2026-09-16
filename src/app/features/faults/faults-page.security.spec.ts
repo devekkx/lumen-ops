@@ -10,7 +10,7 @@ import { FaultsPageComponent } from './faults-page.component';
 
 /* The brief calls this the single most valuable test in the exercise: a
  * VIEWER's rendered DOM must contain *zero* write-action elements, not merely
- * disabled ones — a disabled button still ships its handler and its intent
+ * disabled ones - a disabled button still ships its handler and its intent
  * to any user poking at devtools, and a CSS-hidden one still exists in the
  * accessibility tree. Asserting on [data-action] rather than button text or
  * count also means the assertion can never pass by accident (an unrelated
@@ -61,11 +61,11 @@ const samplePage: Page<Fault> = {
 };
 
 /* Renders the page against a stubbed AuthService/FaultService and lets the
-   base class's 250ms debounce elapse so the (stubbed) page actually loads —
+   base class's 250ms debounce elapse so the (stubbed) page actually loads -
    asserting against an empty, still-loading table would prove nothing.
    The v2 (resource()) base needs one more beat than v1 did here: `tick(250)`
    plus a `detectChanges()` flushes the debounce and starts resource()'s
-   loadEffect, but that effect is `async` — even a synchronous `of(samplePage)`
+   loadEffect, but that effect is `async` - even a synchronous `of(samplePage)`
    resolves through a microtask, which only a *subsequent* `tick()` drains
    (nothing after this point re-enters the fake clock to drain it otherwise).
    The final `detectChanges()` then re-renders against the now-resolved page. */
@@ -89,12 +89,12 @@ const render = (abilities: Abilities) => {
 	return fixture;
 };
 
-describe('FaultsPageComponent — write actions are gated by ability, not by disabled state', () => {
+describe('FaultsPageComponent - write actions are gated by ability, not by disabled state', () => {
 	it('renders zero [data-action] elements for a VIEWER', fakeAsync(() => {
 		const fixture = render(abilitiesOf({}));
 
 		const actions = fixture.nativeElement.querySelectorAll('[data-action]');
-		expect(actions.length).toBe(0);
+		expect(actions).toHaveSize(0);
 
 		/* Belt and braces: not just absent, but genuinely not present anywhere
 		   in the row, disabled or otherwise. */

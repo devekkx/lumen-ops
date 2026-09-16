@@ -1,20 +1,19 @@
 <section *transloco="let t">
 	<div class="d-flex justify-content-between align-items-center mb-4">
 		<div>
-			<p class="text-uppercase text-secondary small mb-1">{{ t('nav.crews') }}</p>
 			<h1>{{ t('crew.title') }}</h1>
 			<p class="text-secondary mb-0">{{ t('crew.subtitle') }}</p>
 		</div>
-		<button type="button" class="lum-btn lum-btn--secondary" (click)="refresh()">
-			{{ t('table.retry') }}
+		<button type="button" class="btn btn-outline-secondary" (click)="refresh()">
+			{{ t('table.refresh') }}
 		</button>
 	</div>
 
-	<div class="lum-panel mb-3">
-		<label class="lum-field mb-0">
-			<span class="lum-field__label">{{ t('table.search') }}</span>
+	<div class="card card-body mb-3">
+		<label class="d-block mb-0">
+			<span class="form-label">{{ t('table.search') }}</span>
 			<input
-				class="lum-field__control lum-field__control--sm"
+				class="form-control form-control-sm"
 				type="search"
 				[placeholder]="t('table.searchCrews')"
 				(input)="setSearch($any($event.target).value)"

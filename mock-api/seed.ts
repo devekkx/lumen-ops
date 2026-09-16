@@ -9,7 +9,7 @@ export const SEED = 20260915;
 export const NOW = new Date('2026-09-15T09:00:00Z').getTime();
 export const DAY = 86_400_000;
 
-/* mulberry32 — small, fast, and good enough that the data does not look banded. */
+/* mulberry32 - small, fast, and good enough that the data does not look banded. */
 const mulberry32 = (seed: number) => () => {
 	seed = (seed + 0x6d2b79f5) | 0;
 	let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
@@ -64,7 +64,7 @@ export interface Zone {
 	streets: readonly string[];
 }
 
-/* Real districts and real street names inside a real bounding box — the map in
+/* Real districts and real street names inside a real bounding box - the map in
    exercise 5.1 has to look like a city, not a scatter plot. */
 export const ZONES: readonly Zone[] = [
 	{ id: 'Z01', name: 'Centro', lat: 40.4155, lon: -3.7074, streets: ['Calle Mayor', 'Gran Vía', 'Calle de Toledo', 'Calle de Alcalá', 'Plaza de la Cebada'] },
@@ -213,7 +213,7 @@ const buildCrews = (): Crew[] => {
 	});
 };
 
-/* Faults cluster on luminaires that are not OK — three in four. A fault on a
+/* Faults cluster on luminaires that are not OK - three in four. A fault on a
    healthy lamp is possible (a citizen reports the wrong pole) but uncommon. */
 const buildFaults = (luminaires: readonly Luminaire[]): Fault[] => {
 	const faulty = luminaires.filter((item) => item.status !== 'OK');

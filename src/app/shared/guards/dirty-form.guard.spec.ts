@@ -1,7 +1,7 @@
 import { fakeAsync, flushMicrotasks } from '@angular/core/testing';
 import { DirtyFormHost, dirtyFormGuard } from './dirty-form.guard';
 
-/* Deliberately not routed through TestBed/Router — the guard only ever calls
+/* Deliberately not routed through TestBed/Router - the guard only ever calls
    two methods on whatever component it is handed, so a plain fake exercising
    those two methods is a more direct proof than standing up a real route
    navigation would be. */

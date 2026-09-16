@@ -2,16 +2,25 @@
 	<lumen-page-header [title]="t('dash.title')" [subtitle]="t('dash.subtitle')" />
 
 	<div class="dash-kpis">
-		@for (tile of kpiTiles(); track tile.key) {
-			<div class="card card-body dash-kpi">
-				<span class="dash-kpi__label">{{ t('kpi.' + tile.key) }}</span>
-				<span class="dash-kpi__value">
-					{{ tile.value | lumenNumber: tile.digits }}{{ tile.suffix ?? '' }}
-					@if (tile.unitKey) {
-						{{ t(tile.unitKey) }}
-					}
-				</span>
-			</div>
+		@if (loading() && !kpiTiles().length) {
+			@for (i of [0, 1, 2, 3, 4]; track i) {
+				<div class="card card-body dash-kpi" aria-hidden="true">
+					<span class="lum-skeleton dash-kpi__skeleton-label"></span>
+					<span class="lum-skeleton dash-kpi__skeleton-value"></span>
+				</div>
+			}
+		} @else {
+			@for (tile of kpiTiles(); track tile.key) {
+				<div class="card card-body dash-kpi">
+					<span class="dash-kpi__label">{{ t('kpi.' + tile.key) }}</span>
+					<span class="dash-kpi__value">
+						{{ tile.value | lumenNumber: tile.digits }}{{ tile.suffix ?? '' }}
+						@if (tile.unitKey) {
+							{{ t(tile.unitKey) }}
+						}
+					</span>
+				</div>
+			}
 		}
 	</div>
 

@@ -51,7 +51,7 @@ describe('FaultService', () => {
 	});
 
 	describe('get(id)', () => {
-		/* There is no GET /api/faults/:id on the mock, only on luminaires — see
+		/* There is no GET /api/faults/:id on the mock, only on luminaires - see
 		   fault.service.ts's comment on why get() goes through the paged
 		   endpoint filtered to a single id instead. */
 		it('filters the paged endpoint to one id rather than fetching a single record', () => {
@@ -95,7 +95,9 @@ describe('FaultService', () => {
 
 	it('delete() DELETEs by id', () => {
 		service.delete('fault-1').subscribe();
-		http.expectOne('/api/faults/fault-1').flush(null);
+		const testRequest = http.expectOne('/api/faults/fault-1');
+		expect(testRequest.request.method).toBe('DELETE');
+		testRequest.flush(null);
 	});
 
 	it('transition() POSTs the new status to the transition sub-route', () => {

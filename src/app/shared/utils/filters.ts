@@ -43,7 +43,7 @@ export const condition = (
 		matchMode
 	};
 
-	/* The null checks carry no operand at all — not an empty one. A rightHand
+	/* The null checks carry no operand at all - not an empty one. A rightHand
 	   of '' would read as "equals empty string" to any backend. */
 	if (matchMode !== MatchMode.IS_NULL && matchMode !== MatchMode.IS_NOT_NULL) {
 		filter.rightHand = {
@@ -57,7 +57,7 @@ export const condition = (
 };
 
 export interface BuildOptions {
-	/* Pins a match mode for a key whose type does not imply the right one — a
+	/* Pins a match mode for a key whose type does not imply the right one - a
 	   code field that should be EQUAL rather than the CONTAINS a string gets. */
 	overrides?: Record<string, MatchMode>;
 	type?: AssignmentType;
@@ -79,55 +79,55 @@ export interface BuildOptions {
  * half-open range still filters. BETWEEN needs both ends; "installed after
  * 2020, no upper bound" is a perfectly ordinary thing to ask for.
  */
+/* One record entry's worth of conditions - split out of buildFilterConditions
+   so each key's type-driven branching (sentinel, blank, override, array,
+   number/boolean, range, string) is its own unit rather than one function
+   that has to hold all of it in mind at once. */
+const conditionsForEntry = (
+	key: string,
+	raw: FilterRecord[string],
+	overrides: Record<string, MatchMode>,
+	type: AssignmentType
+): Filter[] => {
+	if (raw === IS_NULL_SENTINEL) return [condition(key, MatchMode.IS_NULL)];
+	if (raw === IS_NOT_NULL_SENTINEL) return [condition(key, MatchMode.IS_NOT_NULL)];
+
+	/* Blank means no condition at all - not a condition that matches
+	   nothing. This single line is what keeps an untouched filter panel
+	   from emptying the table. */
+	if (isBlank(raw)) return [];
+
+	const override = overrides[key];
+	if (override) return [condition(key, override, raw as FilterValue, { type })];
+
+	if (Array.isArray(raw)) return [condition(key, MatchMode.IN, raw, { type })];
+	if (typeof raw === 'number' || typeof raw === 'boolean') {
+		return [condition(key, MatchMode.EQUAL, raw, { type })];
+	}
+
+	if (typeof raw === 'object') {
+		const range = raw as RangeValue;
+		const conditions: Filter[] = [];
+		if (!isBlank(range.from)) {
+			conditions.push(condition(key, MatchMode.GTE, range.from as FilterValue, { type }));
+		}
+		if (!isBlank(range.to)) {
+			conditions.push(condition(key, MatchMode.LTE, range.to as FilterValue, { type }));
+		}
+		return conditions;
+	}
+
+	return [condition(key, MatchMode.CONTAINS, String(raw), { type })];
+};
+
 export const buildFilterConditions = (
 	record: FilterRecord | null | undefined,
 	options: BuildOptions = {}
 ): Filters => {
 	const { overrides = {}, type = AssignmentType.CONTROL } = options;
-	const filters: Filter[] = [];
-
-	for (const [key, raw] of Object.entries(record ?? {})) {
-		if (raw === IS_NULL_SENTINEL) {
-			filters.push(condition(key, MatchMode.IS_NULL));
-			continue;
-		}
-		if (raw === IS_NOT_NULL_SENTINEL) {
-			filters.push(condition(key, MatchMode.IS_NOT_NULL));
-			continue;
-		}
-
-		/* Blank means no condition at all — not a condition that matches
-		   nothing. This single line is what keeps an untouched filter panel
-		   from emptying the table. */
-		if (isBlank(raw)) continue;
-
-		const override = overrides[key];
-		if (override) {
-			filters.push(condition(key, override, raw as FilterValue, { type }));
-			continue;
-		}
-
-		if (Array.isArray(raw)) {
-			filters.push(condition(key, MatchMode.IN, raw, { type }));
-			continue;
-		}
-		if (typeof raw === 'number' || typeof raw === 'boolean') {
-			filters.push(condition(key, MatchMode.EQUAL, raw, { type }));
-			continue;
-		}
-		if (typeof raw === 'object') {
-			const range = raw as RangeValue;
-			if (!isBlank(range.from)) {
-				filters.push(condition(key, MatchMode.GTE, range.from as FilterValue, { type }));
-			}
-			if (!isBlank(range.to)) {
-				filters.push(condition(key, MatchMode.LTE, range.to as FilterValue, { type }));
-			}
-			continue;
-		}
-
-		filters.push(condition(key, MatchMode.CONTAINS, String(raw), { type }));
-	}
+	const filters = Object.entries(record ?? {}).flatMap(([key, raw]) =>
+		conditionsForEntry(key, raw, overrides, type)
+	);
 
 	/* Conditions default to AND against the next one. Set it explicitly on all
 	   but the last so the payload is unambiguous to read and to log. */
@@ -160,7 +160,7 @@ export const describeFilter = (filter: Filter): string => {
 	return `${filter.leftHand.value} ${filter.matchMode}${operand}${chain}`;
 };
 
-/* Groups a run of conditions into one OR set — the nesting the evaluator reads
+/* Groups a run of conditions into one OR set - the nesting the evaluator reads
    as parenthesised. */
 export const orGroup = (...conditions: Filter[]): Filter[] =>
 	conditions.map((filter, index) =>

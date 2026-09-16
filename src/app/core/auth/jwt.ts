@@ -1,6 +1,6 @@
 import { Role, SessionUser, TokenPayload } from './auth.models';
 
-/* Our own base64url decode rather than a library — it is eight lines, and
+/* Our own base64url decode rather than a library - it is eight lines, and
    exercise 2.1 is explicit that you should know what is inside a token.
    The `%xx` round-trip is what makes it UTF-8 safe: `atob` yields bytes, and
    a Spanish name with an accent in it decodes to mojibake without this. */
@@ -11,7 +11,8 @@ export const base64UrlDecode = (input: string): string => {
 	const bytes = atob(normalised);
 	let encoded = '';
 	for (let index = 0; index < bytes.length; index++) {
-		encoded += `%${`00${bytes.charCodeAt(index).toString(16)}`.slice(-2)}`;
+		const hex = bytes.charCodeAt(index).toString(16).padStart(2, '0');
+		encoded += `%${hex}`;
 	}
 	return decodeURIComponent(encoded);
 };

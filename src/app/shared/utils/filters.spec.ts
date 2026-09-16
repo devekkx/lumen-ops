@@ -65,7 +65,7 @@ describe('buildFilterConditions', () => {
 			status: 'OPEN',
 			severity: ['HIGH', 'MEDIUM'],
 			street: 'mayor'
-		}) as Array<{ leftHand: { value: string }; matchMode: string; rightHand?: { value: unknown } }>;
+		}) as { leftHand: { value: string }; matchMode: string; rightHand?: { value: unknown } }[];
 
 		const byKey = Object.fromEntries(filters.map((filter) => [filter.leftHand.value, filter]));
 
@@ -85,7 +85,7 @@ describe('buildFilterConditions', () => {
 	it('splits a range into GTE and LTE, never a single BETWEEN', () => {
 		const filters = buildFilterConditions({
 			installedAt: { from: '2020-01-01', to: '2020-12-31' }
-		}) as Array<{ matchMode: string }>;
+		}) as { matchMode: string }[];
 
 		expect(filters.map((filter) => filter.matchMode)).toEqual([MatchMode.GTE, MatchMode.LTE]);
 	});
@@ -93,9 +93,9 @@ describe('buildFilterConditions', () => {
 	it('keeps a half-open range: only the filled end produces a condition', () => {
 		const filters = buildFilterConditions({
 			installedAt: { from: '2020-01-01', to: null }
-		}) as Array<{
+		}) as {
 			matchMode: string;
-		}>;
+		}[];
 
 		expect(filters).toHaveSize(1);
 		expect(filters[0].matchMode).toBe(MatchMode.GTE);
@@ -105,9 +105,9 @@ describe('buildFilterConditions', () => {
 		const filters = buildFilterConditions({
 			trap: IS_NULL_SENTINEL,
 			zoneId: IS_NOT_NULL_SENTINEL
-		}) as Array<{
+		}) as {
 			matchMode: string;
-		}>;
+		}[];
 
 		expect(filters.map((filter) => filter.matchMode).sort()).toEqual(
 			[MatchMode.IS_NOT_NULL, MatchMode.IS_NULL].sort()
@@ -131,15 +131,15 @@ describe('buildFilterConditions', () => {
 		const filters = buildFilterConditions(
 			{ code: 'LUM-0001' },
 			{ overrides: { code: MatchMode.EQUAL } }
-		) as Array<{ matchMode: string }>;
+		) as { matchMode: string }[];
 
 		expect(filters[0].matchMode).toBe(MatchMode.EQUAL);
 	});
 
 	it('chains every condition but the last with AND', () => {
-		const filters = buildFilterConditions({ status: 'OPEN', lampType: 'LED' }) as Array<{
+		const filters = buildFilterConditions({ status: 'OPEN', lampType: 'LED' }) as {
 			operator?: string;
-		}>;
+		}[];
 
 		expect(filters[0].operator).toBe('AND');
 		expect(filters.at(-1)?.operator).toBeUndefined();

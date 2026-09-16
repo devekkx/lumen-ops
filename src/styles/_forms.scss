@@ -1,7 +1,7 @@
 /* Form controls are Bootstrap's own .form-control/.form-select/.form-label
-   now (customized from the same tokens in _bootstrap-overrides.scss) —
+   now (customized from the same tokens in _bootstrap-overrides.scss) -
    nothing here still needs .lum-field. Focus thickens the border to 2px ink
-   rather than drawing a ring — that thickening is the focus indicator, so
+   rather than drawing a ring - that thickening is the focus indicator, so
    Bootstrap's own focus box-shadow is disabled ($input-focus-box-shadow:
    none in the overrides) and the global focus outline is suppressed here,
    and only here, same as it was for .lum-field__control before. */

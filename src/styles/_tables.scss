@@ -1,7 +1,7 @@
 /* The presentational table surface, ported from the canvas. Bootstrap's own
    .table (customized from the design tokens in _bootstrap-overrides.scss)
-   is the base now — cell colour, padding, borders and row hover come from
-   there — so only what Bootstrap has no equivalent for stays here: the card
+   is the base now - cell colour, padding, borders and row hover come from
+   there - so only what Bootstrap has no equivalent for stays here: the card
    shell with its 3px progress rail, the sticky uppercase header, the
    sortable-header buttons, the ellipsis truncation, the skeleton-loading
    rows, and the actions column. */
@@ -18,7 +18,7 @@
 		background: var(--color-surface-soft);
 	}
 
-	/* Indeterminate sweep — the table is loading but we cannot say how far. */
+	/* Indeterminate sweep - the table is loading but we cannot say how far. */
 	&__rail-fill {
 		width: 25%;
 		height: 3px;
@@ -40,7 +40,7 @@
 
 	/* The heading's own padding lives on __heading/__sort below, so the cell
 	   itself must not double it up. Specificity note: Bootstrap's own cell
-	   padding rule is `.table > :not(caption) > * > *` (0,1,1) — this compiles
+	   padding rule is `.table > :not(caption) > * > *` (0,1,1) - this compiles
 	   to the equally-specific `.lum-table th` (0,1,1) and wins on source order,
 	   since this file's @use comes after the Bootstrap import in styles.scss. */
 	th {
@@ -85,13 +85,13 @@
 
 	/* Row hover is Bootstrap's own .table-hover now (also on the <table> tag
 	   unconditionally, same as this rule used to apply to every table
-	   regardless of whether its rows are clickable) — only the pointer
+	   regardless of whether its rows are clickable) - only the pointer
 	   cursor for an actually-clickable row has no Bootstrap equivalent. */
 	&__row--clickable {
 		cursor: pointer;
 	}
 
-	/* The one real interactive element a selectable row offers — inherits the
+	/* The one real interactive element a selectable row offers - inherits the
 	   cell's text styling so it reads like a plain cell, but is a genuine
 	   <button> underneath so it is reachable and activatable by keyboard. */
 	&__row-open {
@@ -107,7 +107,7 @@
 		cursor: pointer;
 	}
 
-	/* Long cells ellipsize rather than wrapping, so row height stays uniform —
+	/* Long cells ellipsize rather than wrapping, so row height stays uniform -
 	   the cell's colour, font and padding are Bootstrap's own now. */
 	td {
 		max-width: 280px;
@@ -152,7 +152,7 @@ td.lum-table__skeleton-cell {
 }
 
 /* Per-page and the pager share one visual group on the right of the footer
-   row, per the design — not two separate groups spread across it. */
+   row, per the design - not two separate groups spread across it. */
 .lum-table__pager-group {
 	display: flex;
 	align-items: center;

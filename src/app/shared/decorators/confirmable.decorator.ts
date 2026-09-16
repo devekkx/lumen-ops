@@ -6,7 +6,7 @@ export interface ConfirmableOptions<A extends unknown[]> {
 	confirmKey?: string;
 	cancelKey?: string;
 	/* Builds the transloco interpolation params (e.g. { code: fault.code })
-	   from whatever the decorated method was called with — `messageKey` is a
+	   from whatever the decorated method was called with - `messageKey` is a
 	   fixed i18n key ('confirm.deleteFault'), so the {code} inside it has to
 	   come from the call site rather than from the decorator declaration. */
 	params?: (...args: A) => Record<string, unknown>;
@@ -16,7 +16,7 @@ export interface ConfirmableOptions<A extends unknown[]> {
  * at all if the user declines.
  *
  * A method decorator has no constructor and no field initializer, so it
- * cannot `inject(ModalService)` itself — it reaches the same instance every
+ * cannot `inject(ModalService)` itself - it reaches the same instance every
  * component gets via `ModalService.instance`, the one narrow exception to
  * "always use DI" documented on that getter. This is the trade-off called out
  * in the PR: a decorator that instead required every consuming class to

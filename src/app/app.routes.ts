@@ -4,7 +4,7 @@ import { authGuard, hasRole, hasRoleAndNot, someRoleGuard } from './core/auth/au
 import { dirtyFormGuard } from './shared/guards/dirty-form.guard';
 import { ShellComponent } from './layout/shell.component';
 
-/* Route segments are Spanish while the code is English — the real app mixes the
+/* Route segments are Spanish while the code is English - the real app mixes the
    two, and it is better to meet that here than to be surprised by it later. */
 export const routes: Routes = [
 	{
@@ -55,7 +55,7 @@ export const routes: Routes = [
 
 			{
 				path: 'panel',
-				/* preload: false — see SelectivePreloadingStrategy. ~572kB raw
+				/* preload: false - see SelectivePreloadingStrategy. ~572kB raw
 				   (ECharts) and ADMIN/COUNCIL-only; preloading it for every
 				   session would fetch it for CONTRACTOR/VIEWER users who can
 				   never open it. */
@@ -112,7 +112,7 @@ export const routes: Routes = [
 			},
 			{
 				path: 'mapa',
-				/* preload: false — see SelectivePreloadingStrategy. ~321kB raw
+				/* preload: false - see SelectivePreloadingStrategy. ~321kB raw
 				   (OpenLayers), the second-heaviest lazy chunk in the app;
 				   deferred until a session actually navigates here. */
 				data: { breadcrumb: 'nav.map', preload: false },

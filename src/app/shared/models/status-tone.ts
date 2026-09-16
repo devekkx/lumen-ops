@@ -1,5 +1,5 @@
 /* The domain vocabulary maps onto the seven tones defined by $status-variants
-   in src/styles/_variables.scss — it never introduces a colour of its own.
+   in src/styles/_variables.scss - it never introduces a colour of its own.
    Statuses, severities, lamp types and roles all resolve through this one map,
    which is why a severity reads the same colour in a pill, on the map and in a
    chart. */

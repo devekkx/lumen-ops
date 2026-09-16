@@ -6,7 +6,7 @@ const encode = (value: object) =>
 	btoa(unescape(encodeURIComponent(JSON.stringify(value))))
 		.replace(/\+/g, '-')
 		.replace(/\//g, '_')
-		.replace(/=+$/, '');
+		.replaceAll('=', '');
 
 const tokenFor = (payload: object) => `${encode({ alg: 'HS256' })}.${encode(payload)}.sig`;
 

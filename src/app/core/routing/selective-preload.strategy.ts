@@ -3,14 +3,14 @@ import { PreloadingStrategy, Route } from '@angular/router';
 import { Observable, of } from 'rxjs';
 
 /* PreloadAllModules (exercise 1.1) fetches every lazy chunk shortly after
- * bootstrap, regardless of the signed-in user's role — preloading does not
+ * bootstrap, regardless of the signed-in user's role - preloading does not
  * consult canActivate/canMatch. Measured against the real production build
  * (`ng build --configuration production --stats-json`, see
  * dist/lumen-ops/stats.json and the PR body for the exact numbers), two
  * routes are genuinely heavy and also role-restricted:
  *
- *   /panel (dashboard, ECharts)     ~572 kB raw / ~165 kB gzip — ADMIN/COUNCIL only
- *   /mapa  (map, OpenLayers)        ~321 kB raw /  ~81 kB gzip — open to everyone
+ *   /panel (dashboard, ECharts)     ~572 kB raw / ~165 kB gzip - ADMIN/COUNCIL only
+ *   /mapa  (map, OpenLayers)        ~321 kB raw /  ~81 kB gzip - open to everyone
  *
  * Every other lazy route is a few kB to a few tens of kB. A CONTRACTOR or
  * VIEWER session can never legally reach /panel (someRoleGuard blocks

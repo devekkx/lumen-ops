@@ -40,7 +40,7 @@ interface RangeOption {
 	hours: number;
 }
 
-/* '1' means "24 hours", not "1 day" — it is the mock's hourly-bucket range
+/* '1' means "24 hours", not "1 day" - it is the mock's hourly-bucket range
    (docs/mock-api.md: a span of 48h or less switches the aggregation from
    daily to hourly buckets), so it is kept a whole hour short of 48h here too. */
 const RANGES: readonly RangeOption[] = [
@@ -120,7 +120,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 		this.severityChart?.resize();
 	};
 
-	/* A window resize is the only thing the old listener alone caught — but
+	/* A window resize is the only thing the old listener alone caught - but
 	   collapsing the sidebar changes this component's own width without the
 	   browser window changing size at all, so charts sat at their stale
 	   width until the user happened to resize the actual window. Observing
@@ -132,7 +132,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 		/* Re-renders on new data *and* on a language change: the axis labels,
 		   legend names and number formatting are all baked into the echarts
 		   option objects imperatively, so nothing short of redrawing picks up a
-		   locale switch — Transloco's own change detection never touches
+		   locale switch - Transloco's own change detection never touches
 		   canvas content it does not own. */
 		effect(() => {
 			const data = this.snapshot();
