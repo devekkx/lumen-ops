@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
@@ -9,7 +8,7 @@ import {
 	PaginatedTableComponent,
 	TableColumn
 } from '@shared/components/paginated-table/paginated-table.component';
-import { PaginatedTableBase } from '@shared/components/paginated-table/paginated-table.base';
+import { PaginatedTableBaseV2 } from '@shared/v2/paginated-table.base';
 import { FilterRecord } from '@shared/models/filter';
 import {
 	FAULT_SEARCH_KEYS,
@@ -19,13 +18,15 @@ import {
 	SEVERITIES
 } from './fault.service';
 
+/* Migrated to the v2 (signal + resource()) base — see docs/table-v1-vs-v2.md. Luminaires stays on v1
+   deliberately, so both are live side by side as the comparison. */
 @Component({
 	selector: 'lumen-faults-page',
 	standalone: true,
-	imports: [AsyncPipe, TranslocoDirective, RouterLink, PaginatedTableComponent],
+	imports: [TranslocoDirective, RouterLink, PaginatedTableComponent],
 	templateUrl: './faults-page.component.html'
 })
-export class FaultsPageComponent extends PaginatedTableBase<Fault> {
+export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 	protected readonly collection = inject(FaultService);
 	private readonly auth = inject(AuthService);
 	private readonly toast = inject(ToastService);
