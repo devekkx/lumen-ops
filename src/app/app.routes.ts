@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { ROLE_GROUPS } from './core/auth/auth.models';
 import { authGuard, hasRole, hasRoleAndNot, someRoleGuard } from './core/auth/auth.guards';
+import { dirtyFormGuard } from './shared/guards/dirty-form.guard';
 import { ShellComponent } from './layout/shell.component';
 
 /* Route segments are Spanish while the code is English — the real app mixes the
@@ -71,7 +72,23 @@ export const routes: Routes = [
 				path: 'averias',
 				data: { breadcrumb: 'nav.faults' },
 				loadComponent: () =>
-					import('./features/placeholder-page.component').then((m) => m.PlaceholderPageComponent)
+					import('./features/faults/faults-page.component').then((m) => m.FaultsPageComponent)
+			},
+			{
+				path: 'averias/nueva',
+				data: { breadcrumb: 'fault.new', roles: ROLE_GROUPS.COUNCIL },
+				canActivate: [someRoleGuard],
+				canDeactivate: [dirtyFormGuard],
+				loadComponent: () =>
+					import('./features/faults/fault-form.component').then((m) => m.FaultFormComponent)
+			},
+			{
+				path: 'averias/:id/editar',
+				data: { breadcrumb: 'fault.edit', roles: ROLE_GROUPS.COUNCIL },
+				canActivate: [someRoleGuard],
+				canDeactivate: [dirtyFormGuard],
+				loadComponent: () =>
+					import('./features/faults/fault-form.component').then((m) => m.FaultFormComponent)
 			},
 			{
 				path: 'ordenes-trabajo',
