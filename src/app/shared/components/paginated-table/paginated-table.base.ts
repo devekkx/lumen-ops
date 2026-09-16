@@ -31,6 +31,14 @@ export abstract class PaginatedTableBase<T> {
 
 	private readonly params: BehaviorSubject<PageRequest>;
 	private readonly filterRecord = new BehaviorSubject<FilterRecord>({});
+	/* Bumped only by refresh(). distinctUntilChanged below compares the whole
+	   tuple by JSON.stringify, so a refresh that changes nothing else —
+	   { ...params.value } is a new object with identical contents — would
+	   otherwise stringify equal to the previous emission and be silently
+	   dropped before switchMap ever re-subscribes. This is the one field in
+	   the tuple whose only job is to make "fetch again with the same params"
+	   distinguishable from "nothing changed". */
+	private readonly refreshTick = new BehaviorSubject(0);
 
 	readonly loading = new BehaviorSubject(false);
 	readonly error = new BehaviorSubject<string | null>(null);
@@ -39,7 +47,7 @@ export abstract class PaginatedTableBase<T> {
 	protected constructor(searchKeys: readonly string[], defaultSort: Ordination) {
 		this.params = new BehaviorSubject<PageRequest>(createPageRequest(searchKeys, defaultSort));
 
-		this.page$ = combineLatest([this.params, this.filterRecord]).pipe(
+		this.page$ = combineLatest([this.params, this.filterRecord, this.refreshTick]).pipe(
 			debounceTime(250),
 			distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
 			tap(() => {
@@ -106,7 +114,7 @@ export abstract class PaginatedTableBase<T> {
 	}
 
 	refresh(): void {
-		this.params.next({ ...this.params.value });
+		this.refreshTick.next(this.refreshTick.value + 1);
 	}
 
 	private update(change: Partial<PageRequest>): void {
