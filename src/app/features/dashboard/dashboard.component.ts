@@ -72,6 +72,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 	private readonly dashboard = inject(DashboardService);
 	private readonly transloco = inject(TranslocoService);
 	private readonly language = inject(LanguageService);
+	private readonly hostRef = inject(ElementRef<HTMLElement>);
 
 	@ViewChild('energy') private readonly energyRef!: ElementRef<HTMLElement>;
 	@ViewChild('lamp') private readonly lampRef!: ElementRef<HTMLElement>;
@@ -119,6 +120,14 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 		this.severityChart?.resize();
 	};
 
+	/* A window resize is the only thing the old listener alone caught — but
+	   collapsing the sidebar changes this component's own width without the
+	   browser window changing size at all, so charts sat at their stale
+	   width until the user happened to resize the actual window. Observing
+	   the host element directly catches any reason its box changes,
+	   sidebar toggle included. */
+	private resizeObserver?: ResizeObserver;
+
 	constructor() {
 		/* Re-renders on new data *and* on a language change: the axis labels,
 		   legend names and number formatting are all baked into the echarts
@@ -134,11 +143,14 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
 	ngAfterViewInit(): void {
 		window.addEventListener('resize', this.onResize);
+		this.resizeObserver = new ResizeObserver(() => this.onResize());
+		this.resizeObserver.observe(this.hostRef.nativeElement);
 		this.load();
 	}
 
 	ngOnDestroy(): void {
 		window.removeEventListener('resize', this.onResize);
+		this.resizeObserver?.disconnect();
 		this.energyChart?.dispose();
 		this.lampChart?.dispose();
 		this.severityChart?.dispose();
