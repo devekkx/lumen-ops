@@ -18,10 +18,10 @@
 	</div>
 
 	<div class="card card-body mb-3">
-		<label class="lum-field mb-3">
-			<span class="lum-field__label">{{ t('table.search') }}</span>
+		<label class="d-block mb-3">
+			<span class="form-label">{{ t('table.search') }}</span>
 			<input
-				class="lum-field__control lum-field__control--sm"
+				class="form-control form-control-sm"
 				type="search"
 				[placeholder]="t('table.searchFaults')"
 				(input)="setSearch($any($event.target).value)"
@@ -29,7 +29,7 @@
 		</label>
 
 		<div class="mb-3">
-			<span class="lum-field__label d-block mb-2">{{ t('fault.severity') }}</span>
+			<span class="form-label d-block mb-2">{{ t('fault.severity') }}</span>
 			<div class="d-flex flex-wrap gap-2">
 				@for (severity of severities; track severity) {
 					<button
@@ -46,7 +46,7 @@
 		</div>
 
 		<div>
-			<span class="lum-field__label d-block mb-2">{{ t('fault.status') }}</span>
+			<span class="form-label d-block mb-2">{{ t('fault.status') }}</span>
 			<div class="d-flex flex-wrap gap-2">
 				@for (status of statuses; track status) {
 					<button

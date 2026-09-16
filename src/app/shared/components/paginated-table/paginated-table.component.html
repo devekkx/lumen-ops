@@ -146,7 +146,7 @@
 		<label class="lum-table__per-page">
 			{{ t('table.perPage') }}
 			<select
-				class="lum-field__control lum-field__control--sm"
+				class="form-select form-select-sm"
 				[value]="page?.perPage ?? 20"
 				(change)="perPageChange.emit(+$any($event.target).value)"
 			>

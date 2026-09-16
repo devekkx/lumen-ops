@@ -6,52 +6,71 @@
 		<p class="text-secondary">{{ t('common.loading') }}</p>
 	} @else {
 		<form class="card card-body" [formGroup]="form" (ngSubmit)="save()">
-			<label class="lum-field mb-3" [class.lum-field--invalid]="fieldError('luminaireId')">
-				<span class="lum-field__label">{{ t('fault.picker') }}</span>
+			<label class="d-block mb-3">
+				<span class="form-label">{{ t('fault.picker') }}</span>
 				<lumen-luminaire-picker formControlName="luminaireId" />
 				@if (fieldError('luminaireId'); as err) {
-					<span class="lum-field__error">{{ t(err.key, err.params) }}</span>
+					<!-- The picker owns its own <input>, so there is no control here for
+					     Bootstrap's .is-invalid ~ .invalid-feedback sibling rule to key
+					     off; force it visible instead of relying on that. -->
+					<span class="invalid-feedback d-block">{{ t(err.key, err.params) }}</span>
 				}
 			</label>
 
-			<label class="lum-field mb-3" [class.lum-field--invalid]="fieldError('severity')">
-				<span class="lum-field__label">{{ t('fault.severity') }}</span>
-				<select class="lum-field__control" formControlName="severity">
+			<label class="d-block mb-3">
+				<span class="form-label">{{ t('fault.severity') }}</span>
+				<select
+					class="form-select"
+					[class.is-invalid]="fieldError('severity')"
+					formControlName="severity"
+				>
 					@for (severity of severities; track severity) {
 						<option [value]="severity">{{ t('severity.' + severity) }}</option>
 					}
 				</select>
 				@if (fieldError('severity'); as err) {
-					<span class="lum-field__error">{{ t(err.key, err.params) }}</span>
+					<span class="invalid-feedback">{{ t(err.key, err.params) }}</span>
 				}
 			</label>
 
-			<label class="lum-field mb-3" [class.lum-field--invalid]="fieldError('description')">
-				<span class="lum-field__label">{{ t('fault.description') }}</span>
+			<label class="d-block mb-3">
+				<span class="form-label">{{ t('fault.description') }}</span>
 				<textarea
-					class="lum-field__control lum-field__control--textarea"
+					class="form-control"
+					[class.is-invalid]="fieldError('description')"
+					rows="3"
 					formControlName="description"
 					[placeholder]="t('fault.descriptionPlaceholder')"
 				></textarea>
 				@if (fieldError('description'); as err) {
-					<span class="lum-field__error">{{ t(err.key, err.params) }}</span>
+					<span class="invalid-feedback">{{ t(err.key, err.params) }}</span>
 				}
 			</label>
 
 			<div class="d-flex gap-3 mb-3">
-				<label class="lum-field flex-fill" [class.lum-field--invalid]="fieldError('reportedAt')">
-					<span class="lum-field__label">{{ t('fault.reportedAt') }}</span>
-					<input class="lum-field__control" type="date" formControlName="reportedAt" />
+				<label class="d-block flex-fill">
+					<span class="form-label">{{ t('fault.reportedAt') }}</span>
+					<input
+						class="form-control"
+						[class.is-invalid]="fieldError('reportedAt')"
+						type="date"
+						formControlName="reportedAt"
+					/>
 					@if (fieldError('reportedAt'); as err) {
-						<span class="lum-field__error">{{ t(err.key, err.params) }}</span>
+						<span class="invalid-feedback">{{ t(err.key, err.params) }}</span>
 					}
 				</label>
 
-				<label class="lum-field flex-fill" [class.lum-field--invalid]="fieldError('dueAt')">
-					<span class="lum-field__label">{{ t('fault.dueAt') }}</span>
-					<input class="lum-field__control" type="date" formControlName="dueAt" />
+				<label class="d-block flex-fill">
+					<span class="form-label">{{ t('fault.dueAt') }}</span>
+					<input
+						class="form-control"
+						[class.is-invalid]="fieldError('dueAt')"
+						type="date"
+						formControlName="dueAt"
+					/>
 					@if (fieldError('dueAt'); as err) {
-						<span class="lum-field__error">{{ t(err.key, err.params) }}</span>
+						<span class="invalid-feedback">{{ t(err.key, err.params) }}</span>
 					}
 				</label>
 			</div>

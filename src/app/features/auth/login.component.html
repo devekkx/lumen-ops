@@ -8,10 +8,10 @@
 
 		<div class="login__grid">
 			<form class="login__form" (ngSubmit)="submit()">
-				<label class="lum-field" for="login-email">
-					<span class="lum-field__label">{{ t('auth.user') }}</span>
+				<label class="d-block" for="login-email">
+					<span class="form-label">{{ t('auth.user') }}</span>
 					<input
-						class="lum-field__control"
+						class="form-control"
 						id="login-email"
 						type="email"
 						name="email"
@@ -22,10 +22,10 @@
 					/>
 				</label>
 
-				<label class="lum-field" for="login-password">
-					<span class="lum-field__label">{{ t('auth.password') }}</span>
+				<label class="d-block" for="login-password">
+					<span class="form-label">{{ t('auth.password') }}</span>
 					<input
-						class="lum-field__control"
+						class="form-control"
 						id="login-password"
 						type="password"
 						name="password"
