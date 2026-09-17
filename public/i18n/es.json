@@ -20,19 +20,20 @@
 	"auth": {
 		"title": "Inicia sesión en Lumen Ops",
 		"subtitle": "Contrato de alumbrado público del Ayuntamiento de Madrid",
-		"user": "Usuario",
+		"user": "Correo electrónico",
 		"userPlaceholder": "nombre@lumen.madrid",
 		"password": "Contraseña",
 		"passwordPlaceholder": "Tu contraseña",
 		"signIn": "Iniciar sesión",
 		"signingIn": "Iniciando sesión…",
-		"demoUsers": "Cuatro usuarios predefinidos, cada uno con una página de inicio diferente",
-		"useUser": "Usar este usuario",
 		"invalid": "Usuario o contraseña incorrectos",
 		"expired": "Tu sesión ha expirado. Inicia sesión de nuevo.",
 		"boot": "Resolviendo la sesión antes de la primera ruta…",
-		"expiredSwitch": "Inicia sesión con un token ya expirado (para probar el bootstrap)",
-		"bootFailed": "No se pudo resolver la sesión"
+		"bootFailed": "No se pudo resolver la sesión",
+		"highlightFaults": "Sigue cada avería notificada desde el aviso hasta la reparación",
+		"highlightOrders": "Asigna cuadrillas y sigue las órdenes de trabajo hasta su cierre",
+		"highlightMap": "Consulta el estado de cada luminaria en el mapa en directo",
+		"togglePassword": "Mostrar u ocultar la contraseña"
 	},
 	"shell": {
 		"collapse": "Contraer la barra lateral",

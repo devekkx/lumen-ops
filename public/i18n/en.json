@@ -20,19 +20,20 @@
 	"auth": {
 		"title": "Sign in to Lumen Ops",
 		"subtitle": "Madrid city council street-lighting contract",
-		"user": "User",
+		"user": "Email",
 		"userPlaceholder": "name@lumen.madrid",
 		"password": "Password",
 		"passwordPlaceholder": "Your password",
 		"signIn": "Sign in",
 		"signingIn": "Signing in…",
-		"demoUsers": "Four seeded users, each with a different home page",
-		"useUser": "Use this user",
 		"invalid": "Wrong user or password",
 		"expired": "Your session expired. Sign in again.",
 		"boot": "Resolving the session before the first route…",
-		"expiredSwitch": "Sign in with an already-expired token (to test the bootstrap)",
-		"bootFailed": "Session could not be resolved"
+		"bootFailed": "Session could not be resolved",
+		"highlightFaults": "Track every reported fault from citizen report to repair",
+		"highlightOrders": "Assign crews and follow work orders through to completion",
+		"highlightMap": "See every luminaire's status on the live city map",
+		"togglePassword": "Show or hide password"
 	},
 	"shell": {
 		"collapse": "Collapse the sidebar",

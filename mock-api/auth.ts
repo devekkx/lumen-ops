@@ -17,18 +17,43 @@ export interface SeededUser {
 }
 
 export const USERS: readonly SeededUser[] = [
-	{ id: 'u-admin', email: 'admin@lumen.madrid', password: 'lumen', name: 'Elena Rivas', org: 'Dirección General de Alumbrado', roles: ['ADMIN'] },
-	{ id: 'u-council', email: 'ayto@lumen.madrid', password: 'lumen', name: 'Marta Gil Soler', org: 'Área de Obras y Equipamientos', roles: ['COUNCIL'] },
-	{ id: 'u-contractor', email: 'contrata@lumen.madrid', password: 'lumen', name: 'Diego Ferrán', org: 'Iluminia Servicios', roles: ['CONTRACTOR'] },
-	{ id: 'u-viewer', email: 'consulta@lumen.madrid', password: 'lumen', name: 'Paula Ortega', org: 'Intervención General', roles: ['VIEWER'] }
+	{
+		id: 'u-admin',
+		email: 'admin@lumen.madrid',
+		password: 'lumen',
+		name: 'Elena Rivas',
+		org: 'Dirección General de Alumbrado',
+		roles: ['ADMIN']
+	},
+	{
+		id: 'u-council',
+		email: 'ayto@lumen.madrid',
+		password: 'lumen',
+		name: 'Marta Gil Soler',
+		org: 'Área de Obras y Equipamientos',
+		roles: ['COUNCIL']
+	},
+	{
+		id: 'u-contractor',
+		email: 'contrata@lumen.madrid',
+		password: 'lumen',
+		name: 'Diego Ferrán',
+		org: 'Iluminia Servicios',
+		roles: ['CONTRACTOR']
+	},
+	{
+		id: 'u-viewer',
+		email: 'consulta@lumen.madrid',
+		password: 'lumen',
+		name: 'Paula Ortega',
+		org: 'Intervención General',
+		roles: ['VIEWER']
+	}
 ];
 
 const base64Url = (text: string) => Buffer.from(text, 'utf8').toString('base64url');
 
-/* A negative TTL is not an accident - the login screen offers an
-   already-expired token on purpose, so the app-initializer failure path in
-   exercise 2.1 can be triggered from the UI rather than by editing storage. */
-export const signToken = (user: SeededUser, ttlMinutes = 60): string => {
+export const signToken = (user: SeededUser): string => {
 	const issuedAt = Math.floor(Date.now() / 1000);
 	const header = base64Url(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
 	const payload = base64Url(
@@ -39,7 +64,7 @@ export const signToken = (user: SeededUser, ttlMinutes = 60): string => {
 			org: user.org,
 			roles: user.roles,
 			iat: issuedAt,
-			exp: issuedAt + ttlMinutes * 60
+			exp: issuedAt + 60 * 60
 		})
 	);
 	return `${header}.${payload}.mock-signature-not-verified`;

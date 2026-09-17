@@ -1,19 +1,9 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
-import { Role } from '@core/auth/auth.models';
 import { AuthService } from '@core/auth/auth.service';
-import { toneFor } from '@shared/models/status-tone';
-
-interface SeededUser {
-	id: string;
-	email: string;
-	name: string;
-	org: string;
-	roles: Role[];
-}
+import { LOCALES, LanguageService, Locale } from '@core/i18n/language.service';
 
 @Component({
 	selector: 'lumen-login',
@@ -25,18 +15,17 @@ interface SeededUser {
 export class LoginComponent {
 	private readonly auth = inject(AuthService);
 	private readonly router = inject(Router);
-	private readonly http = inject(HttpClient);
 	private readonly transloco = inject(TranslocoService);
+	private readonly language = inject(LanguageService);
 
-	readonly email = signal('ayto@lumen.madrid');
-	readonly password = signal('lumen');
-	readonly expired = signal(false);
+	readonly locales = LOCALES;
+	readonly activeLocale = this.language.current;
+
+	readonly email = signal('');
+	readonly password = signal('');
+	readonly showPassword = signal(false);
 	readonly busy = signal(false);
 	readonly error = signal<string | null>(null);
-
-	/* The four seeded users come from the API rather than being hardcoded here,
-	   so the list cannot drift from what the mock will actually accept. */
-	readonly users = signal<SeededUser[]>([]);
 
 	/* A session that failed to resolve at bootstrap lands here. Showing why -
 	   expired rather than just "sign in" - is the difference between the user
@@ -47,28 +36,11 @@ export class LoginComponent {
 		return failure === 'EXPIRED' ? 'auth.expired' : 'auth.bootFailed';
 	});
 
-	constructor() {
-		this.http
-			.get<SeededUser[]>('/api/auth/users')
-			.subscribe({ next: (users) => this.users.set(users), error: () => this.users.set([]) });
-	}
-
-	tone(roles: Role[]): string {
-		return toneFor(roles[0]);
-	}
-
-	initials(name: string): string {
-		return name
-			.split(' ')
-			.map((part) => part[0])
-			.slice(0, 2)
-			.join('');
-	}
-
-	use(user: SeededUser): void {
-		this.email.set(user.email);
-		this.password.set('lumen');
-		void this.submit();
+	/* Injecting LanguageService here - not just in the shell - is what makes
+	   the active language (and the switcher below) apply before a session
+	   exists at all, rather than only once someone is signed in. */
+	use(locale: Locale): void {
+		this.language.use(locale);
 	}
 
 	async submit(): Promise<void> {
@@ -80,19 +52,13 @@ export class LoginComponent {
 		try {
 			await this.auth.login({
 				email: this.email(),
-				password: this.password(),
-				expiredToken: this.expired()
+				password: this.password()
 			});
 			/* Land on `/` and let the four canMatch redirects decide where that
 			   is - the login screen does not need to know the role map. */
 			await this.router.navigateByUrl('/');
-		} catch (error) {
-			/* An expired token is a successful request whose payload we then
-			   reject, so it surfaces here rather than as an HTTP failure. */
-			const expired = this.expired() || (error as { status?: number })?.status !== 401;
-			this.error.set(
-				this.transloco.translate(expired && this.expired() ? 'auth.expired' : 'auth.invalid')
-			);
+		} catch {
+			this.error.set(this.transloco.translate('auth.invalid'));
 		} finally {
 			this.busy.set(false);
 		}
