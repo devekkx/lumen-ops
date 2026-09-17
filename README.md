@@ -41,7 +41,7 @@ docker compose up --build
 This builds the production Angular bundle and serves it via nginx on
 `http://localhost:8080`, alongside a second container running the mock API.
 nginx proxies `/api` to the mock API container - see `Dockerfile` and
-`deploy/nginx.conf` for exactly how, and why that's a different mechanism
+`nginx.conf` for exactly how, and why that's a different mechanism
 than the dev-server proxy (`src/proxy.conf.json`) uses.
 
 ## Layout
