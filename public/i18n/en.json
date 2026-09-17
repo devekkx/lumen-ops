@@ -20,7 +20,7 @@
 	"auth": {
 		"title": "Sign in to Lumen Ops",
 		"subtitle": "Madrid city council street-lighting contract",
-		"user": "User",
+		"user": "Email",
 		"userPlaceholder": "name@lumen.madrid",
 		"password": "Password",
 		"passwordPlaceholder": "Your password",

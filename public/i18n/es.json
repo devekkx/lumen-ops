@@ -20,7 +20,7 @@
 	"auth": {
 		"title": "Inicia sesión en Lumen Ops",
 		"subtitle": "Contrato de alumbrado público del Ayuntamiento de Madrid",
-		"user": "Usuario",
+		"user": "Correo electrónico",
 		"userPlaceholder": "nombre@lumen.madrid",
 		"password": "Contraseña",
 		"passwordPlaceholder": "Tu contraseña",
