@@ -14,6 +14,7 @@
 		"orders": "Órdenes de trabajo",
 		"crews": "Cuadrillas",
 		"map": "Mapa",
+		"diagnostics": "Diagnóstico",
 		"docs": "Documentación"
 	},
 	"auth": {
@@ -62,6 +63,7 @@
 		"error": "No se pudo cargar la tabla",
 		"retry": "Reintentar",
 		"refresh": "Actualizar",
+		"exportCsv": "Exportar CSV",
 		"actions": "Acciones",
 		"dsl": "Inspector de DSL de filtros",
 		"dslEmpty": "Sin condiciones: los filtros vacíos no generan condición alguna.",
@@ -160,7 +162,11 @@
 		"zone": "Distrito de origen",
 		"shift": "Turno",
 		"load": "Carga",
-		"openOrders": "{n} órdenes abiertas"
+		"openOrders": "{n} órdenes abiertas",
+		"edit": "Editar cuadrilla",
+		"editTitle": "Editar cuadrilla {code}",
+		"save": "Guardar",
+		"updated": "Cuadrilla {code} actualizada"
 	},
 	"map": {
 		"title": "Mapa",
@@ -205,7 +211,11 @@
 		"trap500": "Llamar al id que siempre devuelve 500",
 		"slow": "Llamar al endpoint de 4 s",
 		"retry": "Reintento acotado: solo GET",
-		"retryNote": "Un POST reintentado crearía un reporte de avería duplicado, así que el reintento es estructuralmente imposible fuera de GET."
+		"retryNote": "Un POST reintentado crearía un reporte de avería duplicado, así que el reintento es estructuralmente imposible fuera de GET.",
+		"reset": "Restablecer datos simulados",
+		"resetHint": "Restaura las luminarias, averías, órdenes de trabajo y cuadrillas a su estado inicial - deshace todo lo creado, validado, asignado o editado durante esta sesión.",
+		"resetDone": "Datos simulados restablecidos a su estado inicial",
+		"slowDone": "El endpoint lento respondió tras {ms} ms"
 	},
 	"docs": {
 		"title": "Documentación",
@@ -230,7 +240,8 @@
 		"deleteFault": "La avería {code} será eliminada. Esto no se puede deshacer.",
 		"validateFault": "La avería {code} será validada y se creará su orden de trabajo.",
 		"closeFault": "La avería {code} será cerrada y su orden se completará.",
-		"completeOrder": "La orden {code} se marcará como completada. Su avería se cerrará con ella."
+		"completeOrder": "La orden {code} se marcará como completada. Su avería se cerrará con ella.",
+		"resetDiagnostics": "Todos los datos sembrados se restaurarán a su estado inicial. Se perderá todo lo creado, validado, asignado o editado en esta sesión."
 	},
 	"error": {
 		"401": "Tu sesión no es válida. Inicia sesión de nuevo.",

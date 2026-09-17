@@ -111,6 +111,15 @@ export const routes: Routes = [
 					import('./features/crews/crews-page.component').then((m) => m.CrewsPageComponent)
 			},
 			{
+				path: 'diagnosticos',
+				data: { breadcrumb: 'nav.diagnostics', roles: ROLE_GROUPS.ADMIN },
+				canActivate: [someRoleGuard],
+				loadComponent: () =>
+					import('./features/diagnostics/diagnostics-page.component').then(
+						(m) => m.DiagnosticsPageComponent
+					)
+			},
+			{
 				path: 'mapa',
 				/* preload: false - see SelectivePreloadingStrategy. ~321kB raw
 				   (OpenLayers), the second-heaviest lazy chunk in the app;

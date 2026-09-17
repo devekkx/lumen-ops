@@ -1,0 +1,46 @@
+<section *transloco="let t">
+	<div class="mb-4">
+		<h1>{{ t('diag.title') }}</h1>
+		<p class="text-secondary mb-0">{{ t('diag.body') }}</p>
+	</div>
+
+	@if (traps(); as loadedTraps) {
+		<div class="card card-body mb-3 d-flex flex-column gap-3">
+			<div>
+				<button
+					type="button"
+					class="btn btn-outline-secondary"
+					[disabled]="callingTrap()"
+					(click)="callTrap()"
+				>
+					{{ t('diag.trap500') }}
+				</button>
+				<p class="text-secondary small mb-0 mt-1">{{ loadedTraps.always500LuminaireId }}</p>
+			</div>
+
+			<div>
+				<button
+					type="button"
+					class="btn btn-outline-secondary"
+					[disabled]="callingSlow()"
+					(click)="callSlow()"
+				>
+					{{ t('diag.slow') }}
+				</button>
+			</div>
+		</div>
+	}
+
+	<div class="card card-body mb-3">
+		<p class="fw-semibold mb-1">{{ t('diag.retry') }}</p>
+		<p class="text-secondary small mb-0">{{ t('diag.retryNote') }}</p>
+	</div>
+
+	<div class="card card-body">
+		<p class="fw-semibold mb-2">{{ t('diag.reset') }}</p>
+		<p class="text-secondary small mb-3">{{ t('diag.resetHint') }}</p>
+		<button type="button" class="btn btn-outline-danger" (click)="reset()">
+			{{ t('diag.reset') }}
+		</button>
+	</div>
+</section>

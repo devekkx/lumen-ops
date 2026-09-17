@@ -88,7 +88,12 @@ export const abilitiesFor = (user: SessionUser | null): Abilities => {
 		editCrew: admin,
 		exportData: council || contractor,
 		seeDiagnostics: admin,
-		seeCosts: council || admin
+		/* Not council-or-admin alone: the only screen that actually shows a
+		   cost today (work-orders) is CONTRACTOR/ADMIN-only, so excluding
+		   contractor left this ability controlling nothing anyone could ever
+		   see - the audience that reaches the page is the audience the
+		   ability names. */
+		seeCosts: council || contractor || admin
 	};
 };
 

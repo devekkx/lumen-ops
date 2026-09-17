@@ -11,6 +11,7 @@ import {
 } from '@shared/components/paginated-table/paginated-table.component';
 import { PaginatedTableBaseV2 } from '@shared/v2/paginated-table.base';
 import { FilterRecord } from '@shared/models/filter';
+import { downloadCsv, toCsv } from '@shared/utils/csv';
 import {
 	FAULT_SEARCH_KEYS,
 	FAULT_STATUSES,
@@ -141,6 +142,20 @@ export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 			this.toast.show(this.transloco.translate('fault.deleted', { code: fault.code }), 'critical');
 			this.refresh();
 		});
+	}
+
+	/* Exports the page currently on screen, not the whole collection - see
+	   shared/utils/csv.ts for why. Column headers come from the same
+	   TableColumn config the table itself renders, translated at export
+	   time, so a CSV column always matches the header the person exporting
+	   was actually looking at. */
+	exportCsv(): void {
+		const columns = this.columns.map((column) => ({
+			key: column.key,
+			header: this.transloco.translate(column.label)
+		}));
+		const rows = this.page().data;
+		downloadCsv(`averias-${new Date().toISOString().slice(0, 10)}.csv`, toCsv(columns, rows));
 	}
 
 	private applyFilters(): void {

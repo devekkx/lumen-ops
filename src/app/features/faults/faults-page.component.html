@@ -8,6 +8,11 @@
 			<button type="button" class="btn btn-outline-secondary" (click)="refresh()">
 				{{ t('table.refresh') }}
 			</button>
+			@if (abilities().exportData) {
+				<button type="button" class="btn btn-outline-secondary" data-action="export" (click)="exportCsv()">
+					{{ t('table.exportCsv') }}
+				</button>
+			}
 			@if (abilities().createFault) {
 				<a class="btn btn-primary" data-action="create" routerLink="/averias/nueva">
 					{{ t('fault.new') }}

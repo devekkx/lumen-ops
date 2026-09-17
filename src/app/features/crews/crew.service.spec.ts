@@ -43,4 +43,19 @@ describe('CrewService', () => {
 
 		expect(result).toEqual([{ id: 'crew-01', code: 'CU-01' }]);
 	});
+
+	it('update() PATCHes the edited fields to /api/crews/:id', () => {
+		const patch = {
+			name: 'Cuadrilla Centro Norte',
+			contractor: 'Iluminia Servicios',
+			members: 4,
+			shift: 'NIGHT' as const
+		};
+		service.update('crew-01', patch).subscribe();
+
+		const testRequest = http.expectOne('/api/crews/crew-01');
+		expect(testRequest.request.method).toBe('PATCH');
+		expect(testRequest.request.body).toEqual(patch);
+		testRequest.flush({ id: 'crew-01', code: 'CU-01', ...patch, zoneId: 'Z01', zone: 'Centro' });
+	});
 });

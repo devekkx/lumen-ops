@@ -10,6 +10,10 @@ export type Shift = 'DAY' | 'NIGHT';
 
 export const SHIFTS: readonly Shift[] = ['DAY', 'NIGHT'];
 
+/* Matches mock-api/seed.ts's buildCrews() exactly - the two contractors this
+   council contract is actually split between, not an open text field. */
+export const CONTRACTORS: readonly string[] = ['Iluminia Servicios', 'ElectroMadrid UTE'];
+
 export interface Crew {
 	id: string;
 	code: string;
@@ -20,6 +24,8 @@ export interface Crew {
 	zone: string;
 	shift: Shift;
 }
+
+export type CrewPatch = Pick<Crew, 'name' | 'contractor' | 'members' | 'shift'>;
 
 export const CREW_SEARCH_KEYS = ['code', 'name', 'contractor', 'zone'] as const;
 
@@ -41,5 +47,12 @@ export class CrewService implements GenericCollectionService<Crew> {
 	   of them. */
 	list(): Observable<Crew[]> {
 		return this.api.get<Crew[]>('/api/crews');
+	}
+
+	/* Crews are edited in place, never created or deleted from this screen -
+	   the roster is the contractors' real headcount for this contract, not a
+	   collection an ADMIN session grows or shrinks. */
+	update(id: string, patch: CrewPatch): Observable<Crew> {
+		return this.api.patch<Crew>(`/api/crews/${id}`, patch);
 	}
 }

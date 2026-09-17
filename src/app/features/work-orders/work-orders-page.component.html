@@ -4,9 +4,16 @@
 			<h1>{{ t('order.title') }}</h1>
 			<p class="text-secondary mb-0">{{ t('order.subtitle') }}</p>
 		</div>
-		<button type="button" class="btn btn-outline-secondary" (click)="refresh()">
-			{{ t('table.refresh') }}
-		</button>
+		<div class="d-flex gap-2">
+			<button type="button" class="btn btn-outline-secondary" (click)="refresh()">
+				{{ t('table.refresh') }}
+			</button>
+			@if (abilities().exportData) {
+				<button type="button" class="btn btn-outline-secondary" data-action="export" (click)="exportCsv()">
+					{{ t('table.exportCsv') }}
+				</button>
+			}
+		</div>
 	</div>
 
 	<div class="card card-body mb-3">
@@ -40,7 +47,7 @@
 
 	<lumen-table
 		[caption]="'order.title'"
-		[columns]="columns"
+		[columns]="columns()"
 		[pillColumns]="pillColumns"
 		[dateColumns]="dateColumns"
 		[page]="displayPage$ | async"
