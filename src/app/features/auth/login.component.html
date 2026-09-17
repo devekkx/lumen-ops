@@ -1,12 +1,26 @@
 <div class="login" *transloco="let t">
 	<div class="login__inner">
+		<div class="login__langs" role="group" [attr.aria-label]="t('shell.language')">
+			@for (locale of locales; track locale) {
+				<button
+					class="login__lang"
+					type="button"
+					[class.login__lang--on]="activeLocale() === locale"
+					[attr.aria-pressed]="activeLocale() === locale"
+					(click)="use(locale)"
+				>
+					{{ locale.toUpperCase() }}
+				</button>
+			}
+		</div>
+
 		<div class="login__head">
 			<span class="login__wordmark">lumen ops</span>
 			<h1 class="login__title">{{ t('auth.title') }}</h1>
 			<p class="login__subtitle">{{ t('auth.subtitle') }}</p>
 		</div>
 
-		<div class="login__grid">
+		<div class="login__panel">
 			<form class="login__form" (ngSubmit)="submit()">
 				<label class="d-block" for="login-email">
 					<span class="form-label">{{ t('auth.user') }}</span>
@@ -56,25 +70,6 @@
 					{{ busy() ? t('auth.signingIn') : t('auth.signIn') }}
 				</button>
 			</form>
-
-			<div class="login__users">
-				<p class="login__users-hint">{{ t('auth.demoUsers') }}</p>
-
-				@for (user of users(); track user.id) {
-					<button class="login__user" type="button" (click)="use(user)" [disabled]="busy()">
-						<span class="login__avatar" [class]="'lum-pill--' + tone(user.roles)">
-							{{ initials(user.name) }}
-						</span>
-						<span class="login__user-text">
-							<span class="login__user-name">{{ user.name }}</span>
-							<span class="login__user-org">{{ user.org }}</span>
-							<span class="login__user-role" [class]="'lum-pill--' + tone(user.roles)">
-								{{ t('role.' + user.roles[0]) }}
-							</span>
-						</span>
-					</button>
-				}
-			</div>
 		</div>
 	</div>
 </div>

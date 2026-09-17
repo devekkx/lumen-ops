@@ -26,8 +26,6 @@
 		"passwordPlaceholder": "Tu contraseña",
 		"signIn": "Iniciar sesión",
 		"signingIn": "Iniciando sesión…",
-		"demoUsers": "Cuatro usuarios predefinidos, cada uno con una página de inicio diferente",
-		"useUser": "Usar este usuario",
 		"invalid": "Usuario o contraseña incorrectos",
 		"expired": "Tu sesión ha expirado. Inicia sesión de nuevo.",
 		"boot": "Resolviendo la sesión antes de la primera ruta…",
