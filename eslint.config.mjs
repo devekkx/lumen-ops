@@ -1,10 +1,10 @@
 // @ts-check
-const eslint = require('@eslint/js');
-const tseslint = require('typescript-eslint');
-const angular = require('angular-eslint');
-const sonarjs = require('eslint-plugin-sonarjs');
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import angular from 'angular-eslint';
+import sonarjs from 'eslint-plugin-sonarjs';
 
-module.exports = tseslint.config(
+export default tseslint.config(
 	{
 		ignores: ['dist/**', 'coverage/**', '.angular/**']
 	},
@@ -81,7 +81,7 @@ module.exports = tseslint.config(
 		languageOptions: {
 			parserOptions: {
 				project: ['./tsconfig.app.json', './tsconfig.spec.json'],
-				tsconfigRootDir: __dirname
+				tsconfigRootDir: import.meta.dirname
 			}
 		},
 		rules: {
