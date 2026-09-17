@@ -21,8 +21,14 @@ jobs:
       - run: npx ng lint
 
   build:
-    name: Build (production)
+    name: Build
     runs-on: ubuntu-latest
+    # main is the branch that actually ships, so it's the only one held to a
+    # real production build (minified, hashed, budget-checked). A PR or push
+    # targeting any other branch (develop included) only needs to prove the
+    # app still builds, via the cheaper development configuration.
+    env:
+      TARGET_BRANCH: ${{ github.event_name == 'pull_request' && github.base_ref || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
 
@@ -32,7 +38,14 @@ jobs:
           cache: npm
 
       - run: npm ci
-      - run: npx ng build --configuration production
+
+      - name: Build
+        run: |
+          if [ "$TARGET_BRANCH" = "main" ]; then
+            npx ng build --configuration production
+          else
+            npx ng build --configuration development
+          fi
 
   test:
     name: Unit tests (Chrome headless)
