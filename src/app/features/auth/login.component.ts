@@ -21,8 +21,8 @@ export class LoginComponent {
 	readonly locales = LOCALES;
 	readonly activeLocale = this.language.current;
 
-	readonly email = signal('ayto@lumen.madrid');
-	readonly password = signal('lumen');
+	readonly email = signal('');
+	readonly password = signal('');
 	readonly showPassword = signal(false);
 	readonly expired = signal(false);
 	readonly busy = signal(false);
