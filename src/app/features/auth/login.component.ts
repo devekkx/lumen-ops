@@ -24,7 +24,6 @@ export class LoginComponent {
 	readonly email = signal('');
 	readonly password = signal('');
 	readonly showPassword = signal(false);
-	readonly expired = signal(false);
 	readonly busy = signal(false);
 	readonly error = signal<string | null>(null);
 
@@ -53,19 +52,13 @@ export class LoginComponent {
 		try {
 			await this.auth.login({
 				email: this.email(),
-				password: this.password(),
-				expiredToken: this.expired()
+				password: this.password()
 			});
 			/* Land on `/` and let the four canMatch redirects decide where that
 			   is - the login screen does not need to know the role map. */
 			await this.router.navigateByUrl('/');
-		} catch (error) {
-			/* An expired token is a successful request whose payload we then
-			   reject, so it surfaces here rather than as an HTTP failure. */
-			const expired = this.expired() || (error as { status?: number })?.status !== 401;
-			this.error.set(
-				this.transloco.translate(expired && this.expired() ? 'auth.expired' : 'auth.invalid')
-			);
+		} catch {
+			this.error.set(this.transloco.translate('auth.invalid'));
 		} finally {
 			this.busy.set(false);
 		}

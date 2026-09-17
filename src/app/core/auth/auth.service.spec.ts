@@ -110,14 +110,11 @@ describe('AuthService', () => {
 			expect(localStorage.getItem(TOKEN_KEY)).not.toBeNull();
 		});
 
-		/* The expired-token switch returns HTTP 200 with a token we then reject,
-		   so the failure surfaces from adopt() rather than from the request. */
+		/* A login response is HTTP 200 even when the token inside it is already
+		   expired, so the failure has to surface from adopt() rather than from
+		   the request itself. */
 		it('rejects an already-expired token and stores nothing', async () => {
-			const pending = service.login({
-				email: 'ayto@lumen.madrid',
-				password: 'lumen',
-				expiredToken: true
-			});
+			const pending = service.login({ email: 'ayto@lumen.madrid', password: 'lumen' });
 			http.expectOne('/api/auth/login').flush({ token: tokenFor(-60) });
 
 			await expectAsync(pending).toBeRejected();

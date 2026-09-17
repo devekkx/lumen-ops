@@ -25,10 +25,7 @@ export const USERS: readonly SeededUser[] = [
 
 const base64Url = (text: string) => Buffer.from(text, 'utf8').toString('base64url');
 
-/* A negative TTL is not an accident - the login screen offers an
-   already-expired token on purpose, so the app-initializer failure path in
-   exercise 2.1 can be triggered from the UI rather than by editing storage. */
-export const signToken = (user: SeededUser, ttlMinutes = 60): string => {
+export const signToken = (user: SeededUser): string => {
 	const issuedAt = Math.floor(Date.now() / 1000);
 	const header = base64Url(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
 	const payload = base64Url(
@@ -39,7 +36,7 @@ export const signToken = (user: SeededUser, ttlMinutes = 60): string => {
 			org: user.org,
 			roles: user.roles,
 			iat: issuedAt,
-			exp: issuedAt + ttlMinutes * 60
+			exp: issuedAt + 60 * 60
 		})
 	);
 	return `${header}.${payload}.mock-signature-not-verified`;

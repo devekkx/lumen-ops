@@ -97,16 +97,6 @@
 					</p>
 				}
 
-				<label class="login__switch">
-					<input
-						type="checkbox"
-						name="expired"
-						[ngModel]="expired()"
-						(ngModelChange)="expired.set($event)"
-					/>
-					<span>{{ t('auth.expiredSwitch') }}</span>
-				</label>
-
 				<button class="btn btn-primary w-100 login__submit" type="submit" [disabled]="busy()">
 					@if (busy()) {
 						<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>

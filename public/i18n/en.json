@@ -29,7 +29,6 @@
 		"invalid": "Wrong user or password",
 		"expired": "Your session expired. Sign in again.",
 		"boot": "Resolving the session before the first route…",
-		"expiredSwitch": "Sign in with an already-expired token (to test the bootstrap)",
 		"bootFailed": "Session could not be resolved",
 		"highlightFaults": "Track every reported fault from citizen report to repair",
 		"highlightOrders": "Assign crews and follow work orders through to completion",

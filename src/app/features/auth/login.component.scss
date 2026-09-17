@@ -127,21 +127,6 @@
 		color: var(--color-error);
 	}
 
-	&__switch {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		font: var(--type-caption-sm);
-		color: var(--color-muted);
-		cursor: pointer;
-
-		input {
-			width: var(--space-base);
-			height: var(--space-base);
-			accent-color: var(--color-primary);
-		}
-	}
-
 	&__submit {
 		display: inline-flex;
 		align-items: center;

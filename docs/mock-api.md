@@ -125,10 +125,16 @@ roles:
 | `contrata@lumen.madrid` | `['CONTRACTOR']` | `u-contractor` |
 | `consulta@lumen.madrid` | `['VIEWER']` | `u-viewer` |
 
-Password for all four is `lumen`; a wrong one returns 401. `expiredToken: true`
-signs a token whose `exp` is already 60 seconds in the past - that is how I
-get the login screen to trigger the app-initializer failure path in
-exercise 2.1, without anyone having to hand-edit storage.
+Password for all four is `lumen`; a wrong one returns 401.
+
+The login screen used to carry a switch that asked for a token already 60
+seconds expired, purely to trigger the app-initializer failure path from
+exercise 2.1 on demand. I pulled that switch back out - a real login screen
+has no business offering to sign you in with a broken session - so that path
+is now exercised the way it actually happens in production: a token already
+sitting in storage that time-boxes out. `auth.service.spec.ts` covers it
+directly, by handing `adopt()` an already-expired token rather than asking
+the login screen to request one.
 
 **The DSL**, end to end against the seeded data:
 

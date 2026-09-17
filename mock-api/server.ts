@@ -95,20 +95,20 @@ app.use(express.json({ limit: '4mb' }));
 
 app.post('/api/auth/login', async (request: Request, response: Response) => {
 	await sleep(quickLatency());
-	const { email, password, expiredToken = false } = request.body ?? {};
+	const { email, password } = request.body ?? {};
 	const user = findUser(email);
 
 	if (!user || user.password !== password) {
 		return response.status(401).json({ code: 'INVALID_CREDENTIALS' });
 	}
 	return response.json({
-		token: signToken(user, expiredToken ? -1 : 60),
+		token: signToken(user),
 		user: publicUser(user)
 	});
 });
 
-/* The login screen lists the seeded users, so nobody has to read the source to
-   find a password. */
+/* No UI reads this any more, but nothing testing this API by hand should have
+   to guess a password out of the source either. */
 app.get('/api/auth/users', (_request: Request, response: Response) =>
 	response.json(USERS.map(publicUser))
 );

@@ -10,10 +10,6 @@ const TOKEN_KEY = 'lumen.session.token';
 export interface Credentials {
 	email: string;
 	password: string;
-	/* Asks the mock for a token that is already expired, so the
-	   app-initializer failure path can be triggered from the login screen
-	   rather than by hand-editing storage. */
-	expiredToken?: boolean;
 }
 
 interface LoginResponse {
