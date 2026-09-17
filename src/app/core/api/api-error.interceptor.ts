@@ -8,19 +8,19 @@ import { SKIP_ERROR_TOAST, SKIP_RETRY } from './api-options';
 import { ToastService, ToastTone } from './toast.service';
 
 /* Comfortably above the mock API's randomised 300-900ms paged latency, so
-   ordinary traffic never trips this — only the deliberate 4s
+   ordinary traffic never trips this - only the deliberate 4s
    /api/diagnostics/slow trap does. */
 const REQUEST_TIMEOUT_MS = 15_000;
 
 /* GET, HEAD and OPTIONS are the methods a client may repeat without changing
    server state. A retried POST could resubmit a form the user already saw
-   fail or succeed once — a duplicate fault report is worse than the original
-   error — so idempotence is checked structurally here, not left to a flag
+   fail or succeed once - a duplicate fault report is worse than the original
+   error - so idempotence is checked structurally here, not left to a flag
    someone could get wrong per call site. */
 const IDEMPOTENT_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
-/* Retrying a 4xx teaches the server nothing new — the same expired token or
-   the same missing record comes back every time — so only a transient-looking
+/* Retrying a 4xx teaches the server nothing new - the same expired token or
+   the same missing record comes back every time - so only a transient-looking
    failure (offline, or the server's own 5xx) is worth spending a retry on. */
 const isRetryableStatus = (status: number) => status === 0 || status >= 500;
 
@@ -49,12 +49,12 @@ const messageKeyFor = (error: unknown): string => {
 };
 
 /* Maps a failed request to one translated, actionable toast and lets the
- * error keep propagating — a 401 still has to reach the auth flow, and a
+ * error keep propagating - a 401 still has to reach the auth flow, and a
  * caller with its own recovery (a form re-showing a field error) still needs
  * the rejection.
  *
  * A call site opts out of retry (SKIP_RETRY) or the toast (SKIP_ERROR_TOAST)
- * through its HttpContext rather than the interceptor guessing from the URL —
+ * through its HttpContext rather than the interceptor guessing from the URL -
  * see api-options.ts for why login and a typeahead search both want that. */
 export const apiErrorInterceptor: HttpInterceptorFn = (request, next) => {
 	const toast = inject(ToastService);

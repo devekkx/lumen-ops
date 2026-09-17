@@ -45,6 +45,9 @@ describe('ApiService', () => {
 		request.flush({});
 	});
 
+	/* Each expectOne((req) => req.method === X) predicate is the assertion: it
+	   throws if no outstanding request matches that exact method. */
+	// eslint-disable-next-line sonarjs/assertions-in-tests
 	it('sends PUT, PATCH and DELETE with the right method', () => {
 		service.put('/api/faults/fault-1', { status: 'CLOSED' }).subscribe();
 		http.expectOne((req) => req.method === 'PUT').flush({});

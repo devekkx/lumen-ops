@@ -21,7 +21,7 @@ import {
 
 const HOUR = 3_600_000;
 
-/* Deterministic per-hour jitter — the same hour always gets the same wobble, so
+/* Deterministic per-hour jitter - the same hour always gets the same wobble, so
    two requests for the same range return the same series. */
 const hash = (value: number) => {
 	const x = Math.sin(value) * 10000;

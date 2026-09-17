@@ -38,8 +38,8 @@ export class LoginComponent {
 	   so the list cannot drift from what the mock will actually accept. */
 	readonly users = signal<SeededUser[]>([]);
 
-	/* A session that failed to resolve at bootstrap lands here. Showing why —
-	   expired rather than just "sign in" — is the difference between the user
+	/* A session that failed to resolve at bootstrap lands here. Showing why -
+	   expired rather than just "sign in" - is the difference between the user
 	   knowing what happened and guessing. */
 	readonly bootFailure = computed(() => {
 		const failure = this.auth.failure();
@@ -84,7 +84,7 @@ export class LoginComponent {
 				expiredToken: this.expired()
 			});
 			/* Land on `/` and let the four canMatch redirects decide where that
-			   is — the login screen does not need to know the role map. */
+			   is - the login screen does not need to know the role map. */
 			await this.router.navigateByUrl('/');
 		} catch (error) {
 			/* An expired token is a successful request whose payload we then

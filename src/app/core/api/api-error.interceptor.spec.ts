@@ -50,7 +50,7 @@ describe('apiErrorInterceptor', () => {
 	});
 
 	/* A deliberate timeout cancellation leaves one request the backend never
-	   answered — that is what "cancelled" means to HttpTestingController, not
+	   answered - that is what "cancelled" means to HttpTestingController, not
 	   a forgotten assertion, so it is the one thing verify() is told to allow. */
 	afterEach(() => httpMock.verify({ ignoreCancelled: true }));
 
@@ -61,12 +61,12 @@ describe('apiErrorInterceptor', () => {
 		settleGet(httpMock, '/api/luminaires', 500);
 
 		expect(caught).toBeTruthy();
-		expect(toast.toasts().length).toBe(1);
+		expect(toast.toasts()).toHaveSize(1);
 		expect(toast.toasts()[0].tone).toBe('critical');
 	}));
 
 	/* The structural guarantee the brief asks for: a write is never wrapped in
-	   retry, so this fails if a second request ever reaches the mock — ticking
+	   retry, so this fails if a second request ever reaches the mock - ticking
 	   well past every retry delay used above is what makes that assertion mean
 	   something, rather than merely running before a real setTimeout fires. */
 	it('never retries a failing POST', fakeAsync(() => {
@@ -76,8 +76,8 @@ describe('apiErrorInterceptor', () => {
 		tick(5000);
 	}));
 
-	/* A 401 is never retried even on an idempotent GET — resubmitting the same
-	   expired token teaches the server nothing new — so this settles in one
+	/* A 401 is never retried even on an idempotent GET - resubmitting the same
+	   expired token teaches the server nothing new - so this settles in one
 	   round trip rather than three. */
 	it('logs out and redirects to login on a 401, without swallowing the error', () => {
 		let caught: unknown;
@@ -90,7 +90,10 @@ describe('apiErrorInterceptor', () => {
 	});
 
 	/* The same non-retryable-status guard, proven on a GET that never resolves
-	   even though the method itself is idempotent. */
+	   even though the method itself is idempotent. The assertion is the
+	   shared afterEach's httpMock.verify() above: a retry would leave a
+	   second outstanding request that expectOne never matched. */
+	// eslint-disable-next-line sonarjs/assertions-in-tests
 	it('never retries a 404 GET, only a transient-looking failure', () => {
 		http.get('/api/luminaires/does-not-exist').subscribe({ error: () => undefined });
 		httpMock
@@ -98,6 +101,9 @@ describe('apiErrorInterceptor', () => {
 			.flush(null, { status: 404, statusText: 'Not found' });
 	});
 
+	/* Same reasoning: httpMock.verify() in afterEach is what actually proves
+	   no retry fired. */
+	// eslint-disable-next-line sonarjs/assertions-in-tests
 	it('honours SKIP_RETRY on an otherwise-idempotent GET', () => {
 		const context = new HttpContext().set(SKIP_RETRY, true);
 		http.get('/api/luminaires', { context }).subscribe({ error: () => undefined });
@@ -109,7 +115,7 @@ describe('apiErrorInterceptor', () => {
 		http.get('/api/luminaires', { context }).subscribe({ error: () => undefined });
 		httpMock.expectOne('/api/luminaires').flush(null, { status: 401, statusText: 'Unauthorized' });
 
-		expect(toast.toasts().length).toBe(0);
+		expect(toast.toasts()).toHaveSize(0);
 		expect(auth.logout).toHaveBeenCalled();
 	});
 
@@ -119,11 +125,11 @@ describe('apiErrorInterceptor', () => {
 		settleGet(httpMock, '/api/luminaires', 0);
 
 		expect(toast.toasts()[0].message).toBe(
-			'Sin conexión con el mock API. Reintenta cuando vuelva la red.'
+			'Sin conexión a la API simulada. Reintenta cuando la red esté disponible.'
 		);
 	}));
 
-	/* One clear toast, not a cascade — the DONE WHEN criterion from the brief. */
+	/* One clear toast, not a cascade - the DONE WHEN criterion from the brief. */
 	it('collapses a burst of identical failures into a single toast', fakeAsync(() => {
 		http.get('/api/a').subscribe({ error: () => undefined });
 		http.get('/api/b').subscribe({ error: () => undefined });
@@ -131,7 +137,7 @@ describe('apiErrorInterceptor', () => {
 		settleGet(httpMock, '/api/a', 0);
 		settleGet(httpMock, '/api/b', 0);
 
-		expect(toast.toasts().length).toBe(1);
+		expect(toast.toasts()).toHaveSize(1);
 	}));
 
 	/* Isolates the timeout mechanism on a POST, which the retry operator never
@@ -144,6 +150,6 @@ describe('apiErrorInterceptor', () => {
 		tick(15_001);
 
 		expect(caught).toBeTruthy();
-		expect(toast.toasts()[0].message).toBe('La petición tardó demasiado y se ha cancelado.');
+		expect(toast.toasts()[0].message).toBe('La solicitud tardó demasiado y fue cancelada.');
 	}));
 });

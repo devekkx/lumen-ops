@@ -1,25 +1,6 @@
-# syntax=docker/dockerfile:1
-#
-# Three real targets, not one straight-through build:
-#   deps      - shared `npm ci`, cached as its own layer
-#   build     - `ng build --configuration production` (Angular app only)
-#   mock-api  - runs mock-api/server.ts via tsx (no build step: tsx runs the
-#               TypeScript source directly, same as `npm run mock-api` locally)
-#   runtime   - nginx serving `build`'s static output (the image actually
-#               named/tagged by a plain `docker build .` with no --target,
-#               since it is the last stage)
-#
-# docker-compose.yml builds both `mock-api` and `runtime` from this one file
-# via `target:`, rather than maintaining two separate Dockerfiles for one
-# repo this size.
-
-FROM node:20-alpine AS deps
+FROM node:24.8.0-alpine3.24 AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-# Every stage below needs devDependencies too: `build` needs @angular/cli and
-# typescript, `mock-api` needs tsx. There is no separate "production
-# dependencies" stage because nothing in this repo's own runtime code (the
-# mock API) ships as anything other than TypeScript run directly by tsx.
 RUN npm ci
 
 FROM deps AS build
@@ -32,11 +13,15 @@ ENV PORT=3000
 EXPOSE 3000
 CMD ["npx", "tsx", "mock-api/server.ts"]
 
-FROM nginx:1.27-alpine AS runtime
-COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
-# The new (esbuild-based) Angular application builder emits the static site
-# under an extra `browser/` directory inside outputPath (dist/lumen-ops),
-# alongside server-only artifacts (stats.json, prerendered-routes.json) that
-# do not belong in a static image — only `browser/` is copied.
+# Pinned by digest, not a version tag: Chainguard's free tier only publishes
+# :latest/:latest-dev (pinned semantic-version tags need a paid plan), and
+# :latest is exactly that - a moving target - without a digest. This digest
+# is what :latest resolved to at the time this was pinned (checked against
+# the registry's own manifest API); Chainguard rebuilds :latest continuously
+# to stay at zero CVEs, so this pin should be refreshed periodically rather
+# than left to go stale indefinitely - freezing it forever defeats the
+# reason this image was chosen over a version-pinned one in the first place.
+FROM cgr.dev/chainguard/nginx@sha256:d770a59f02e443a1403d44f4d6c0eb74b076a2433f3df9e0f4782fe4bff2ac22 AS runtime
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist/lumen-ops/browser /usr/share/nginx/html
-EXPOSE 80
+EXPOSE 8080

@@ -54,7 +54,7 @@ describe('auth guards', () => {
 		});
 	});
 
-	describe('rolesGuard — needs every listed role', () => {
+	describe('rolesGuard - needs every listed role', () => {
 		it('allows a user holding all of them', () => {
 			auth.as('ADMIN', 'COUNCIL');
 			expect(run(rolesGuard as never, { roles: ['ADMIN', 'COUNCIL'] })).toBe(true);
@@ -72,7 +72,7 @@ describe('auth guards', () => {
 		});
 	});
 
-	describe('someRoleGuard — needs at least one', () => {
+	describe('someRoleGuard - needs at least one', () => {
 		it('allows a user holding one of them', () => {
 			auth.as('CONTRACTOR');
 			expect(run(someRoleGuard as never, { roles: ['ADMIN', 'CONTRACTOR'] })).toBe(true);
@@ -132,7 +132,7 @@ describe('auth guards', () => {
 		it('matches exactly one entry per single-role user', () => {
 			for (const role of ['COUNCIL', 'CONTRACTOR', 'VIEWER', 'ADMIN'] as Role[]) {
 				auth.as(role);
-				expect(chain().filter(([, matched]) => matched).length).toBe(1);
+				expect(chain().filter(([, matched]) => matched)).toHaveSize(1);
 			}
 		});
 	});

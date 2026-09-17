@@ -5,7 +5,7 @@ import { GenericCollectionService } from '@shared/services/generic-collection.se
 import { Filters } from '@shared/models/filter';
 import { Page, PageRequest } from '@shared/models/pagination';
 
-/* Mirrors the seed's shape independently rather than importing it — the
+/* Mirrors the seed's shape independently rather than importing it - the
    contract is the wire payload, not shared code, matching how the filter
    DSL's evaluator is deliberately reimplemented on both sides. */
 export type LampType = 'SODIUM' | 'LED' | 'METAL_HALIDE';
@@ -39,7 +39,7 @@ export interface Luminaire {
 export const LUMINAIRE_SEARCH_KEYS = ['code', 'street', 'zone'] as const;
 
 /* The map's request: the same search/filter vocabulary as the table, but no
-   page or ordination, because /geo has no pagination envelope — it always
+   page or ordination, because /geo has no pagination envelope - it always
    answers with every matching luminaire. Every field is optional; an empty
    body means "everything". */
 export interface GeoRequest {
@@ -60,7 +60,7 @@ export class LuminaireService implements GenericCollectionService<Luminaire> {
 		return this.api.get<Luminaire>(`/api/luminaires/${id}`);
 	}
 
-	/* /api/luminaires/geo returns a plain array, not a Page — the map draws
+	/* /api/luminaires/geo returns a plain array, not a Page - the map draws
 	   every matching feature at once rather than one page of them. */
 	geo(request: GeoRequest = {}): Observable<Luminaire[]> {
 		return this.api.post<Luminaire[]>('/api/luminaires/geo', request);

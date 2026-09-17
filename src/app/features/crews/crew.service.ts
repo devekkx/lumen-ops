@@ -5,7 +5,7 @@ import { GenericCollectionService } from '@shared/services/generic-collection.se
 import { Page, PageRequest } from '@shared/models/pagination';
 
 /* Mirrors mock-api/seed.ts's Crew shape independently rather than importing
-   it — same convention as the other collection services. */
+   it - same convention as the other collection services. */
 export type Shift = 'DAY' | 'NIGHT';
 
 export const SHIFTS: readonly Shift[] = ['DAY', 'NIGHT'];
@@ -36,7 +36,7 @@ export class CrewService implements GenericCollectionService<Crew> {
 		return this.api.post<Page<Crew>>('/api/crews/paged', request);
 	}
 
-	/* The full, unpaged crew list — GET /api/crews — for pickers like the
+	/* The full, unpaged crew list - GET /api/crews - for pickers like the
 	   assign-crew dialog, which needs every crew at once rather than one page
 	   of them. */
 	list(): Observable<Crew[]> {

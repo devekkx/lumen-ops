@@ -1,13 +1,12 @@
 <section *transloco="let t">
 	<div class="d-flex justify-content-between align-items-center mb-4">
 		<div>
-			<p class="text-uppercase text-secondary small mb-1">{{ t('nav.faults') }}</p>
 			<h1>{{ t('fault.title') }}</h1>
 			<p class="text-secondary mb-0">{{ t('fault.subtitle') }}</p>
 		</div>
 		<div class="d-flex gap-2">
 			<button type="button" class="btn btn-outline-secondary" (click)="refresh()">
-				{{ t('table.retry') }}
+				{{ t('table.refresh') }}
 			</button>
 			@if (abilities().createFault) {
 				<a class="btn btn-primary" data-action="create" routerLink="/averias/nueva">
@@ -67,6 +66,7 @@
 		[caption]="'fault.title'"
 		[columns]="columns"
 		[pillColumns]="pillColumns"
+		[dateColumns]="dateColumns"
 		[page]="page()"
 		[loading]="loading()"
 		[error]="error()"

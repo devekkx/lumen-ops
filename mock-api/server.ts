@@ -29,7 +29,7 @@ const PORT = Number(process.env.PORT ?? 3000);
 
 /* Artificial latency, from exercise 1.2 step 5. Without it, debouncing and
    race conditions are invisible on localhost and two later exercises become
-   meaningless — so the paged endpoints are deliberately slow and jittery. */
+   meaningless - so the paged endpoints are deliberately slow and jittery. */
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const pagedLatency = () => 300 + Math.random() * 600;
 const quickLatency = () => 120 + Math.random() * 230;
@@ -148,7 +148,7 @@ app.get('/api/luminaires/search', async (request: Request, response: Response) =
 	);
 });
 
-/* The map needs every matching feature, not a page of them — the filter still
+/* The map needs every matching feature, not a page of them - the filter still
    applies, so filtering the table visibly filters the map. */
 app.post('/api/luminaires/geo', async (request: Request, response: Response) => {
 	await sleep(pagedLatency());
@@ -255,7 +255,7 @@ app.put('/api/faults/:id', async (request: Request, response: Response) => {
 	return response.json(database.faults[index]);
 });
 
-/* Validating a fault is what creates its work order — the state change has a
+/* Validating a fault is what creates its work order - the state change has a
    consequence elsewhere, which is the point of modelling the lifecycle. */
 app.post('/api/faults/:id/transition', async (request: Request, response: Response) => {
 	await sleep(quickLatency());

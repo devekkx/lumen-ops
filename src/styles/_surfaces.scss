@@ -1,5 +1,5 @@
 /* Surface primitives: empty/error states, the toast and the confirm modal's
-   panel. The card and the inline panel are gone from here — every former
+   panel. The card and the inline panel are gone from here - every former
    .lum-card/.lum-panel usage is Bootstrap's own .card now (customized from
    the same tokens in _bootstrap-overrides.scss). Depth comes from hairlines
    and white-on-soft separation; the single shadow tier is reserved for
@@ -79,7 +79,7 @@
 		text-wrap: pretty;
 	}
 
-	/* Explicit 24x24 minimum so the dismiss target meets SC 2.5.8 — the glyph
+	/* Explicit 24x24 minimum so the dismiss target meets SC 2.5.8 - the glyph
 	   alone, at 18px with no box around it, would fall under that floor. */
 	&__close {
 		flex-shrink: 0;

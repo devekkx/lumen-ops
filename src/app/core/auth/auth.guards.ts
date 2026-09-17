@@ -31,7 +31,7 @@ export const someRoleGuard: CanActivateFn = (route) => {
  * Only canMatch can drive this pattern, and that is the single most useful
  * thing in exercise 2.2. canActivate runs *after* the router has already
  * committed to a route: the first empty-path entry would match, its guard would
- * deny, and navigation would fail — the later empty-path entries are never
+ * deny, and navigation would fail - the later empty-path entries are never
  * considered, because matching already happened. canMatch runs *during*
  * matching, so a false result makes the router skip that route and keep looking,
  * which is what lets four routes share the empty path and pick one by role.

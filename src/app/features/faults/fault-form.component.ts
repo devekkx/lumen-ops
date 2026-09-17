@@ -42,14 +42,14 @@ export class FaultFormComponent implements DirtyFormHost {
 
 	private readonly faultId = signal<string | null>(null);
 	/* The one thing every "isEdit ? X : Y" question in the template actually
-	   needs — everything else (loading the record, defaulting the form,
+	   needs - everything else (loading the record, defaulting the form,
 	   building the save payload) is handled here, once, rather than repeated
 	   as scattered conditionals. */
 	readonly mode = computed<FormMode>(() => (this.faultId() ? 'edit' : 'create'));
 
 	/* The full record as loaded, kept only so save() can merge the form's
 	   patch over fields the form never edits (code, status, photos,
-	   reportedBy, and the luminaire's denormalised street/zone) — a PUT that
+	   reportedBy, and the luminaire's denormalised street/zone) - a PUT that
 	   sent those back blank would overwrite server-held data with nothing. */
 	private readonly original = signal<Fault | null>(null);
 

@@ -3,15 +3,15 @@ import { ActivatedRouteSnapshot } from '@angular/router';
 export interface Crumb {
 	label: string;
 	href: string | null;
-	/* Pre-translated labels (a luminaire code, say) skip the translate step —
+	/* Pre-translated labels (a luminaire code, say) skip the translate step -
 	   `LUM-0312` is not a key and looking it up would render it as one. */
 	literal: boolean;
 }
 
 /* Walks the activated-route tree collecting `data.breadcrumb`.
  *
- * A route may resolve a label instead of declaring one — a detail route knows
- * `LUM-0312` only after loading it — so `data.breadcrumbLabel` overrides
+ * A route may resolve a label instead of declaring one - a detail route knows
+ * `LUM-0312` only after loading it - so `data.breadcrumbLabel` overrides
  * `data.breadcrumb` and is treated as literal text rather than a key. */
 export const crumbsFrom = (root: ActivatedRouteSnapshot | null): Crumb[] => {
 	const crumbs: Crumb[] = [];

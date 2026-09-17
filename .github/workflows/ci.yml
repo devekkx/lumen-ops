@@ -1,29 +1,47 @@
 name: CI
 
-# No lint step: this repo has no ESLint config (confirmed — no .eslintrc*,
-# no eslint.config.*, no `lint` script in package.json). Adding one here
-# would invent a gate the project never actually adopted; if that changes,
-# add a `lint` job alongside `build` rather than folding it into either.
-
 on:
   push:
     branches: [main]
   pull_request:
 
 jobs:
-  build:
-    name: Build (production)
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - run: npm ci
-      - run: npx ng build --configuration production
+      - run: npx ng lint
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      TARGET_BRANCH: ${{ github.event_name == 'pull_request' && github.base_ref || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        run: |
+          if [ "$TARGET_BRANCH" = "main" ]; then
+            npx ng build --configuration production
+          else
+            npx ng build --configuration development
+          fi
 
   test:
     name: Unit tests (Chrome headless)
@@ -33,19 +51,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - run: npm ci
-
-      # ubuntu-latest ships a real Chrome; karma.conf.js's ChromeHeadlessCI
-      # custom launcher adds --no-sandbox (a bare container has no user
-      # namespace for Chrome's own sandbox) and --disable-gpu. This is the
-      # one place in the whole build-week exercise this suite can actually
-      # execute — no headless browser exists in the sandbox every spec in
-      # this repo was written and reasoned through in, so this workflow run
-      # is the first real execution of all of them, not a re-run of
-      # something already confirmed passing.
       - name: Run unit tests
         run: npx ng test --no-watch --no-progress --browsers=ChromeHeadlessCI
 

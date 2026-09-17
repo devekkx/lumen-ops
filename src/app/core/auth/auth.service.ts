@@ -37,7 +37,7 @@ export class AuthService {
 	readonly isAuthenticated = computed(() => this.userState() !== null);
 
 	/* Derived once per session change rather than recomputed per template
-	   binding — every row of a 20-row table asks the same questions. */
+	   binding - every row of a 20-row table asks the same questions. */
 	readonly abilities = computed<Abilities>(() => abilitiesFor(this.userState()));
 
 	async login(credentials: Credentials): Promise<void> {
@@ -61,7 +61,7 @@ export class AuthService {
 	   known session.
 	 *
 	 * It deliberately never rejects. A rejected initializer leaves Angular with
-	 * nothing bootstrapped and the user staring at a blank page — no login
+	 * nothing bootstrapped and the user staring at a blank page - no login
 	 * screen, no error, nothing to act on. Instead the failure is recorded, the
 	 * bad token discarded, and the guards send the user to /auth/login where the
 	 * reason is shown. See docs/app-initializer.md for what the blank page
@@ -108,7 +108,7 @@ export class AuthService {
 		this.failureState.set(null);
 	}
 
-	/* Storage can throw rather than return null — a private window, blocked
+	/* Storage can throw rather than return null - a private window, blocked
 	   site data, a preview frame. A session that cannot be persisted should
 	   still work for the current tab. */
 	private read(): string | null {

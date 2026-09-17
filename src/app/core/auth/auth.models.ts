@@ -1,7 +1,7 @@
 export type Role = 'ADMIN' | 'COUNCIL' | 'CONTRACTOR' | 'VIEWER';
 
 /* What the token's payload actually carries. The app decodes it; it never
-   verifies it — the mock signature is not real, and that is fine, because the
+   verifies it - the mock signature is not real, and that is fine, because the
    shape is what the client depends on. */
 export interface TokenPayload {
 	sub: string;
@@ -28,7 +28,7 @@ export interface SessionUser {
 export type SessionFailure = 'MALFORMED' | 'EXPIRED';
 
 /* `as const` before the freeze, so the values stay literal Role tuples rather
-   than widening to string[] — which is what lets `satisfies` actually check
+   than widening to string[] - which is what lets `satisfies` actually check
    that every entry really is a list of Roles. */
 export const ROLE_GROUPS = Object.freeze({
 	ALL: ['ADMIN', 'COUNCIL', 'CONTRACTOR', 'VIEWER'],
@@ -48,7 +48,7 @@ export const hasSomeRole = (user: SessionUser | null, roles: readonly Role[]): b
 	!!user && roles.some((role) => user.roles.includes(role));
 
 /* A flat record of booleans computed once from the current user, for the logic
-   that is not simply show/hide — disabled states, which columns exist, whether
+   that is not simply show/hide - disabled states, which columns exist, whether
    a bulk action is offered at all. */
 export interface Abilities {
 	viewLuminaires: boolean;

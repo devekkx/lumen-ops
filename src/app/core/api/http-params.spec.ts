@@ -24,10 +24,10 @@ describe('buildHttpParams', () => {
 	});
 
 	it('returns an empty params object for no input at all', () => {
-		expect(buildHttpParams().keys().length).toBe(0);
+		expect(buildHttpParams().keys()).toHaveSize(0);
 	});
 
-	/* HttpParams.set returns a new instance rather than mutating the receiver —
+	/* HttpParams.set returns a new instance rather than mutating the receiver -
 	   the exact property that makes Object.assign the wrong tool here. A reduce
 	   that forgot to use the returned instance as its accumulator would leave
 	   every key but the last missing from the final params. */

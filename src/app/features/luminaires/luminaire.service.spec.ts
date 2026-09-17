@@ -33,7 +33,9 @@ describe('LuminaireService', () => {
 
 	it('reads a single luminaire by its string id', () => {
 		service.get('lum-0001').subscribe();
-		http.expectOne('/api/luminaires/lum-0001').flush({ id: 'lum-0001' });
+		const testRequest = http.expectOne('/api/luminaires/lum-0001');
+		expect(testRequest.request.method).toBe('GET');
+		testRequest.flush({ id: 'lum-0001' });
 	});
 
 	it('POSTs to /api/luminaires/geo and reads back a plain array, not a page', () => {
@@ -48,7 +50,7 @@ describe('LuminaireService', () => {
 		expect(result).toEqual([{ id: 'lum-0001' }]);
 	});
 
-	it('defaults the geo request body to {} — an empty request means "everything"', () => {
+	it('defaults the geo request body to {} - an empty request means "everything"', () => {
 		service.geo().subscribe();
 		const testRequest = http.expectOne('/api/luminaires/geo');
 		expect(testRequest.request.body).toEqual({});

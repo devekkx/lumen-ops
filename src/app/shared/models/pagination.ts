@@ -5,7 +5,7 @@ export interface Ordination {
 	direction: 'ASC' | 'DESC';
 }
 
-/* The envelope every collection endpoint accepts — one shape for the four
+/* The envelope every collection endpoint accepts - one shape for the four
    tables in the app, because the mock API's /:collection/paged route is
    itself generic over the same four fields. */
 export interface PageRequest {

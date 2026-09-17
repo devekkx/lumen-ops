@@ -74,16 +74,20 @@
 												<span [class]="pillClassFor(item[column.key])">
 													{{ t(pillColumns[column.key] + '.' + item[column.key]) }}
 												</span>
+											} @else if (dateColumns.includes(column.key)) {
+												<span>{{ $any(item[column.key]) | lumenDate }}</span>
 											} @else {
-												<span data-bs-toggle="tooltip" [title]="item[column.key] + ''">{{ item[column.key] }}</span>
+												<span>{{ item[column.key] }}</span>
 											}
 										</button>
 									} @else if (pillColumns[column.key]) {
 										<span [class]="pillClassFor(item[column.key])">
 											{{ t(pillColumns[column.key] + '.' + item[column.key]) }}
 										</span>
+									} @else if (dateColumns.includes(column.key)) {
+										<span>{{ $any(item[column.key]) | lumenDate }}</span>
 									} @else {
-										<span data-bs-toggle="tooltip" [title]="item[column.key] + ''">{{ item[column.key] }}</span>
+										<span>{{ item[column.key] }}</span>
 									}
 								</td>
 							}
@@ -123,7 +127,7 @@
 
 		<!-- Per-page and pagination share one group on the right, per the
 		     design: per-page on the left of this group, prev/page/next on
-		     the right of it — not two separate groups spread across the row. -->
+		     the right of it - not two separate groups spread across the row. -->
 		<div class="lum-table__pager-group">
 			<label class="lum-table__per-page">
 				{{ t('table.perPage') }}

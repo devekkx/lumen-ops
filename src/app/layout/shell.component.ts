@@ -14,7 +14,7 @@ import { crumbsFrom } from './breadcrumbs';
 const COLLAPSED_KEY = 'lumen.sidebar.collapsed';
 const MOBILE_WIDTH = 920;
 /* Keep in sync with $aside-width / $aside-width-collapsed in
-   shell.component.scss — the toggle's floating position is computed off
+   shell.component.scss - the toggle's floating position is computed off
    these same widths so it always sits straddling the aside's current edge. */
 const ASIDE_WIDTH = 248;
 const ASIDE_WIDTH_COLLAPSED = 72;
@@ -43,7 +43,7 @@ export class ShellComponent {
 	readonly narrow = signal(window.innerWidth < MOBILE_WIDTH);
 
 	/* Below the breakpoint the aside is an overlay, so "collapsed" stops meaning
-	   narrow and starts meaning hidden. One flag, two behaviours — hence the
+	   narrow and starts meaning hidden. One flag, two behaviours - hence the
 	   separate `narrow` signal rather than a CSS-only solution: the backdrop and
 	   the aria-expanded state have to agree with the layout. */
 	readonly asideOpen = computed(() => (this.narrow() ? !this.collapsed() : true));
@@ -52,9 +52,9 @@ export class ShellComponent {
 
 	/* The toggle is a floating disc that straddles the aside's current right
 	   edge (half over the aside, half over the content) rather than a fixed
-	   corner button — it has to move as the aside's own width changes. On a
-	   narrow screen the drawer is an overlay, not a layout column — nothing
-	   sits at a "current edge" to straddle in either state — so the button
+	   corner button - it has to move as the aside's own width changes. On a
+	   narrow screen the drawer is an overlay, not a layout column - nothing
+	   sits at a "current edge" to straddle in either state - so the button
 	   stays in one fixed spot (the flush left-edge tab) whether the drawer
 	   is open or closed, instead of jumping between two positions. */
 	readonly toggleLeft = computed(() => {
@@ -70,7 +70,7 @@ export class ShellComponent {
 
 	/* The scrim behind the user menu sits above the aside in stacking order
 	   (z-index 39 vs. 30), so inset: 0 would blur/dim the sidebar along with
-	   the content it's actually meant to dim — harmless while it was fully
+	   the content it's actually meant to dim - harmless while it was fully
 	   invisible, visible now that it carries a blur. On a normal-width
 	   screen the aside is a permanent column, not an overlay, so the scrim
 	   should only ever cover what's actually behind the menu: the content
@@ -83,9 +83,9 @@ export class ShellComponent {
 	});
 
 	/* Points toward what the click does: left/"collapse" while open, right/
-	   "expand" while closed — never the hamburger glyph the design has no use
+	   "expand" while closed - never the hamburger glyph the design has no use
 	   for on a control that always has an open-or-closed aside to describe. */
-	/* collapsed(), not asideOpen() — asideOpen() is hardcoded true on desktop
+	/* collapsed(), not asideOpen() - asideOpen() is hardcoded true on desktop
 	   (it only tracks the narrow-screen drawer's open/closed state), so the
 	   icon never changed on a normal-width screen even though the button's
 	   position correctly did. collapsed() is what actually varies in both
@@ -105,7 +105,7 @@ export class ShellComponent {
 
 	readonly crumbs = computed(() => crumbsFrom(this.navigation()));
 
-	/* Only the groups this user can reach, and only their reachable items — an
+	/* Only the groups this user can reach, and only their reachable items - an
 	   empty group renders no heading rather than a heading over nothing. */
 	readonly groups = computed(() => {
 		const auth = this.auth;
@@ -157,7 +157,7 @@ export class ShellComponent {
 	}
 
 	/* Opening the menu with the keyboard (Enter/Space on the trigger) should
-	   land focus inside it — otherwise a keyboard user hears "menu opened" and
+	   land focus inside it - otherwise a keyboard user hears "menu opened" and
 	   is left exactly where they were, with no obvious way to reach it. */
 	toggleMenu(): void {
 		const next = !this.menuOpen();

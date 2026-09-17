@@ -90,6 +90,9 @@ describe('DashboardComponent', () => {
 		request.flush(SNAPSHOT);
 	});
 
+	/* expectNone below is the assertion: it throws if a matching request was
+	   actually made. */
+	// eslint-disable-next-line sonarjs/assertions-in-tests
 	it('does not re-request when the active range is clicked again', () => {
 		const fixture = render();
 		http.expectOne((req) => req.url === '/api/dashboard').flush(SNAPSHOT);
@@ -102,10 +105,12 @@ describe('DashboardComponent', () => {
 
 	it('reports a chart as having no data when every value in it is zero', () => {
 		const fixture = render();
-		http.expectOne((req) => req.url === '/api/dashboard').flush({
-			...SNAPSHOT,
-			bySeverity: SNAPSHOT.bySeverity.map((item) => ({ ...item, count: 0 }))
-		});
+		http
+			.expectOne((req) => req.url === '/api/dashboard')
+			.flush({
+				...SNAPSHOT,
+				bySeverity: SNAPSHOT.bySeverity.map((item) => ({ ...item, count: 0 }))
+			});
 		fixture.detectChanges();
 
 		expect(fixture.componentInstance.hasSeverityData()).toBe(false);
@@ -123,7 +128,9 @@ describe('DashboardComponent', () => {
 
 	it('falls back to the empty state and stops loading when the request fails', () => {
 		const fixture = render();
-		http.expectOne((req) => req.url === '/api/dashboard').flush('boom', { status: 500, statusText: 'Server error' });
+		http
+			.expectOne((req) => req.url === '/api/dashboard')
+			.flush('boom', { status: 500, statusText: 'Server error' });
 		fixture.detectChanges();
 
 		expect(fixture.componentInstance.loading()).toBe(false);

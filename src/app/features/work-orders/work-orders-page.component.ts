@@ -12,17 +12,23 @@ import {
 	TableColumn
 } from '@shared/components/paginated-table/paginated-table.component';
 import { FilterRecord } from '@shared/models/filter';
+import { LumenTooltipDirective } from '@shared/directives/tooltip.directive';
 import { CrewService } from '../crews/crew.service';
 import { assignCrewDialog } from './assign-crew-dialog.component';
-import { ORDER_STATUSES, WORK_ORDER_SEARCH_KEYS, WorkOrder, WorkOrderService } from './work-order.service';
+import {
+	ORDER_STATUSES,
+	WORK_ORDER_SEARCH_KEYS,
+	WorkOrder,
+	WorkOrderService
+} from './work-order.service';
 
-/* Same v1 (RxJS) base as luminaires — see docs/table-v1-vs-v2.md. Work orders
+/* Same v1 (RxJS) base as luminaires - see docs/table-v1-vs-v2.md. Work orders
    and crews are not part of that deliberate v1/v2 comparison (only luminaires
    and faults are), so there is no reason to pick the newer base here. */
 @Component({
 	selector: 'lumen-work-orders-page',
 	standalone: true,
-	imports: [AsyncPipe, TranslocoDirective, PaginatedTableComponent],
+	imports: [AsyncPipe, TranslocoDirective, PaginatedTableComponent, LumenTooltipDirective],
 	templateUrl: './work-orders-page.component.html'
 })
 export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
@@ -38,7 +44,7 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 	/* Same reasoning as faults-page's hasRowActions: every write action below
 	   is individually ability-gated, but that still leaves an empty Actions
 	   column for a CONTRACTOR-scoped VIEWER-like session (there isn't one
-	   today — ordenes-trabajo is CONTRACTOR/ADMIN-only — but the column
+	   today - ordenes-trabajo is CONTRACTOR/ADMIN-only - but the column
 	   shouldn't silently exist for nobody if that ever changes). */
 	readonly hasRowActions = computed(() => {
 		const abilities = this.abilities();
@@ -58,17 +64,18 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 	];
 
 	readonly pillColumns = { severity: 'severity', status: 'status' };
+	readonly dateColumns = ['scheduledAt'];
 
 	readonly statuses = ORDER_STATUSES;
 
 	private statusFilter: string[] = [];
 
-	/* The base's page$ carries the raw wire value for crewName — null on a
+	/* The base's page$ carries the raw wire value for crewName - null on a
 	   DRAFT order. The table renders a column's value with a plain
 	   interpolation (see paginated-table.component.html), which would just be
 	   blank for null rather than saying anything, so this substitutes the
 	   translated placeholder before the page ever reaches the table. Built
-	   once per emission with the language active at fetch time — the same
+	   once per emission with the language active at fetch time - the same
 	   level of reactivity the rest of the app gives one-off translated text
 	   (e.g. the toasts on the faults page), not a live re-translation on a
 	   language switch after the fact. */
@@ -110,7 +117,7 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 	}
 
 	/* Fetches the full crew list fresh each time rather than caching it on the
-	   component — crews rarely change, but the picker should never offer a
+	   component - crews rarely change, but the picker should never offer a
 	   list that's gone stale across a long-lived session, and this page has
 	   nowhere better to invalidate a cache from. */
 	assignCrew(order: WorkOrder): void {

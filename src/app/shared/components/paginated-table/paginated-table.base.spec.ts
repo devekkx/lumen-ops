@@ -56,7 +56,7 @@ describe('PaginatedTableBase', () => {
 		tick(250); // debounce fires again; switchMap drops 'slow' and starts 'fast'
 		tick(50); // 'fast' resolves (50ms)
 
-		/* 100 + 250 + 50 = 400ms since 'slow' started — under its 500ms delay.
+		/* 100 + 250 + 50 = 400ms since 'slow' started - under its 500ms delay.
 		   Advancing well past that proves its late arrival is discarded rather
 		   than merely not-yet-checked. */
 		tick(500);
@@ -79,7 +79,7 @@ describe('PaginatedTableBase', () => {
 	}));
 
 	/* An error must not leave the previous page's rows on screen with no
-	   indication — the base swaps in an empty page and a translation key. */
+	   indication - the base swaps in an empty page and a translation key. */
 	it('surfaces a translated error and an empty page rather than a stale one', fakeAsync(() => {
 		let shouldFail = false;
 		const collection: GenericCollectionService<Row> = {
@@ -116,8 +116,8 @@ describe('PaginatedTableBase', () => {
 		expect(collection.requests.at(-1)?.page).toBe(1);
 	}));
 
-	/* Regression: refresh() used to re-emit { ...params.value } — a new object
-	   with identical contents — which distinctUntilChanged's JSON.stringify
+	/* Regression: refresh() used to re-emit { ...params.value } - a new object
+	   with identical contents - which distinctUntilChanged's JSON.stringify
 	   comparison treated as no change at all, so a refetch with the same
 	   params (exactly what every write action in the faults list relies on
 	   after a validate/reject/close/delete) silently never happened. */
@@ -131,6 +131,6 @@ describe('PaginatedTableBase', () => {
 		table.refresh();
 		tick(260);
 
-		expect(collection.requests.length).toBe(before + 1);
+		expect(collection.requests).toHaveSize(before + 1);
 	}));
 });
