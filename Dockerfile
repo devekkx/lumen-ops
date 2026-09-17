@@ -1,18 +1,3 @@
-# syntax=docker/dockerfile:1
-#
-# Three real targets, not one straight-through build:
-#   deps      - shared `npm ci`, cached as its own layer
-#   build     - `ng build --configuration production` (Angular app only)
-#   mock-api  - runs mock-api/server.ts via tsx (no build step: tsx runs the
-#               TypeScript source directly, same as `npm run mock-api` locally)
-#   runtime   - nginx serving `build`'s static output (the image actually
-#               named/tagged by a plain `docker build .` with no --target,
-#               since it is the last stage)
-#
-# docker-compose.yml builds both `mock-api` and `runtime` from this one file
-# via `target:`, rather than maintaining two separate Dockerfiles for one
-# repo this size.
-
 FROM node:24-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
