@@ -3,16 +3,16 @@
 Three non-default choices went into `provideRouter()`, and the brief asks
 one sentence per option: what breaks without it, and what it costs me.
 
-`withHashLocation()` — without it, a deep link or a reload on any route
+`withHashLocation()` - without it, a deep link or a reload on any route
 other than `/` 404s, because nginx serves one `index.html` and does not
 rewrite application paths back to it; the cost is an ugly `#` in every URL,
 which I accept for a console nobody bookmarks by hand.
 
-`withComponentInputBinding()` — without it, every route param and query
+`withComponentInputBinding()` - without it, every route param and query
 param has to be pulled out of `ActivatedRoute` by hand in each component's
 constructor; the cost is close to nothing, so this one was an easy yes.
 
-`withPreloading()` — without any preloading strategy at all, the *first*
+`withPreloading()` - without any preloading strategy at all, the *first*
 navigation into a feature is slower than it needs to be, since Angular only
 fetches a lazy chunk the moment you actually route to it.
 

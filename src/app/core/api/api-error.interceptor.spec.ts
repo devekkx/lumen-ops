@@ -125,7 +125,7 @@ describe('apiErrorInterceptor', () => {
 		settleGet(httpMock, '/api/luminaires', 0);
 
 		expect(toast.toasts()[0].message).toBe(
-			'Sin conexión con el mock API. Reintenta cuando vuelva la red.'
+			'Sin conexión a la API simulada. Reintenta cuando la red esté disponible.'
 		);
 	}));
 
@@ -150,6 +150,6 @@ describe('apiErrorInterceptor', () => {
 		tick(15_001);
 
 		expect(caught).toBeTruthy();
-		expect(toast.toasts()[0].message).toBe('La petición tardó demasiado y se ha cancelado.');
+		expect(toast.toasts()[0].message).toBe('La solicitud tardó demasiado y fue cancelada.');
 	}));
 });

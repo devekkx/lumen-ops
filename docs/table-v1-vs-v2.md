@@ -13,9 +13,6 @@ concrete table holds and reacts to its own state did.
   - `resource()`. I migrated faults onto it; see
     `src/app/features/faults/faults-page.component.ts`.
 
-The Angular I have installed here is **19.2.25**, where `resource()` is a
-stable
-
 ## Side by side
 
 |                      | v1                                                                                | v2                                                                                                                                                                                    |

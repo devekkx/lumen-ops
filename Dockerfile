@@ -13,7 +13,7 @@
 # via `target:`, rather than maintaining two separate Dockerfiles for one
 # repo this size.
 
-FROM node:20-alpine AS deps
+FROM node:24-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 # Every stage below needs devDependencies too: `build` needs @angular/cli and
@@ -32,11 +32,11 @@ ENV PORT=3000
 EXPOSE 3000
 CMD ["npx", "tsx", "mock-api/server.ts"]
 
-FROM nginx:1.27-alpine AS runtime
+FROM nginx:1.29-alpine AS runtime
 COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
 # The new (esbuild-based) Angular application builder emits the static site
 # under an extra `browser/` directory inside outputPath (dist/lumen-ops),
 # alongside server-only artifacts (stats.json, prerendered-routes.json) that
-# do not belong in a static image — only `browser/` is copied.
+# do not belong in a static image - only `browser/` is copied.
 COPY --from=build /app/dist/lumen-ops/browser /usr/share/nginx/html
 EXPOSE 80
