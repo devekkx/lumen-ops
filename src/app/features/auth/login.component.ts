@@ -13,13 +13,13 @@ import { LOCALES, LanguageService, Locale } from '@core/i18n/language.service';
 	styleUrl: './login.component.scss'
 })
 export class LoginComponent {
-	private readonly auth = inject(AuthService);
-	private readonly router = inject(Router);
-	private readonly transloco = inject(TranslocoService);
-	private readonly language = inject(LanguageService);
+	private readonly _auth = inject(AuthService);
+	private readonly _router = inject(Router);
+	private readonly _transloco = inject(TranslocoService);
+	private readonly _language = inject(LanguageService);
 
 	readonly locales = LOCALES;
-	readonly activeLocale = this.language.current;
+	readonly activeLocale = this._language.current;
 
 	readonly email = signal('');
 	readonly password = signal('');
@@ -31,7 +31,7 @@ export class LoginComponent {
 	   expired rather than just "sign in" - is the difference between the user
 	   knowing what happened and guessing. */
 	readonly bootFailure = computed(() => {
-		const failure = this.auth.failure();
+		const failure = this._auth.failure();
 		if (!failure) return null;
 		return failure === 'EXPIRED' ? 'auth.expired' : 'auth.bootFailed';
 	});
@@ -40,7 +40,7 @@ export class LoginComponent {
 	   the active language (and the switcher below) apply before a session
 	   exists at all, rather than only once someone is signed in. */
 	use(locale: Locale): void {
-		this.language.use(locale);
+		this._language.use(locale);
 	}
 
 	async submit(): Promise<void> {
@@ -50,15 +50,15 @@ export class LoginComponent {
 		this.error.set(null);
 
 		try {
-			await this.auth.login({
+			await this._auth.login({
 				email: this.email(),
 				password: this.password()
 			});
 			/* Land on `/` and let the four canMatch redirects decide where that
 			   is - the login screen does not need to know the role map. */
-			await this.router.navigateByUrl('/');
+			await this._router.navigateByUrl('/');
 		} catch {
-			this.error.set(this.transloco.translate('auth.invalid'));
+			this.error.set(this._transloco.translate('auth.invalid'));
 		} finally {
 			this.busy.set(false);
 		}

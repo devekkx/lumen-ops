@@ -10,12 +10,7 @@ import { Page, PageRequest } from '@shared/models/pagination';
    boundary. */
 export type OrderStatus = 'DRAFT' | 'ASSIGNED' | 'IN_PROGRESS' | 'DONE';
 
-export const ORDER_STATUSES: readonly OrderStatus[] = [
-	'DRAFT',
-	'ASSIGNED',
-	'IN_PROGRESS',
-	'DONE'
-];
+export const ORDER_STATUSES: readonly OrderStatus[] = ['DRAFT', 'ASSIGNED', 'IN_PROGRESS', 'DONE'];
 
 /* Only the statuses a crew still has open work for - DONE orders are no
    longer anyone's load. Used both to gate the Start/Complete actions and to
@@ -57,17 +52,17 @@ export interface WorkOrderPatch {
 
 @Injectable({ providedIn: 'root' })
 export class WorkOrderService implements GenericCollectionService<WorkOrder> {
-	private readonly api = inject(ApiService);
+	private readonly _api = inject(ApiService);
 
 	page(request: PageRequest): Observable<Page<WorkOrder>> {
-		return this.api.post<Page<WorkOrder>>('/api/work-orders/paged', request);
+		return this._api.post<Page<WorkOrder>>('/api/work-orders/paged', request);
 	}
 
 	/* Not part of GenericCollectionService - a work order is never created or
 	   replaced wholesale by this screen, only patched: assigning a crew or
 	   moving its status is a lifecycle step, not a generic save. */
 	patch(id: string, changes: WorkOrderPatch): Observable<WorkOrder> {
-		return this.api.patch<WorkOrder>(`/api/work-orders/${id}`, changes);
+		return this._api.patch<WorkOrder>(`/api/work-orders/${id}`, changes);
 	}
 
 	assignCrew(orderId: string, crewId: string): Observable<WorkOrder> {

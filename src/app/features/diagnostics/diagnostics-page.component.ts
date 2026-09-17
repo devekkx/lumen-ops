@@ -20,16 +20,16 @@ interface DiagnosticsTraps {
 	templateUrl: './diagnostics-page.component.html'
 })
 export class DiagnosticsPageComponent implements OnInit {
-	private readonly api = inject(ApiService);
-	private readonly toast = inject(ToastService);
-	private readonly transloco = inject(TranslocoService);
+	private readonly _api = inject(ApiService);
+	private readonly _toast = inject(ToastService);
+	private readonly _transloco = inject(TranslocoService);
 
 	readonly traps = signal<DiagnosticsTraps | null>(null);
 	readonly callingTrap = signal(false);
 	readonly callingSlow = signal(false);
 
 	ngOnInit(): void {
-		this.api
+		this._api
 			.get<DiagnosticsTraps>('/api/diagnostics/traps')
 			.subscribe((traps) => this.traps.set(traps));
 	}
@@ -42,7 +42,7 @@ export class DiagnosticsPageComponent implements OnInit {
 		const traps = this.traps();
 		if (!traps) return;
 		this.callingTrap.set(true);
-		this.api.get(`/api/luminaires/${traps.always500LuminaireId}`).subscribe({
+		this._api.get(`/api/luminaires/${traps.always500LuminaireId}`).subscribe({
 			error: () => this.callingTrap.set(false),
 			complete: () => this.callingTrap.set(false)
 		});
@@ -52,10 +52,10 @@ export class DiagnosticsPageComponent implements OnInit {
 		const traps = this.traps();
 		if (!traps) return;
 		this.callingSlow.set(true);
-		this.api.get<{ ok: boolean; tookMs: number }>(traps.slowPath).subscribe({
+		this._api.get<{ ok: boolean; tookMs: number }>(traps.slowPath).subscribe({
 			next: (result) => {
-				this.toast.show(
-					this.transloco.translate('diag.slowDone', { ms: result.tookMs }),
+				this._toast.show(
+					this._transloco.translate('diag.slowDone', { ms: result.tookMs }),
 					'healthy'
 				);
 			},
@@ -65,8 +65,8 @@ export class DiagnosticsPageComponent implements OnInit {
 
 	@Confirmable('confirm.resetDiagnostics')
 	reset(): void {
-		this.api.post<{ ok: boolean }>('/api/diagnostics/reset', {}).subscribe(() => {
-			this.toast.show(this.transloco.translate('diag.resetDone'), 'healthy');
+		this._api.post<{ ok: boolean }>('/api/diagnostics/reset', {}).subscribe(() => {
+			this._toast.show(this._transloco.translate('diag.resetDone'), 'healthy');
 		});
 	}
 }

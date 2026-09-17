@@ -59,11 +59,11 @@ import { TranslocoDirective } from '@jsverse/transloco';
 	]
 })
 export class UnauthorizedComponent {
-	private readonly router = inject(Router);
+	private readonly _router = inject(Router);
 
 	/* Back to `/`, so the same canMatch chain that decides a home page on login
 	   decides it here too. */
 	home(): void {
-		void this.router.navigateByUrl('/');
+		void this._router.navigateByUrl('/');
 	}
 }

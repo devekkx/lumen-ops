@@ -29,10 +29,10 @@ import { ToastService } from '@core/api/toast.service';
 	`
 })
 export class ToastHostComponent {
-	private readonly toastService = inject(ToastService);
-	readonly toasts = this.toastService.toasts;
+	private readonly _toastService = inject(ToastService);
+	readonly toasts = this._toastService.toasts;
 
 	dismiss(id: number): void {
-		this.toastService.dismiss(id);
+		this._toastService.dismiss(id);
 	}
 }

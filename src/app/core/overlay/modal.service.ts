@@ -26,9 +26,9 @@ export const MODAL_DATA = new InjectionToken<unknown>('MODAL_DATA');
  */
 @Injectable({ providedIn: 'root' })
 export class ModalService {
-	private readonly overlay = inject(Overlay);
-	private readonly focusTrapFactory = inject(FocusTrapFactory);
-	private readonly injector = inject(Injector);
+	private readonly _overlay = inject(Overlay);
+	private readonly _focusTrapFactory = inject(FocusTrapFactory);
+	private readonly _injector = inject(Injector);
 
 	/* A handful of decorators (see @Confirmable) run outside any injection
 	   context - they wrap a plain method on an arbitrary class, not a
@@ -38,29 +38,29 @@ export class ModalService {
 	   decorator reach the same service every component gets, without every
 	   consumer of @Confirmable having to expose a `modal` property under an
 	   agreed name. */
-	private static current: ModalService | null = null;
+	private static _current: ModalService | null = null;
 
 	static get instance(): ModalService {
-		if (!ModalService.current) {
+		if (!ModalService._current) {
 			throw new Error('ModalService used before Angular constructed it');
 		}
-		return ModalService.current;
+		return ModalService._current;
 	}
 
 	constructor() {
-		ModalService.current = this;
+		ModalService._current = this;
 	}
 
 	open<C, R = unknown>(component: Type<C>, data?: unknown): Promise<R | undefined> {
 		return new Promise<R | undefined>((resolve) => {
 			const previouslyFocused = document.activeElement as HTMLElement | null;
 
-			const overlayRef = this.overlay.create({
+			const overlayRef = this._overlay.create({
 				hasBackdrop: true,
 				backdropClass: 'cdk-overlay-dark-backdrop',
 				panelClass: 'lum-modal-panel',
-				positionStrategy: this.overlay.position().global().centerHorizontally().centerVertically(),
-				scrollStrategy: this.overlay.scrollStrategies.block()
+				positionStrategy: this._overlay.position().global().centerHorizontally().centerVertically(),
+				scrollStrategy: this._overlay.scrollStrategies.block()
 			});
 
 			let trap: FocusTrap | null = null;
@@ -78,7 +78,7 @@ export class ModalService {
 			const modalRef: ModalRef<R> = { close };
 
 			const portalInjector = Injector.create({
-				parent: this.injector,
+				parent: this._injector,
 				providers: [
 					{ provide: MODAL_DATA, useValue: data },
 					{ provide: MODAL_REF, useValue: modalRef }
@@ -87,18 +87,18 @@ export class ModalService {
 
 			const componentRef = overlayRef.attach(new ComponentPortal(component, null, portalInjector));
 
-			trap = this.focusTrapFactory.create(overlayRef.overlayElement);
+			trap = this._focusTrapFactory.create(overlayRef.overlayElement);
 			void trap.focusInitialElementWhenReady();
 
-			overlayRef.backdropClick().subscribe(() => close(undefined));
+			overlayRef.backdropClick().subscribe(() => close());
 			overlayRef.keydownEvents().subscribe((event) => {
-				if (event.key === 'Escape') close(undefined);
+				if (event.key === 'Escape') close();
 			});
 
 			/* A component that gets destroyed some other way (a hard navigation,
 			   a test tearing down the fixture) must still resolve the promise
 			   rather than leave the caller awaiting forever. */
-			componentRef.onDestroy(() => close(undefined));
+			componentRef.onDestroy(() => close());
 		});
 	}
 }

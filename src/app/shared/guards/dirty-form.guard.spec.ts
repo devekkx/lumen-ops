@@ -47,7 +47,7 @@ describe('dirtyFormGuard', () => {
 		expect(result).toBeInstanceOf(Promise);
 
 		let resolved: boolean | undefined;
-		result.then((value) => (resolved = value));
+		void result.then((value) => (resolved = value));
 		flushMicrotasks();
 
 		expect(resolved).toBe(true);
@@ -66,7 +66,7 @@ describe('dirtyFormGuard', () => {
 		) as Promise<boolean>;
 
 		let resolved: boolean | undefined;
-		result.then((value) => (resolved = value));
+		void result.then((value) => (resolved = value));
 		flushMicrotasks();
 
 		expect(resolved).toBe(false);

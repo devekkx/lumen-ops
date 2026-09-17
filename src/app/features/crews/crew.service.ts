@@ -36,23 +36,23 @@ export const CREW_SEARCH_KEYS = ['code', 'name', 'contractor', 'zone'] as const;
    or delete, so this only implements page() plus the one extra read. */
 @Injectable({ providedIn: 'root' })
 export class CrewService implements GenericCollectionService<Crew> {
-	private readonly api = inject(ApiService);
+	private readonly _api = inject(ApiService);
 
 	page(request: PageRequest): Observable<Page<Crew>> {
-		return this.api.post<Page<Crew>>('/api/crews/paged', request);
+		return this._api.post<Page<Crew>>('/api/crews/paged', request);
 	}
 
 	/* The full, unpaged crew list - GET /api/crews - for pickers like the
 	   assign-crew dialog, which needs every crew at once rather than one page
 	   of them. */
 	list(): Observable<Crew[]> {
-		return this.api.get<Crew[]>('/api/crews');
+		return this._api.get<Crew[]>('/api/crews');
 	}
 
 	/* Crews are edited in place, never created or deleted from this screen -
 	   the roster is the contractors' real headcount for this contract, not a
 	   collection an ADMIN session grows or shrinks. */
 	update(id: string, patch: CrewPatch): Observable<Crew> {
-		return this.api.patch<Crew>(`/api/crews/${id}`, patch);
+		return this._api.patch<Crew>(`/api/crews/${id}`, patch);
 	}
 }

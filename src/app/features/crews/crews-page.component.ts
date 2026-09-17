@@ -35,12 +35,12 @@ import { editCrewDialog } from './edit-crew-dialog.component';
 })
 export class CrewsPageComponent extends PaginatedTableBase<Crew> {
 	protected readonly collection = inject(CrewService);
-	private readonly auth = inject(AuthService);
-	private readonly modal = inject(ModalService);
-	private readonly toast = inject(ToastService);
-	private readonly transloco = inject(TranslocoService);
+	private readonly _auth = inject(AuthService);
+	private readonly _modal = inject(ModalService);
+	private readonly _toast = inject(ToastService);
+	private readonly _transloco = inject(TranslocoService);
 
-	readonly abilities = this.auth.abilities;
+	readonly abilities = this._auth.abilities;
 	readonly hasRowActions = computed(() => this.abilities().editCrew);
 
 	readonly columns: TableColumn<Crew>[] = [
@@ -59,10 +59,10 @@ export class CrewsPageComponent extends PaginatedTableBase<Crew> {
 	}
 
 	editCrew(crew: Crew): void {
-		void editCrewDialog(this.modal, { crew }).then((patch) => {
+		void editCrewDialog(this._modal, { crew }).then((patch) => {
 			if (!patch) return;
 			this.collection.update(crew.id, patch).subscribe(() => {
-				this.toast.show(this.transloco.translate('crew.updated', { code: crew.code }), 'healthy');
+				this._toast.show(this._transloco.translate('crew.updated', { code: crew.code }), 'healthy');
 				this.refresh();
 			});
 		});

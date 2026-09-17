@@ -46,31 +46,31 @@ export class LumenTooltipDirective implements OnChanges, OnDestroy {
 	@Input() title = '';
 	@Input() placement: 'top' | 'right' | 'bottom' | 'left' = 'top';
 
-	private readonly el = inject(ElementRef<HTMLElement>);
-	private readonly renderer = inject(Renderer2);
-	private tooltip: LumenTooltipInstance | undefined;
+	private readonly _el = inject(ElementRef<HTMLElement>);
+	private readonly _renderer = inject(Renderer2);
+	private _tooltip: LumenTooltipInstance | undefined;
 
 	ngOnChanges(changes: SimpleChanges): void {
 		if (!('title' in changes)) return;
 
 		if (!this.title) {
-			this.teardown();
+			this._teardown();
 			return;
 		}
 
-		if (this.tooltip) {
-			this.tooltip.setContent({ '.tooltip-inner': this.title });
+		if (this._tooltip) {
+			this._tooltip.setContent({ '.tooltip-inner': this.title });
 			return;
 		}
 
 		/* The native attribute is the documented Bootstrap markup and the
 		   no-JS/no-Bootstrap fallback (a plain browser tooltip); set it before
 		   handing the element to Bootstrap, which reads it once at construction. */
-		this.renderer.setAttribute(this.el.nativeElement, 'title', this.title);
+		this._renderer.setAttribute(this._el.nativeElement, 'title', this.title);
 
 		if (typeof bootstrap === 'undefined') return;
 
-		this.tooltip = new bootstrap.Tooltip(this.el.nativeElement, {
+		this._tooltip = new bootstrap.Tooltip(this._el.nativeElement, {
 			trigger: 'hover focus',
 			container: 'body',
 			placement: this.placement
@@ -82,16 +82,16 @@ export class LumenTooltipDirective implements OnChanges, OnDestroy {
 		   moved elsewhere AND something else stole focus. Blurring right after
 		   the click drops the "focus" half as soon as the action it describes
 		   has actually happened, instead of leaving it hanging on hover alone. */
-		this.renderer.listen(this.el.nativeElement, 'click', () => this.el.nativeElement.blur());
+		this._renderer.listen(this._el.nativeElement, 'click', () => this._el.nativeElement.blur());
 	}
 
 	ngOnDestroy(): void {
-		this.teardown();
+		this._teardown();
 	}
 
-	private teardown(): void {
-		this.tooltip?.dispose();
-		this.tooltip = undefined;
-		this.renderer.removeAttribute(this.el.nativeElement, 'title');
+	private _teardown(): void {
+		this._tooltip?.dispose();
+		this._tooltip = undefined;
+		this._renderer.removeAttribute(this._el.nativeElement, 'title');
 	}
 }

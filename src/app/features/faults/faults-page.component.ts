@@ -30,11 +30,11 @@ import {
 })
 export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 	protected readonly collection = inject(FaultService);
-	private readonly auth = inject(AuthService);
-	private readonly toast = inject(ToastService);
-	private readonly transloco = inject(TranslocoService);
+	private readonly _auth = inject(AuthService);
+	private readonly _toast = inject(ToastService);
+	private readonly _transloco = inject(TranslocoService);
 
-	readonly abilities = this.auth.abilities;
+	readonly abilities = this._auth.abilities;
 
 	/* Every write action is individually ability-gated inside #rowActions
 	   already, but that leaves an empty Actions column for a read-only user
@@ -68,33 +68,33 @@ export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 	readonly severities = SEVERITIES;
 	readonly statuses = FAULT_STATUSES;
 
-	private severityFilter: string[] = [];
-	private statusFilter: string[] = [];
+	private _severityFilter: string[] = [];
+	private _statusFilter: string[] = [];
 
 	constructor() {
 		super([...FAULT_SEARCH_KEYS], { property: 'reportedAt', direction: 'DESC' });
 	}
 
 	toggleSeverity(value: string, checked: boolean): void {
-		this.severityFilter = checked
-			? [...this.severityFilter, value]
-			: this.severityFilter.filter((entry) => entry !== value);
-		this.applyFilters();
+		this._severityFilter = checked
+			? [...this._severityFilter, value]
+			: this._severityFilter.filter((entry) => entry !== value);
+		this._applyFilters();
 	}
 
 	toggleStatus(value: string, checked: boolean): void {
-		this.statusFilter = checked
-			? [...this.statusFilter, value]
-			: this.statusFilter.filter((entry) => entry !== value);
-		this.applyFilters();
+		this._statusFilter = checked
+			? [...this._statusFilter, value]
+			: this._statusFilter.filter((entry) => entry !== value);
+		this._applyFilters();
 	}
 
 	isSeverityOn(value: string): boolean {
-		return this.severityFilter.includes(value);
+		return this._severityFilter.includes(value);
 	}
 
 	isStatusOn(value: string): boolean {
-		return this.statusFilter.includes(value);
+		return this._statusFilter.includes(value);
 	}
 
 	canValidate(fault: Fault): boolean {
@@ -112,8 +112,8 @@ export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 
 	rejectFault(fault: Fault): void {
 		this.collection.transition(fault.id, 'REJECTED').subscribe(() => {
-			this.toast.show(
-				this.transloco.translate('fault.rejected', { code: fault.code }),
+			this._toast.show(
+				this._transloco.translate('fault.rejected', { code: fault.code }),
 				'attention'
 			);
 			this.refresh();
@@ -123,7 +123,10 @@ export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 	@Confirmable('confirm.validateFault', { params: (fault: Fault) => ({ code: fault.code }) })
 	validateFault(fault: Fault): void {
 		this.collection.transition(fault.id, 'VALIDATED').subscribe(() => {
-			this.toast.show(this.transloco.translate('fault.validated', { code: fault.code }), 'healthy');
+			this._toast.show(
+				this._transloco.translate('fault.validated', { code: fault.code }),
+				'healthy'
+			);
 			this.refresh();
 		});
 	}
@@ -131,7 +134,10 @@ export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 	@Confirmable('confirm.closeFault', { params: (fault: Fault) => ({ code: fault.code }) })
 	closeFault(fault: Fault): void {
 		this.collection.transition(fault.id, 'CLOSED').subscribe(() => {
-			this.toast.show(this.transloco.translate('fault.closedMsg', { code: fault.code }), 'healthy');
+			this._toast.show(
+				this._transloco.translate('fault.closedMsg', { code: fault.code }),
+				'healthy'
+			);
 			this.refresh();
 		});
 	}
@@ -139,7 +145,10 @@ export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 	@Confirmable('confirm.deleteFault', { params: (fault: Fault) => ({ code: fault.code }) })
 	deleteFault(fault: Fault): void {
 		this.collection.delete(fault.id).subscribe(() => {
-			this.toast.show(this.transloco.translate('fault.deleted', { code: fault.code }), 'critical');
+			this._toast.show(
+				this._transloco.translate('fault.deleted', { code: fault.code }),
+				'critical'
+			);
 			this.refresh();
 		});
 	}
@@ -152,16 +161,16 @@ export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 	exportCsv(): void {
 		const columns = this.columns.map((column) => ({
 			key: column.key,
-			header: this.transloco.translate(column.label)
+			header: this._transloco.translate(column.label)
 		}));
 		const rows = this.page().data;
 		downloadCsv(`averias-${new Date().toISOString().slice(0, 10)}.csv`, toCsv(columns, rows));
 	}
 
-	private applyFilters(): void {
+	private _applyFilters(): void {
 		const record: FilterRecord = {};
-		if (this.severityFilter.length) record['severity'] = this.severityFilter;
-		if (this.statusFilter.length) record['status'] = this.statusFilter;
+		if (this._severityFilter.length) record['severity'] = this._severityFilter;
+		if (this._statusFilter.length) record['status'] = this._statusFilter;
 		this.setFilters(record);
 	}
 }

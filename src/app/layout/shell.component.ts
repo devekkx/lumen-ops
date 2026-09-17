@@ -23,22 +23,28 @@ const TOGGLE_RADIUS = 17; // half of the 34px disc, so it straddles the edge
 @Component({
 	selector: 'lumen-shell',
 	standalone: true,
-	imports: [RouterOutlet, RouterLink, TranslocoDirective, ToastHostComponent, LumenTooltipDirective],
+	imports: [
+		RouterOutlet,
+		RouterLink,
+		TranslocoDirective,
+		ToastHostComponent,
+		LumenTooltipDirective
+	],
 	templateUrl: './shell.component.html',
 	styleUrl: './shell.component.scss'
 })
 export class ShellComponent {
-	private readonly router = inject(Router);
-	private readonly auth = inject(AuthService);
-	private readonly language = inject(LanguageService);
+	private readonly _router = inject(Router);
+	private readonly _auth = inject(AuthService);
+	private readonly _language = inject(LanguageService);
 
 	readonly locales = LOCALES;
-	readonly activeLocale = this.language.current;
-	readonly user = this.auth.user;
+	readonly activeLocale = this._language.current;
+	readonly user = this._auth.user;
 
-	@ViewChild('menuFirstFocusable') private menuFirstFocusable?: ElementRef<HTMLElement>;
+	@ViewChild('menuFirstFocusable') private readonly _menuFirstFocusable?: ElementRef<HTMLElement>;
 
-	readonly collapsed = signal(this.restoreCollapsed());
+	readonly collapsed = signal(this._restoreCollapsed());
 	readonly menuOpen = signal(false);
 	readonly narrow = signal(window.innerWidth < MOBILE_WIDTH);
 
@@ -94,21 +100,21 @@ export class ShellComponent {
 		!this.collapsed() ? 'M14.5 6.5 9 12l5.5 5.5' : 'M9.5 6.5 15 12l-5.5 5.5'
 	);
 
-	private readonly navigation = toSignal(
-		this.router.events.pipe(
+	private readonly _navigation = toSignal(
+		this._router.events.pipe(
 			filter((event): event is NavigationEnd => event instanceof NavigationEnd),
-			map(() => this.router.routerState.snapshot.root),
-			startWith(this.router.routerState.snapshot.root)
+			map(() => this._router.routerState.snapshot.root),
+			startWith(this._router.routerState.snapshot.root)
 		),
-		{ initialValue: this.router.routerState.snapshot.root }
+		{ initialValue: this._router.routerState.snapshot.root }
 	);
 
-	readonly crumbs = computed(() => crumbsFrom(this.navigation()));
+	readonly crumbs = computed(() => crumbsFrom(this._navigation()));
 
 	/* Only the groups this user can reach, and only their reachable items - an
 	   empty group renders no heading rather than a heading over nothing. */
 	readonly groups = computed(() => {
-		const auth = this.auth;
+		const auth = this._auth;
 		return NAV_GROUPS.map((group) => ({
 			label: group.label,
 			items: group.items.filter((item) => !item.roles || auth.hasSomeRole(item.roles))
@@ -133,21 +139,21 @@ export class ShellComponent {
 	});
 
 	constructor() {
-		window.addEventListener('resize', this.onResize, { passive: true });
+		window.addEventListener('resize', this._onResize, { passive: true });
 
 		/* Closing the menu on navigation rather than leaving it open over the
 		   next page. */
 		effect(() => {
-			this.navigation();
+			this._navigation();
 			this.menuOpen.set(false);
 		});
 	}
 
-	private readonly onResize = () => this.narrow.set(window.innerWidth < MOBILE_WIDTH);
+	private readonly _onResize = () => this.narrow.set(window.innerWidth < MOBILE_WIDTH);
 
 	toggleAside(): void {
 		this.collapsed.update((value) => {
-			this.persistCollapsed(!value);
+			this._persistCollapsed(!value);
 			return !value;
 		});
 	}
@@ -163,7 +169,7 @@ export class ShellComponent {
 		const next = !this.menuOpen();
 		this.menuOpen.set(next);
 		if (next) {
-			setTimeout(() => this.menuFirstFocusable?.nativeElement.focus());
+			setTimeout(() => this._menuFirstFocusable?.nativeElement.focus());
 		}
 	}
 
@@ -181,11 +187,11 @@ export class ShellComponent {
 	}
 
 	use(locale: Locale): void {
-		this.language.use(locale);
+		this._language.use(locale);
 	}
 
 	isActive(path: string): boolean {
-		return this.router.isActive(path, {
+		return this._router.isActive(path, {
 			paths: 'subset',
 			queryParams: 'ignored',
 			fragment: 'ignored',
@@ -194,11 +200,11 @@ export class ShellComponent {
 	}
 
 	logout(): void {
-		this.auth.logout();
-		void this.router.navigateByUrl('/auth/login');
+		this._auth.logout();
+		void this._router.navigateByUrl('/auth/login');
 	}
 
-	private restoreCollapsed(): boolean {
+	private _restoreCollapsed(): boolean {
 		try {
 			/* Default collapsed on a narrow screen, expanded on a wide one. */
 			const stored = localStorage.getItem(COLLAPSED_KEY);
@@ -209,7 +215,7 @@ export class ShellComponent {
 		}
 	}
 
-	private persistCollapsed(value: boolean): void {
+	private _persistCollapsed(value: boolean): void {
 		try {
 			localStorage.setItem(COLLAPSED_KEY, String(value));
 		} catch {

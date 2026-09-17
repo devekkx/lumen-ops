@@ -46,16 +46,16 @@ interface PickerLuminaire {
 	]
 })
 export class LuminairePickerComponent implements ControlValueAccessor {
-	private readonly api = inject(ApiService);
+	private readonly _api = inject(ApiService);
 
-	private static nextId = 0;
-	private readonly uid = LuminairePickerComponent.nextId++;
-	readonly listboxId = `luminaire-picker-listbox-${this.uid}`;
+	private static _nextId = 0;
+	private readonly _uid = LuminairePickerComponent._nextId++;
+	readonly listboxId = `luminaire-picker-listbox-${this._uid}`;
 	/* Exposed so a parent template's <label [attr.for]="picker.inputId"> can
 	   associate with this component's internal <input> - a plain wrapping
 	   <label> only auto-associates with a native form element, not a custom
 	   component. */
-	readonly inputId = `luminaire-picker-${this.uid}`;
+	readonly inputId = `luminaire-picker-${this._uid}`;
 
 	readonly query = signal('');
 	readonly suggestions = signal<PickerLuminaire[]>([]);
@@ -65,16 +65,16 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 	readonly disabled = signal(false);
 	readonly selected = signal<PickerLuminaire | null>(null);
 
-	private readonly searchTerms = new Subject<string>();
+	private readonly _searchTerms = new Subject<string>();
 	/* ControlValueAccessor requires a callable default before Angular Forms
 	   installs the real ones via registerOnChange/registerOnTouched below. */
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
-	private onChange: (value: string | null) => void = () => {};
+	private _onChange: (value: string | null) => void = () => {};
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
-	private onTouched: () => void = () => {};
+	private _onTouched: () => void = () => {};
 
 	constructor() {
-		this.searchTerms
+		this._searchTerms
 			.pipe(
 				debounceTime(250),
 				distinctUntilChanged(),
@@ -83,7 +83,7 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 					if (!needle) return of<PickerLuminaire[]>([]);
 
 					this.loading.set(true);
-					return this.api
+					return this._api
 						.get<PickerLuminaire[]>('/api/luminaires/search', { q: needle, limit: 8 })
 						.pipe(
 							catchError(() => of<PickerLuminaire[]>([])),
@@ -107,7 +107,7 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 			return;
 		}
 
-		this.api.get<PickerLuminaire>(`/api/luminaires/${id}`).subscribe({
+		this._api.get<PickerLuminaire>(`/api/luminaires/${id}`).subscribe({
 			next: (luminaire) => {
 				this.selected.set(luminaire);
 				this.query.set(this.labelFor(luminaire));
@@ -123,11 +123,11 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 	}
 
 	registerOnChange(fn: (value: string | null) => void): void {
-		this.onChange = fn;
+		this._onChange = fn;
 	}
 
 	registerOnTouched(fn: () => void): void {
-		this.onTouched = fn;
+		this._onTouched = fn;
 	}
 
 	setDisabledState(isDisabled: boolean): void {
@@ -150,10 +150,10 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 		const current = this.selected();
 		if (current && value !== this.labelFor(current)) {
 			this.selected.set(null);
-			this.onChange(null);
+			this._onChange(null);
 		}
 
-		this.searchTerms.next(value);
+		this._searchTerms.next(value);
 	}
 
 	onFocus(): void {
@@ -166,7 +166,7 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 		   beat later so any option list still visible closes once focus has
 		   genuinely left, and reports touched either way. */
 		setTimeout(() => this.open.set(false), 150);
-		this.onTouched();
+		this._onTouched();
 	}
 
 	select(luminaire: PickerLuminaire): void {
@@ -174,8 +174,8 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 		this.query.set(this.labelFor(luminaire));
 		this.suggestions.set([]);
 		this.open.set(false);
-		this.onChange(luminaire.id);
-		this.onTouched();
+		this._onChange(luminaire.id);
+		this._onTouched();
 	}
 
 	clear(): void {
@@ -183,8 +183,8 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 		this.query.set('');
 		this.suggestions.set([]);
 		this.open.set(false);
-		this.onChange(null);
-		this.onTouched();
+		this._onChange(null);
+		this._onTouched();
 	}
 
 	onKeydown(event: KeyboardEvent): void {

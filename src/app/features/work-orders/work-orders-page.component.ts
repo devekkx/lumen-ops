@@ -34,13 +34,13 @@ import {
 })
 export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 	protected readonly collection = inject(WorkOrderService);
-	private readonly crews = inject(CrewService);
-	private readonly auth = inject(AuthService);
-	private readonly modal = inject(ModalService);
-	private readonly toast = inject(ToastService);
-	private readonly transloco = inject(TranslocoService);
+	private readonly _crews = inject(CrewService);
+	private readonly _auth = inject(AuthService);
+	private readonly _modal = inject(ModalService);
+	private readonly _toast = inject(ToastService);
+	private readonly _transloco = inject(TranslocoService);
 
-	readonly abilities = this.auth.abilities;
+	readonly abilities = this._auth.abilities;
 
 	/* Same reasoning as faults-page's hasRowActions: every write action below
 	   is individually ability-gated, but that still leaves an empty Actions
@@ -52,7 +52,7 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 		return abilities.assignCrew || abilities.startOrder || abilities.completeOrder;
 	});
 
-	private static readonly BASE_COLUMNS: TableColumn<WorkOrder>[] = [
+	private static readonly _BASE_COLUMNS: TableColumn<WorkOrder>[] = [
 		{ key: 'code', label: 'order.code', sortable: true },
 		{ key: 'faultCode', label: 'order.fault', sortable: true },
 		{ key: 'luminaireCode', label: 'lum.title', sortable: true },
@@ -63,7 +63,7 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 		{ key: 'hours', label: 'order.hours', sortable: true }
 	];
 
-	private static readonly COST_COLUMN: TableColumn<WorkOrder> = {
+	private static readonly _COST_COLUMN: TableColumn<WorkOrder> = {
 		key: 'cost',
 		label: 'order.cost',
 		sortable: true
@@ -76,8 +76,8 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 	   ever see again. */
 	readonly columns = computed<TableColumn<WorkOrder>[]>(() =>
 		this.abilities().seeCosts
-			? [...WorkOrdersPageComponent.BASE_COLUMNS, WorkOrdersPageComponent.COST_COLUMN]
-			: WorkOrdersPageComponent.BASE_COLUMNS
+			? [...WorkOrdersPageComponent._BASE_COLUMNS, WorkOrdersPageComponent._COST_COLUMN]
+			: WorkOrdersPageComponent._BASE_COLUMNS
 	);
 
 	readonly pillColumns = { severity: 'severity', status: 'status' };
@@ -85,7 +85,7 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 
 	readonly statuses = ORDER_STATUSES;
 
-	private statusFilter: string[] = [];
+	private _statusFilter: string[] = [];
 
 	/* The base's page$ carries the raw wire value for crewName - null on a
 	   DRAFT order. The table renders a column's value with a plain
@@ -101,7 +101,7 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 			...page,
 			data: page.data.map((order) => ({
 				...order,
-				crewName: order.crewName ?? this.transloco.translate('order.unassigned')
+				crewName: order.crewName ?? this._transloco.translate('order.unassigned')
 			}))
 		}))
 	);
@@ -111,14 +111,14 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 	}
 
 	toggleStatus(value: string, checked: boolean): void {
-		this.statusFilter = checked
-			? [...this.statusFilter, value]
-			: this.statusFilter.filter((entry) => entry !== value);
-		this.applyFilters();
+		this._statusFilter = checked
+			? [...this._statusFilter, value]
+			: this._statusFilter.filter((entry) => entry !== value);
+		this._applyFilters();
 	}
 
 	isStatusOn(value: string): boolean {
-		return this.statusFilter.includes(value);
+		return this._statusFilter.includes(value);
 	}
 
 	canAssign(order: WorkOrder): boolean {
@@ -138,12 +138,12 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 	   list that's gone stale across a long-lived session, and this page has
 	   nowhere better to invalidate a cache from. */
 	assignCrew(order: WorkOrder): void {
-		this.crews.list().subscribe((crews) => {
-			void assignCrewDialog(this.modal, { code: order.code, crews }).then((crewId) => {
+		this._crews.list().subscribe((crews) => {
+			void assignCrewDialog(this._modal, { code: order.code, crews }).then((crewId) => {
 				if (!crewId) return;
 				this.collection.assignCrew(order.id, crewId).subscribe((updated) => {
-					this.toast.show(
-						this.transloco.translate('order.assigned', {
+					this._toast.show(
+						this._transloco.translate('order.assigned', {
 							code: order.code,
 							crew: updated.crewName
 						}),
@@ -157,7 +157,7 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 
 	startOrder(order: WorkOrder): void {
 		this.collection.updateStatus(order.id, 'IN_PROGRESS').subscribe(() => {
-			this.toast.show(this.transloco.translate('order.started', { code: order.code }), 'queued');
+			this._toast.show(this._transloco.translate('order.started', { code: order.code }), 'queued');
 			this.refresh();
 		});
 	}
@@ -165,7 +165,10 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 	@Confirmable('confirm.completeOrder', { params: (order: WorkOrder) => ({ code: order.code }) })
 	completeOrder(order: WorkOrder): void {
 		this.collection.updateStatus(order.id, 'DONE').subscribe(() => {
-			this.toast.show(this.transloco.translate('order.completed', { code: order.code }), 'healthy');
+			this._toast.show(
+				this._transloco.translate('order.completed', { code: order.code }),
+				'healthy'
+			);
 			this.refresh();
 		});
 	}
@@ -178,7 +181,7 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 		this.displayPage$.pipe(take(1)).subscribe((page) => {
 			const columns = this.columns().map((column) => ({
 				key: column.key,
-				header: this.transloco.translate(column.label)
+				header: this._transloco.translate(column.label)
 			}));
 			downloadCsv(
 				`ordenes-trabajo-${new Date().toISOString().slice(0, 10)}.csv`,
@@ -187,9 +190,9 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 		});
 	}
 
-	private applyFilters(): void {
+	private _applyFilters(): void {
 		const record: FilterRecord = {};
-		if (this.statusFilter.length) record['status'] = this.statusFilter;
+		if (this._statusFilter.length) record['status'] = this._statusFilter;
 		this.setFilters(record);
 	}
 }

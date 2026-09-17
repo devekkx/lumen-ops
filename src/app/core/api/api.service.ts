@@ -10,14 +10,14 @@ import { HttpParamsInput, buildHttpParams } from './http-params';
    anything through silently. */
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-	private readonly http = inject(HttpClient);
+	private readonly _http = inject(HttpClient);
 
 	get<T = unknown>(
 		path: string,
 		params?: HttpParamsInput,
 		options?: ApiCallOptions
 	): Observable<T> {
-		return this.http.get<T>(path, {
+		return this._http.get<T>(path, {
 			params: buildHttpParams(params),
 			context: contextFor(options)
 		});
@@ -29,7 +29,7 @@ export class ApiService {
 		params?: HttpParamsInput,
 		options?: ApiCallOptions
 	): Observable<T> {
-		return this.http.post<T>(path, body, {
+		return this._http.post<T>(path, body, {
 			params: buildHttpParams(params),
 			context: contextFor(options)
 		});
@@ -41,7 +41,7 @@ export class ApiService {
 		params?: HttpParamsInput,
 		options?: ApiCallOptions
 	): Observable<T> {
-		return this.http.put<T>(path, body, {
+		return this._http.put<T>(path, body, {
 			params: buildHttpParams(params),
 			context: contextFor(options)
 		});
@@ -53,7 +53,7 @@ export class ApiService {
 		params?: HttpParamsInput,
 		options?: ApiCallOptions
 	): Observable<T> {
-		return this.http.patch<T>(path, body, {
+		return this._http.patch<T>(path, body, {
 			params: buildHttpParams(params),
 			context: contextFor(options)
 		});
@@ -64,7 +64,7 @@ export class ApiService {
 		params?: HttpParamsInput,
 		options?: ApiCallOptions
 	): Observable<T> {
-		return this.http.delete<T>(path, {
+		return this._http.delete<T>(path, {
 			params: buildHttpParams(params),
 			context: contextFor(options)
 		});
@@ -73,7 +73,7 @@ export class ApiService {
 	/* The export path from exercise 5.3 reads a file rather than JSON, so it
 	   needs its own response type rather than a generic that defaults wrong. */
 	getBlob(path: string, params?: HttpParamsInput, options?: ApiCallOptions): Observable<Blob> {
-		return this.http.get(path, {
+		return this._http.get(path, {
 			params: buildHttpParams(params),
 			context: contextFor(options),
 			responseType: 'blob'

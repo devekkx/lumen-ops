@@ -8,10 +8,10 @@ import { LanguageService } from './language.service';
 
 @Pipe({ name: 'lumenNumber', standalone: true, pure: false })
 export class LumenNumberPipe implements PipeTransform {
-	private readonly language = inject(LanguageService);
+	private readonly _language = inject(LanguageService);
 
 	transform(value: number | null | undefined, digits = 0): string {
-		return new Intl.NumberFormat(this.language.intlLocale(), {
+		return new Intl.NumberFormat(this._language.intlLocale(), {
 			minimumFractionDigits: digits,
 			maximumFractionDigits: digits
 		}).format(value ?? 0);
@@ -39,7 +39,7 @@ const ordinal = (day: number): string => {
 
 @Pipe({ name: 'lumenDate', standalone: true, pure: false })
 export class LumenDatePipe implements PipeTransform {
-	private readonly language = inject(LanguageService);
+	private readonly _language = inject(LanguageService);
 
 	transform(value: string | Date | null | undefined, withTime = false): string {
 		if (!value) return '-';
@@ -51,14 +51,14 @@ export class LumenDatePipe implements PipeTransform {
 		   with local getters would roll the day back a day for anyone west
 		   of UTC. */
 		const time = withTime
-			? `, ${new Intl.DateTimeFormat(this.language.intlLocale(), {
+			? `, ${new Intl.DateTimeFormat(this._language.intlLocale(), {
 					hour: '2-digit',
 					minute: '2-digit',
 					timeZone: 'UTC'
 				}).format(date)}`
 			: '';
 
-		if (this.language.current() === 'en') {
+		if (this._language.current() === 'en') {
 			const month = new Intl.DateTimeFormat('en-GB', { month: 'long', timeZone: 'UTC' }).format(
 				date
 			);
@@ -77,10 +77,10 @@ export class LumenDatePipe implements PipeTransform {
 
 @Pipe({ name: 'lumenCurrency', standalone: true, pure: false })
 export class LumenCurrencyPipe implements PipeTransform {
-	private readonly language = inject(LanguageService);
+	private readonly _language = inject(LanguageService);
 
 	transform(value: number | null | undefined): string {
-		return new Intl.NumberFormat(this.language.intlLocale(), {
+		return new Intl.NumberFormat(this._language.intlLocale(), {
 			style: 'currency',
 			currency: 'EUR',
 			maximumFractionDigits: 0

@@ -52,10 +52,10 @@ export interface DashboardQuery {
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
-	private readonly api = inject(ApiService);
+	private readonly _api = inject(ApiService);
 
 	snapshot(query: DashboardQuery): Observable<DashboardSnapshot> {
-		return this.api.get<DashboardSnapshot>('/api/dashboard', {
+		return this._api.get<DashboardSnapshot>('/api/dashboard', {
 			from: query.from,
 			to: query.to,
 			zoneId: query.zoneId

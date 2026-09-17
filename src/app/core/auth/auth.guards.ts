@@ -11,19 +11,25 @@ const rolesFromRoute = (data: Record<string, unknown>): readonly Role[] =>
 export const authGuard: CanActivateFn = () =>
 	inject(AuthService).isAuthenticated() || redirect('/auth/login');
 
-/* Needs *every* listed role. */
+/* Needs *every* listed role. Returning boolean-or-UrlTree from the same
+   function is the CanActivateFn contract, not an inconsistency - Sonar's
+   return-type rule doesn't know that. */
+// eslint-disable-next-line sonarjs/function-return-type
 export const rolesGuard: CanActivateFn = (route) => {
 	const auth = inject(AuthService);
 	if (!auth.isAuthenticated()) return redirect('/auth/login');
-	return auth.hasAllRoles(rolesFromRoute(route.data)) || redirect('/unauthorized');
+	if (!auth.hasAllRoles(rolesFromRoute(route.data))) return redirect('/unauthorized');
+	return true;
 };
 
 /* Needs *at least one* listed role. This is the one route configuration
    actually uses, since ROLE_GROUPS entries are "any of these". */
+// eslint-disable-next-line sonarjs/function-return-type -- see rolesGuard above
 export const someRoleGuard: CanActivateFn = (route) => {
 	const auth = inject(AuthService);
 	if (!auth.isAuthenticated()) return redirect('/auth/login');
-	return auth.hasSomeRole(rolesFromRoute(route.data)) || redirect('/unauthorized');
+	if (!auth.hasSomeRole(rolesFromRoute(route.data))) return redirect('/unauthorized');
+	return true;
 };
 
 /* The home-page redirects.

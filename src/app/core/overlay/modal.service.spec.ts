@@ -42,7 +42,7 @@ describe('ModalService', () => {
 	});
 
 	it('passes the data payload through to the opened component', () => {
-		service.open<TestModalComponent, boolean>(TestModalComponent, { label: 'hello' });
+		void service.open<TestModalComponent, boolean>(TestModalComponent, { label: 'hello' });
 		/* The portal-created component is outside any TestBed fixture, so
 		   there is no fixture.detectChanges() to call - the DOM node exists
 		   as soon as the overlay attaches, but its {{ data.label }} binding

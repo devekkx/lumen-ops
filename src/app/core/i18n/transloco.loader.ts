@@ -7,9 +7,9 @@ import { Translation, TranslocoLoader } from '@jsverse/transloco';
    same loader serves both and no scope needs registering here. */
 @Injectable({ providedIn: 'root' })
 export class TranslocoHttpLoader implements TranslocoLoader {
-	private readonly http = inject(HttpClient);
+	private readonly _http = inject(HttpClient);
 
 	getTranslation(path: string) {
-		return this.http.get<Translation>(`/i18n/${path}.json`);
+		return this._http.get<Translation>(`/i18n/${path}.json`);
 	}
 }

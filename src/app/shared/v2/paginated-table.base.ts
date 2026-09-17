@@ -43,11 +43,11 @@ const emptyPageFor = <T>(shape: Pick<PageRequest, 'page' | 'perPage'>): Page<T> 
 export abstract class PaginatedTableBaseV2<T> {
 	protected abstract readonly collection: GenericCollectionService<T>;
 
-	private readonly searchKeys: readonly string[];
-	private readonly params: WritableSignal<TableParams>;
-	private readonly filterRecord = signal<FilterRecord>({});
+	private readonly _searchKeys: readonly string[];
+	private readonly _params: WritableSignal<TableParams>;
+	private readonly _filterRecord = signal<FilterRecord>({});
 
-	private readonly rawRequest: Signal<PageRequest>;
+	private readonly _rawRequest: Signal<PageRequest>;
 	/* Undefined until the first debounce window elapses - resource() reads an undefined request
 	   as "no request yet" (status Idle, no fetch), which is exactly how v1 behaves too:
 	   debounceTime delays even the very first combineLatest emission, so the first real fetch
@@ -55,7 +55,7 @@ export abstract class PaginatedTableBaseV2<T> {
 	   instead would make resource() fire an immediate first fetch AND a second, 250ms later, once
 	   the debounced pipe finally emits that same (by-then-stale) initial request - starting as
 	   plain `undefined` avoids that double fetch. */
-	private readonly debouncedRequest: Signal<PageRequest | undefined>;
+	private readonly _debouncedRequest: Signal<PageRequest | undefined>;
 
 	/* resource() clears value() to defaultValue the instant `request` changes - Loading is
 	   documented to mean "value() will be undefined [or defaultValue]", by design, not a bug. v1
@@ -63,41 +63,41 @@ export abstract class PaginatedTableBaseV2<T> {
 	   (shareReplay(1) never re-emitted an empty page just because a fetch started); this signal
 	   plus the effect() below buy that same feel back - it's the one thing resource() doesn't
 	   give for free that switchMap+shareReplay did. */
-	private readonly lastGoodPage: WritableSignal<Page<T>>;
+	private readonly _lastGoodPage: WritableSignal<Page<T>>;
 
-	private readonly dataResource: ResourceRef<Page<T>>;
+	private readonly _dataResource: ResourceRef<Page<T>>;
 
 	readonly page: Signal<Page<T>>;
 	readonly loading: Signal<boolean>;
 	readonly error: Signal<string | null>;
 
 	protected constructor(searchKeys: readonly string[], defaultSort: Ordination) {
-		this.searchKeys = [...searchKeys];
+		this._searchKeys = [...searchKeys];
 		const initial = createPageRequest(searchKeys, defaultSort);
-		this.params = signal<TableParams>({
+		this._params = signal<TableParams>({
 			page: initial.page,
 			perPage: initial.perPage,
 			searchTerm: initial.searchTerm,
 			ordination: initial.ordination
 		});
 
-		this.rawRequest = computed<PageRequest>(() => ({
-			...this.params(),
-			searchKeys: [...this.searchKeys],
-			filters: buildFilterConditions(this.filterRecord())
+		this._rawRequest = computed<PageRequest>(() => ({
+			...this._params(),
+			searchKeys: [...this._searchKeys],
+			filters: buildFilterConditions(this._filterRecord())
 		}));
 
-		this.debouncedRequest = toSignal(
-			toObservable(this.rawRequest).pipe(
+		this._debouncedRequest = toSignal(
+			toObservable(this._rawRequest).pipe(
 				debounceTime(250),
 				distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
 			)
 		);
 
-		this.lastGoodPage = signal(emptyPageFor<T>(this.rawRequest()));
+		this._lastGoodPage = signal(emptyPageFor<T>(this._rawRequest()));
 
-		this.dataResource = resource({
-			request: () => this.debouncedRequest(),
+		this._dataResource = resource({
+			request: () => this._debouncedRequest(),
 			/* `request!`, not a real nullability hole: with strictNullChecks on,
 			   ResourceLoaderParams<R>['request'] is documented (and typed) as
 			   `Exclude<R, undefined>`, but verified against the actual
@@ -112,73 +112,73 @@ export abstract class PaginatedTableBaseV2<T> {
 			   first combineLatest emission before debounceTime elapses); the `!`
 			   asserts that real, structural guarantee rather than papering over a
 			   genuine gap. */
-			loader: ({ request, abortSignal }) => this.fetch(request!, abortSignal),
-			defaultValue: emptyPageFor<T>(this.rawRequest())
+			loader: ({ request, abortSignal }) => this._fetch(request!, abortSignal),
+			defaultValue: emptyPageFor<T>(this._rawRequest())
 		});
 
 		effect(() => {
-			if (this.dataResource.status() === ResourceStatus.Resolved) {
-				this.lastGoodPage.set(this.dataResource.value());
+			if (this._dataResource.status() === ResourceStatus.Resolved) {
+				this._lastGoodPage.set(this._dataResource.value());
 			}
 		});
 
 		this.page = computed(() => {
-			const status = this.dataResource.status();
+			const status = this._dataResource.status();
 			/* An error must not leave the previous page's rows on screen with no indication -
 			   same rule as v1, just read off resource()'s own status() rather than a catchError
 			   swap-in. The rawRequest() fallback is defensive only: status() can never be Error
 			   before a request has actually been made, so debouncedRequest() is never really
 			   undefined by this point. */
 			if (status === ResourceStatus.Error) {
-				return emptyPageFor<T>(this.debouncedRequest() ?? this.rawRequest());
+				return emptyPageFor<T>(this._debouncedRequest() ?? this._rawRequest());
 			}
 			if (status === ResourceStatus.Resolved || status === ResourceStatus.Local) {
-				return this.dataResource.value();
+				return this._dataResource.value();
 			}
-			return this.lastGoodPage();
+			return this._lastGoodPage();
 		});
-		this.loading = this.dataResource.isLoading;
+		this.loading = this._dataResource.isLoading;
 		this.error = computed(() =>
-			this.dataResource.status() === ResourceStatus.Error ? 'table.error' : null
+			this._dataResource.status() === ResourceStatus.Error ? 'table.error' : null
 		);
 	}
 
 	get filters(): FilterRecord {
-		return this.filterRecord();
+		return this._filterRecord();
 	}
 
 	get sortProperty(): string {
-		return this.params().ordination.property;
+		return this._params().ordination.property;
 	}
 
 	get sortDirection(): Ordination['direction'] {
-		return this.params().ordination.direction;
+		return this._params().ordination.direction;
 	}
 
 	setSearch(searchTerm: string): void {
-		this.update({ searchTerm, page: 1 });
+		this._update({ searchTerm, page: 1 });
 	}
 
 	setPage(page: number): void {
-		this.update({ page });
+		this._update({ page });
 	}
 
 	setPerPage(perPage: number): void {
-		this.update({ perPage, page: 1 });
+		this._update({ perPage, page: 1 });
 	}
 
 	/* A run of OR-chained conditions is not expressible from a flat form record, so this takes the
 	   raw record and builds it fresh on every fetch - same contract as v1's setFilters. */
 	setFilters(record: FilterRecord): void {
-		this.filterRecord.set(record);
-		this.update({ page: 1 });
+		this._filterRecord.set(record);
+		this._update({ page: 1 });
 	}
 
 	sortBy(property: string): void {
-		const current = this.params().ordination;
+		const current = this._params().ordination;
 		const direction: Ordination['direction'] =
 			current.property === property && current.direction === 'ASC' ? 'DESC' : 'ASC';
-		this.update({ ordination: { property, direction } });
+		this._update({ ordination: { property, direction } });
 	}
 
 	/* Unlike v1's refresh() - which re-emits a content-identical params object that
@@ -187,7 +187,7 @@ export abstract class PaginatedTableBaseV2<T> {
 	   own counter independent of the request value, so it always forces a real refetch of the
 	   same request. */
 	refresh(): void {
-		this.dataResource.reload();
+		this._dataResource.reload();
 	}
 
 	/* resource()'s cancellation guarantees only that a superseded request's resolution can never
@@ -196,7 +196,7 @@ export abstract class PaginatedTableBaseV2<T> {
 	   an Observable, not a fetch() Promise, so there's no ambient AbortSignal wiring the way
 	   there would be for `fetch`; this bridges the two by hand so a superseded request is
 	   actually unsubscribed, not merely ignored. */
-	private fetch(request: PageRequest, abortSignal: AbortSignal): Promise<Page<T>> {
+	private _fetch(request: PageRequest, abortSignal: AbortSignal): Promise<Page<T>> {
 		return new Promise<Page<T>>((resolvePromise, reject) => {
 			const subscription = this.collection.page(request).subscribe({
 				next: (page) => resolvePromise(page),
@@ -206,7 +206,7 @@ export abstract class PaginatedTableBaseV2<T> {
 		});
 	}
 
-	private update(change: Partial<TableParams>): void {
-		this.params.update((current) => ({ ...current, ...change }));
+	private _update(change: Partial<TableParams>): void {
+		this._params.update((current) => ({ ...current, ...change }));
 	}
 }

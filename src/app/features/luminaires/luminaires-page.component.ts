@@ -42,33 +42,33 @@ export class LuminairesPageComponent extends PaginatedTableBase<Luminaire> {
 	readonly statuses = LUMINAIRE_STATUSES;
 	readonly lampTypes = LAMP_TYPES;
 
-	private statusFilter: string[] = [];
-	private lampTypeFilter: string[] = [];
+	private _statusFilter: string[] = [];
+	private _lampTypeFilter: string[] = [];
 
 	constructor() {
 		super([...LUMINAIRE_SEARCH_KEYS], { property: 'code', direction: 'ASC' });
 	}
 
 	toggleStatus(value: string, checked: boolean): void {
-		this.statusFilter = checked
-			? [...this.statusFilter, value]
-			: this.statusFilter.filter((entry) => entry !== value);
-		this.applyFilters();
+		this._statusFilter = checked
+			? [...this._statusFilter, value]
+			: this._statusFilter.filter((entry) => entry !== value);
+		this._applyFilters();
 	}
 
 	toggleLampType(value: string, checked: boolean): void {
-		this.lampTypeFilter = checked
-			? [...this.lampTypeFilter, value]
-			: this.lampTypeFilter.filter((entry) => entry !== value);
-		this.applyFilters();
+		this._lampTypeFilter = checked
+			? [...this._lampTypeFilter, value]
+			: this._lampTypeFilter.filter((entry) => entry !== value);
+		this._applyFilters();
 	}
 
 	isStatusOn(value: string): boolean {
-		return this.statusFilter.includes(value);
+		return this._statusFilter.includes(value);
 	}
 
 	isLampTypeOn(value: string): boolean {
-		return this.lampTypeFilter.includes(value);
+		return this._lampTypeFilter.includes(value);
 	}
 
 	/* Rebuilds the readable DSL lines straight from the same builder the
@@ -85,10 +85,10 @@ export class LuminairesPageComponent extends PaginatedTableBase<Luminaire> {
 		return pillClass(value);
 	}
 
-	private applyFilters(): void {
+	private _applyFilters(): void {
 		const record: FilterRecord = {};
-		if (this.statusFilter.length) record['status'] = this.statusFilter;
-		if (this.lampTypeFilter.length) record['lampType'] = this.lampTypeFilter;
+		if (this._statusFilter.length) record['status'] = this._statusFilter;
+		if (this._lampTypeFilter.length) record['lampType'] = this._lampTypeFilter;
 		this.setFilters(record);
 	}
 }

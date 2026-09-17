@@ -20,22 +20,22 @@ const DEFAULT_DURATION_MS = 5000;
    is useful and one that spams the corner of the screen. */
 @Injectable({ providedIn: 'root' })
 export class ToastService {
-	private nextId = 0;
-	private readonly toastsState = signal<Toast[]>([]);
+	private _nextId = 0;
+	private readonly _toastsState = signal<Toast[]>([]);
 
-	readonly toasts = this.toastsState.asReadonly();
+	readonly toasts = this._toastsState.asReadonly();
 
 	show(message: string, tone: ToastTone = 'neutral', durationMs = DEFAULT_DURATION_MS): void {
-		if (this.toastsState().some((toast) => toast.message === message && toast.tone === tone)) {
+		if (this._toastsState().some((toast) => toast.message === message && toast.tone === tone)) {
 			return;
 		}
 
-		const id = ++this.nextId;
-		this.toastsState.update((toasts) => [...toasts, { id, message, tone }]);
+		const id = ++this._nextId;
+		this._toastsState.update((toasts) => [...toasts, { id, message, tone }]);
 		setTimeout(() => this.dismiss(id), durationMs);
 	}
 
 	dismiss(id: number): void {
-		this.toastsState.update((toasts) => toasts.filter((toast) => toast.id !== id));
+		this._toastsState.update((toasts) => toasts.filter((toast) => toast.id !== id));
 	}
 }

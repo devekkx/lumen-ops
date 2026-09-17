@@ -43,19 +43,19 @@ export interface ConfirmDialogData {
 	`
 })
 export class ConfirmDialogComponent {
-	private readonly ref = inject<ModalRef<boolean>>(MODAL_REF);
+	private readonly _ref = inject<ModalRef<boolean>>(MODAL_REF);
 	readonly data = inject<ConfirmDialogData>(MODAL_DATA);
 
-	private static nextId = 0;
-	readonly titleId = `confirm-dialog-title-${ConfirmDialogComponent.nextId++}`;
+	private static _nextId = 0;
+	readonly titleId = `confirm-dialog-title-${ConfirmDialogComponent._nextId++}`;
 	readonly bodyId = `${this.titleId}-body`;
 
 	confirm(): void {
-		this.ref.close(true);
+		this._ref.close(true);
 	}
 
 	cancel(): void {
-		this.ref.close(false);
+		this._ref.close(false);
 	}
 }
 

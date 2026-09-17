@@ -43,10 +43,10 @@ export const FAULT_SEARCH_KEYS = ['code', 'street', 'description'] as const;
 
 @Injectable({ providedIn: 'root' })
 export class FaultService implements GenericCollectionService<Fault> {
-	private readonly api = inject(ApiService);
+	private readonly _api = inject(ApiService);
 
 	page(request: PageRequest): Observable<Page<Fault>> {
-		return this.api.post<Page<Fault>>('/api/faults/paged', request);
+		return this._api.post<Page<Fault>>('/api/faults/paged', request);
 	}
 
 	/* There is no GET /api/faults/:id on the mock - only luminaires got that
@@ -57,7 +57,7 @@ export class FaultService implements GenericCollectionService<Fault> {
 		request.perPage = 1;
 		request.filters = [condition('id', MatchMode.EQUAL, id)];
 
-		return this.api.post<Page<Fault>>('/api/faults/paged', request).pipe(
+		return this._api.post<Page<Fault>>('/api/faults/paged', request).pipe(
 			map((page) => {
 				const [fault] = page.data;
 				if (!fault) throw new Error('FAULT_NOT_FOUND');
@@ -71,19 +71,19 @@ export class FaultService implements GenericCollectionService<Fault> {
 	   third "upsert" endpoint on the server. */
 	save(model: Fault): Observable<Fault> {
 		if (!model.id) {
-			return this.api.post<Fault>('/api/faults', model);
+			return this._api.post<Fault>('/api/faults', model);
 		}
-		return this.api.put<Fault>(`/api/faults/${model.id}`, model);
+		return this._api.put<Fault>(`/api/faults/${model.id}`, model);
 	}
 
 	delete(id: string): Observable<void> {
-		return this.api.delete<void>(`/api/faults/${id}`);
+		return this._api.delete<void>(`/api/faults/${id}`);
 	}
 
 	/* Not part of GenericCollectionService - validate/reject/close are lifecycle
 	   moves, not a generic save, and the mock models them as their own route so
 	   validating can create a work order server-side as a side effect. */
 	transition(id: string, status: FaultStatus): Observable<Fault> {
-		return this.api.post<Fault>(`/api/faults/${id}/transition`, { status });
+		return this._api.post<Fault>(`/api/faults/${id}/transition`, { status });
 	}
 }
