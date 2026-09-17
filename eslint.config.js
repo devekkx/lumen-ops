@@ -41,13 +41,24 @@ module.exports = tseslint.config(
 			// A private field or method is only ever seen from inside its own
 			// class, so the underscore is a visual flag at the *call site*, not
 			// just the declaration - `this._foo` reads as "internal" wherever
-			// it's used, without having to go check the modifier.
+			// it's used, without having to go check the modifier. The second,
+			// more specific entry keeps a private static readonly constant
+			// (a lookup table, not instance state) in the SCREAMING_CASE the
+			// rest of the codebase already uses for that - typescript-eslint
+			// picks whichever selector matches the most modifiers, so this one
+			// wins over the general rule above for that narrower case.
 			'@typescript-eslint/naming-convention': [
 				'error',
 				{
 					selector: ['classProperty', 'classMethod', 'accessor'],
 					modifiers: ['private'],
 					format: ['camelCase'],
+					leadingUnderscore: 'require'
+				},
+				{
+					selector: 'classProperty',
+					modifiers: ['private', 'static', 'readonly'],
+					format: ['UPPER_CASE'],
 					leadingUnderscore: 'require'
 				}
 			]
