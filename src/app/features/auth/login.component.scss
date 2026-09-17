@@ -1,21 +1,16 @@
 .login {
 	min-height: 100vh;
+	position: relative;
 	display: grid;
 	place-items: center;
 	background: var(--color-canvas);
-	padding: 40px 20px;
-
-	&__inner {
-		width: 100%;
-		max-width: 420px;
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-xl);
-	}
+	padding: 72px var(--space-base) var(--space-xl);
 
 	&__langs {
+		position: absolute;
+		top: var(--space-lg);
+		right: var(--space-lg);
 		display: flex;
-		justify-content: center;
 		gap: var(--space-xxs);
 	}
 
@@ -34,11 +29,32 @@
 		}
 	}
 
-	&__head {
+	/* Two columns above ~760px: the brand/highlights make the case for the
+	   product, the form is the actual task. Below that, there is only room
+	   for the task. */
+	&__stage {
+		width: 100%;
+		max-width: 920px;
+		display: grid;
+		grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+		gap: var(--space-xxl);
+		align-items: center;
+
+		@media (max-width: 760px) {
+			grid-template-columns: 1fr;
+			gap: var(--space-xl);
+		}
+	}
+
+	&__hero {
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-sm);
-		text-align: center;
+		gap: var(--space-lg);
+
+		@media (max-width: 760px) {
+			text-align: center;
+			align-items: center;
+		}
 	}
 
 	/* The brand's one loud moment on this screen. */
@@ -59,6 +75,35 @@
 		color: var(--color-muted);
 	}
 
+	&__highlights {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-md);
+
+		li {
+			display: flex;
+			align-items: center;
+			gap: var(--space-sm);
+			font: var(--type-body-sm);
+			color: var(--color-body);
+			text-align: left;
+		}
+
+		i {
+			display: grid;
+			place-items: center;
+			width: 32px;
+			height: 32px;
+			flex-shrink: 0;
+			border-radius: var(--radius-full);
+			background: var(--color-surface-strong);
+			color: var(--color-primary);
+		}
+	}
+
 	&__panel {
 		width: 100%;
 	}
@@ -75,6 +120,9 @@
 	}
 
 	&__error {
+		display: flex;
+		align-items: center;
+		gap: var(--space-xxs);
 		font: var(--type-caption-sm);
 		color: var(--color-error);
 	}
@@ -94,4 +142,10 @@
 		}
 	}
 
+	&__submit {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--space-xs);
+	}
 }

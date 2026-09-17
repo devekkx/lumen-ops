@@ -1,59 +1,100 @@
 <div class="login" *transloco="let t">
-	<div class="login__inner">
-		<div class="login__langs" role="group" [attr.aria-label]="t('shell.language')">
-			@for (locale of locales; track locale) {
-				<button
-					class="login__lang"
-					type="button"
-					[class.login__lang--on]="activeLocale() === locale"
-					[attr.aria-pressed]="activeLocale() === locale"
-					(click)="use(locale)"
-				>
-					{{ locale.toUpperCase() }}
-				</button>
-			}
-		</div>
+	<div class="login__langs" role="group" [attr.aria-label]="t('shell.language')">
+		@for (locale of locales; track locale) {
+			<button
+				class="login__lang"
+				type="button"
+				[class.login__lang--on]="activeLocale() === locale"
+				[attr.aria-pressed]="activeLocale() === locale"
+				(click)="use(locale)"
+			>
+				{{ locale.toUpperCase() }}
+			</button>
+		}
+	</div>
 
-		<div class="login__head">
+	<div class="login__stage">
+		<div class="login__hero">
 			<span class="login__wordmark">lumen ops</span>
 			<h1 class="login__title">{{ t('auth.title') }}</h1>
 			<p class="login__subtitle">{{ t('auth.subtitle') }}</p>
+
+			<ul class="login__highlights">
+				<li>
+					<i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+					<span>{{ t('auth.highlightFaults') }}</span>
+				</li>
+				<li>
+					<i class="bi bi-clipboard-check" aria-hidden="true"></i>
+					<span>{{ t('auth.highlightOrders') }}</span>
+				</li>
+				<li>
+					<i class="bi bi-geo-alt" aria-hidden="true"></i>
+					<span>{{ t('auth.highlightMap') }}</span>
+				</li>
+			</ul>
 		</div>
 
 		<div class="login__panel">
 			<form class="login__form" (ngSubmit)="submit()">
 				<label class="d-block" for="login-email">
 					<span class="form-label">{{ t('auth.user') }}</span>
-					<input
-						class="form-control"
-						id="login-email"
-						type="email"
-						name="email"
-						autocomplete="username"
-						[placeholder]="t('auth.userPlaceholder')"
-						[ngModel]="email()"
-						(ngModelChange)="email.set($event)"
-					/>
+					<div class="input-group">
+						<span class="input-group-text"><i class="bi bi-envelope" aria-hidden="true"></i></span>
+						<input
+							class="form-control"
+							id="login-email"
+							type="email"
+							name="email"
+							autocomplete="username"
+							[placeholder]="t('auth.userPlaceholder')"
+							[ngModel]="email()"
+							(ngModelChange)="email.set($event)"
+						/>
+					</div>
 				</label>
 
 				<label class="d-block" for="login-password">
 					<span class="form-label">{{ t('auth.password') }}</span>
-					<input
-						class="form-control"
-						id="login-password"
-						type="password"
-						name="password"
-						autocomplete="current-password"
-						[placeholder]="t('auth.passwordPlaceholder')"
-						[ngModel]="password()"
-						(ngModelChange)="password.set($event)"
-					/>
+					<div class="input-group">
+						<span class="input-group-text"><i class="bi bi-lock" aria-hidden="true"></i></span>
+						<input
+							class="form-control"
+							id="login-password"
+							[type]="showPassword() ? 'text' : 'password'"
+							name="password"
+							autocomplete="current-password"
+							[placeholder]="t('auth.passwordPlaceholder')"
+							[ngModel]="password()"
+							(ngModelChange)="password.set($event)"
+						/>
+						<button
+							class="btn btn-outline-secondary"
+							type="button"
+							[attr.aria-label]="t('auth.togglePassword')"
+							[attr.aria-pressed]="showPassword()"
+							(click)="showPassword.set(!showPassword())"
+						>
+							<i
+								class="bi"
+								[class.bi-eye]="!showPassword()"
+								[class.bi-eye-slash]="showPassword()"
+								aria-hidden="true"
+							></i>
+						</button>
+					</div>
 				</label>
 
 				@if (error()) {
-					<p class="login__error" role="alert">{{ error() }}</p>
+					<p class="login__error" role="alert">
+						<i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+						{{ error() }}
+					</p>
 				} @else if (bootFailure()) {
-					<p class="login__error" role="alert">{{ t(bootFailure()!) }}</p>
+					<p class="login__error" role="alert">
+						<i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+						{{ t(bootFailure()!) }}
+					</p>
 				}
 
 				<label class="login__switch">
@@ -66,7 +107,10 @@
 					<span>{{ t('auth.expiredSwitch') }}</span>
 				</label>
 
-				<button class="btn btn-primary w-100" type="submit" [disabled]="busy()">
+				<button class="btn btn-primary w-100 login__submit" type="submit" [disabled]="busy()">
+					@if (busy()) {
+						<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+					}
 					{{ busy() ? t('auth.signingIn') : t('auth.signIn') }}
 				</button>
 			</form>

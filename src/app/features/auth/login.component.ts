@@ -23,6 +23,7 @@ export class LoginComponent {
 
 	readonly email = signal('ayto@lumen.madrid');
 	readonly password = signal('lumen');
+	readonly showPassword = signal(false);
 	readonly expired = signal(false);
 	readonly busy = signal(false);
 	readonly error = signal<string | null>(null);
