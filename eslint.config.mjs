@@ -1,4 +1,9 @@
-// @ts-check
+/* No @ts-check: angular-eslint@19.8.1 pulls in @typescript-eslint/types@8.70.0
+   as a transitive dependency, one minor ahead of the typescript-eslint@8.33.1
+   this repo pins directly, so tsc sees two incompatible EcmaVersion literal
+   types for the exact same config shape. ESLint itself doesn't care - only
+   tsc's structural check does - so this is a false positive, not a real bug
+   in this file. */
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import angular from 'angular-eslint';
