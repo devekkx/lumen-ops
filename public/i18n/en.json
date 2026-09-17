@@ -14,6 +14,7 @@
 		"orders": "Work orders",
 		"crews": "Crews",
 		"map": "Map",
+		"diagnostics": "Diagnostics",
 		"docs": "Documentation"
 	},
 	"auth": {
@@ -209,7 +210,11 @@
 		"trap500": "Call the always-500 id",
 		"slow": "Call the 4 s endpoint",
 		"retry": "Bounded retry: GET only",
-		"retryNote": "A retried POST would file a duplicate fault report, so retry is structurally impossible outside GET."
+		"retryNote": "A retried POST would file a duplicate fault report, so retry is structurally impossible outside GET.",
+		"reset": "Reset mock data",
+		"resetHint": "Restores the seeded luminaires, faults, work orders and crews to their original state - undoes anything created, validated, assigned or edited during this session.",
+		"resetDone": "Mock data reset to its seeded state",
+		"slowDone": "Slow endpoint responded after {ms} ms"
 	},
 	"docs": {
 		"title": "Documentation",
@@ -234,7 +239,8 @@
 		"deleteFault": "Fault {code} will be deleted. This cannot be undone.",
 		"validateFault": "Fault {code} will be validated and its work order created.",
 		"closeFault": "Fault {code} will be closed and its order completed.",
-		"completeOrder": "Order {code} will be marked complete. Its fault closes with it."
+		"completeOrder": "Order {code} will be marked complete. Its fault closes with it.",
+		"resetDiagnostics": "All seeded data will be restored to its original state. Anything created, validated, assigned or edited this session will be lost."
 	},
 	"error": {
 		"401": "Your session is not valid. Sign in again.",

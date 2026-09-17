@@ -59,6 +59,12 @@ export const NAV_GROUPS: readonly NavGroup[] = [
 				path: '/mapa',
 				label: 'nav.map',
 				icon: 'geo-alt'
+			},
+			{
+				path: '/diagnosticos',
+				label: 'nav.diagnostics',
+				roles: ROLE_GROUPS.ADMIN,
+				icon: 'bug'
 			}
 		]
 	}
