@@ -27,9 +27,6 @@ export class LoginComponent {
 	readonly busy = signal(false);
 	readonly error = signal<string | null>(null);
 
-	/* A session that failed to resolve at bootstrap lands here. Showing why -
-	   expired rather than just "sign in" - is the difference between the user
-	   knowing what happened and guessing. */
 	readonly bootFailure = computed(() => {
 		const failure = this._auth.failure();
 		if (!failure) return null;
@@ -54,8 +51,6 @@ export class LoginComponent {
 				email: this.email(),
 				password: this.password()
 			});
-			/* Land on `/` and let the four canMatch redirects decide where that
-			   is - the login screen does not need to know the role map. */
 			await this._router.navigateByUrl('/');
 		} catch {
 			this.error.set(this._transloco.translate('auth.invalid'));

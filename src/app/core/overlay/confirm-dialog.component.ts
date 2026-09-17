@@ -2,17 +2,11 @@ import { Component, inject } from '@angular/core';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { MODAL_DATA, MODAL_REF, ModalRef, ModalService } from './modal.service';
 
-/* One dialog shape covers both uses this exercise asks for - a yes/no confirm
-   and the dirty-exit prompt - because both are "a title, a body, two
-   buttons, resolve true or false" once the copy is parameterised. Keeping it
-   to one component means one focus-trapped, backdrop-dismissible surface to
-   get right rather than two near-duplicates. */
 export interface ConfirmDialogData {
 	titleKey: string;
 	bodyKey: string;
 	confirmKey: string;
 	cancelKey: string;
-	/* transloco interpolation params for bodyKey, e.g. { code: 'AVR-0012' }. */
 	params?: Record<string, unknown>;
 }
 

@@ -9,10 +9,6 @@ interface DiagnosticsTraps {
 	slowPath: string;
 }
 
-/* ADMIN-only. The mock API's own two deliberate traps (exercise 1.2) already
-   have real copy written for them in diag.* - this is just the page that was
-   never built to show it: the trap500/slow endpoints, and mock-api/reset for
-   getting back to a known seed after poking at them. */
 @Component({
 	selector: 'lumen-diagnostics-page',
 	standalone: true,

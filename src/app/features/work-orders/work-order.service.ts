@@ -4,17 +4,10 @@ import { ApiService } from '@core/api/api.service';
 import { GenericCollectionService } from '@shared/services/generic-collection.service';
 import { Page, PageRequest } from '@shared/models/pagination';
 
-/* Mirrors mock-api/seed.ts's WorkOrder shape independently rather than
-   importing it - same convention as fault.service.ts and luminaire.service.ts:
-   the contract is the wire payload, not shared code across the mock/app
-   boundary. */
 export type OrderStatus = 'DRAFT' | 'ASSIGNED' | 'IN_PROGRESS' | 'DONE';
 
 export const ORDER_STATUSES: readonly OrderStatus[] = ['DRAFT', 'ASSIGNED', 'IN_PROGRESS', 'DONE'];
 
-/* Only the statuses a crew still has open work for - DONE orders are no
-   longer anyone's load. Used both to gate the Start/Complete actions and to
-   compute the crew load indicator on the crews page. */
 export const OPEN_ORDER_STATUSES: readonly OrderStatus[] = ['DRAFT', 'ASSIGNED', 'IN_PROGRESS'];
 
 export interface WorkOrder {
@@ -39,11 +32,6 @@ export interface WorkOrder {
 
 export const WORK_ORDER_SEARCH_KEYS = ['code', 'faultCode', 'luminaireCode'] as const;
 
-/* The fields PATCH /api/work-orders/:id actually reads off its body (see the
-   route handler in mock-api/server.ts) - crewId, status and scheduledAt, each
-   optional and applied independently. Assigning a crew to a DRAFT order also
-   moves it to ASSIGNED server-side; that side effect lives in the mock, not
-   here. */
 export interface WorkOrderPatch {
 	crewId?: string;
 	status?: OrderStatus;

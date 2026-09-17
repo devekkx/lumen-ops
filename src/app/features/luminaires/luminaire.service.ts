@@ -5,9 +5,6 @@ import { GenericCollectionService } from '@shared/services/generic-collection.se
 import { Filters } from '@shared/models/filter';
 import { Page, PageRequest } from '@shared/models/pagination';
 
-/* Mirrors the seed's shape independently rather than importing it - the
-   contract is the wire payload, not shared code, matching how the filter
-   DSL's evaluator is deliberately reimplemented on both sides. */
 export type LampType = 'SODIUM' | 'LED' | 'METAL_HALIDE';
 export type LuminaireStatus = 'OK' | 'FAULT' | 'MAINTENANCE' | 'OFFLINE';
 
@@ -38,10 +35,6 @@ export interface Luminaire {
 
 export const LUMINAIRE_SEARCH_KEYS = ['code', 'street', 'zone'] as const;
 
-/* The map's request: the same search/filter vocabulary as the table, but no
-   page or ordination, because /geo has no pagination envelope - it always
-   answers with every matching luminaire. Every field is optional; an empty
-   body means "everything". */
 export interface GeoRequest {
 	searchTerm?: string;
 	searchKeys?: string[];

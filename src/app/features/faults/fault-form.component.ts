@@ -41,16 +41,8 @@ export class FaultFormComponent implements DirtyFormHost {
 	readonly severities = SEVERITIES;
 
 	private readonly _faultId = signal<string | null>(null);
-	/* The one thing every "isEdit ? X : Y" question in the template actually
-	   needs - everything else (loading the record, defaulting the form,
-	   building the save payload) is handled here, once, rather than repeated
-	   as scattered conditionals. */
 	readonly mode = computed<FormMode>(() => (this._faultId() ? 'edit' : 'create'));
 
-	/* The full record as loaded, kept only so save() can merge the form's
-	   patch over fields the form never edits (code, status, photos,
-	   reportedBy, and the luminaire's denormalised street/zone) - a PUT that
-	   sent those back blank would overwrite server-held data with nothing. */
 	private readonly _original = signal<Fault | null>(null);
 
 	readonly loading = signal(false);
@@ -159,9 +151,6 @@ export class FaultFormComponent implements DirtyFormHost {
 		this._faults.save(model).subscribe({
 			next: (saved) => {
 				this.saving.set(false);
-				/* Must happen before navigating away: a pristine form is what
-				   stops dirtyFormGuard from prompting after a save that already
-				   succeeded. */
 				this.form.markAsPristine();
 				this._toast.show(this._transloco.translate('fault.saved', { code: saved.code }), 'healthy');
 				void this._router.navigateByUrl('/averias');

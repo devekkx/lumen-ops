@@ -23,9 +23,6 @@ import {
 	WorkOrderService
 } from './work-order.service';
 
-/* Same v1 (RxJS) base as luminaires - see docs/table-v1-vs-v2.md. Work orders
-   and crews are not part of that deliberate v1/v2 comparison (only luminaires
-   and faults are), so there is no reason to pick the newer base here. */
 @Component({
 	selector: 'lumen-work-orders-page',
 	standalone: true,
@@ -42,11 +39,6 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 
 	readonly abilities = this._auth.abilities;
 
-	/* Same reasoning as faults-page's hasRowActions: every write action below
-	   is individually ability-gated, but that still leaves an empty Actions
-	   column for a CONTRACTOR-scoped VIEWER-like session (there isn't one
-	   today - ordenes-trabajo is CONTRACTOR/ADMIN-only - but the column
-	   shouldn't silently exist for nobody if that ever changes). */
 	readonly hasRowActions = computed(() => {
 		const abilities = this.abilities();
 		return abilities.assignCrew || abilities.startOrder || abilities.completeOrder;
@@ -69,11 +61,6 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 		sortable: true
 	};
 
-	/* The one place `seeCosts` actually does something: this page is the only
-	   thing that shows a cost, and only CONTRACTOR/ADMIN ever reach it at
-	   all, so the ability is defined to include contractor here rather than
-	   hidden behind a column nobody who currently uses this screen would
-	   ever see again. */
 	readonly columns = computed<TableColumn<WorkOrder>[]>(() =>
 		this.abilities().seeCosts
 			? [...WorkOrdersPageComponent._BASE_COLUMNS, WorkOrdersPageComponent._COST_COLUMN]
@@ -87,15 +74,6 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 
 	private _statusFilter: string[] = [];
 
-	/* The base's page$ carries the raw wire value for crewName - null on a
-	   DRAFT order. The table renders a column's value with a plain
-	   interpolation (see paginated-table.component.html), which would just be
-	   blank for null rather than saying anything, so this substitutes the
-	   translated placeholder before the page ever reaches the table. Built
-	   once per emission with the language active at fetch time - the same
-	   level of reactivity the rest of the app gives one-off translated text
-	   (e.g. the toasts on the faults page), not a live re-translation on a
-	   language switch after the fact. */
 	readonly displayPage$ = this.page$.pipe(
 		map((page) => ({
 			...page,

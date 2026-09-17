@@ -3,8 +3,6 @@ import { ActivatedRouteSnapshot } from '@angular/router';
 export interface Crumb {
 	label: string;
 	href: string | null;
-	/* Pre-translated labels (a luminaire code, say) skip the translate step -
-	   `LUM-0312` is not a key and looking it up would render it as one. */
 	literal: boolean;
 }
 
@@ -32,7 +30,6 @@ export const crumbsFrom = (root: ActivatedRouteSnapshot | null): Crumb[] => {
 		});
 	}
 
-	/* The last crumb is where you already are, so it is text, not a link. */
 	if (crumbs.length) crumbs[crumbs.length - 1].href = null;
 	return crumbs;
 };

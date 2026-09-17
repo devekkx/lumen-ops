@@ -1,8 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ToastService } from '@core/api/toast.service';
 
-/* One host, mounted once in the shell. Every interceptor and service calls
-   ToastService.show() and never touches the DOM directly. */
 @Component({
 	selector: 'lumen-toast-host',
 	standalone: true,

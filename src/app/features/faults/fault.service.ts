@@ -6,9 +6,6 @@ import { Page, PageRequest, createPageRequest } from '@shared/models/pagination'
 import { MatchMode } from '@shared/models/filter';
 import { condition } from '@shared/utils/filters';
 
-/* Mirrors mock-api/seed.ts's Fault shape independently rather than importing
-   it - same convention as luminaire.service.ts: the contract is the wire
-   payload, not shared code across the mock/app boundary. */
 export type Severity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 export type FaultStatus = 'REPORTED' | 'VALIDATED' | 'IN_PROGRESS' | 'CLOSED' | 'REJECTED';
 export type ReportedBy = 'CITIZEN' | 'INSPECTOR';

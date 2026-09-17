@@ -7,11 +7,6 @@ export interface EditCrewDialogData {
 	crew: Crew;
 }
 
-/* Editing in place, not create/delete - see crew.service.ts's update() for
-   why. Zone and code are read-only here on purpose: this dialog corrects the
-   roster details an ADMIN would actually need to fix (a rename, a contractor
-   handover, a headcount or shift change), not the district a crew is based
-   in, which is closer to a reassignment than an edit. */
 @Component({
 	selector: 'lumen-edit-crew-dialog',
 	standalone: true,

@@ -20,8 +20,6 @@ import { PageHeaderComponent } from '../../layout/page-header.component';
 import { toneInk } from '@shared/models/status-tone';
 import { DashboardService, DashboardSnapshot } from './dashboard.service';
 
-/* Selective imports only: the full echarts/core bundle pulls in every chart
-   and renderer this app never uses. */
 echarts.use([
 	BarChart,
 	LineChart,
@@ -40,9 +38,6 @@ interface RangeOption {
 	hours: number;
 }
 
-/* '1' means "24 hours", not "1 day" - it is the mock's hourly-bucket range
-   (docs/mock-api.md: a span of 48h or less switches the aggregation from
-   daily to hourly buckets), so it is kept a whole hour short of 48h here too. */
 const RANGES: readonly RangeOption[] = [
 	{ key: '1', labelKey: 'chart.range1', hours: 24 },
 	{ key: '7', labelKey: 'chart.range7', hours: 24 * 7 },
@@ -54,9 +49,6 @@ interface KpiTile {
 	key: keyof DashboardSnapshot['kpis'];
 	value: number;
 	digits: number;
-	/* An i18n key rather than translated text, so the tile reads correctly
-	   after a language switch without kpiTiles itself depending on the active
-	   locale. */
 	unitKey?: string;
 	suffix?: string;
 }
@@ -87,10 +79,6 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 	readonly loading = signal(false);
 	readonly snapshot = signal<DashboardSnapshot | null>(null);
 
-	/* "Empty" means no data point worth drawing, not merely an empty array:
-	   byLampType and bySeverity always come back with one entry per known
-	   lamp type / severity, so a quiet range reports real zeros rather than a
-	   short array. Either shape should read as "nothing here" to the user. */
 	readonly hasEnergyData = computed(() =>
 		(this.snapshot()?.series ?? []).some((point) => point.kwh > 0)
 	);
@@ -120,20 +108,9 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 		this._severityChart?.resize();
 	};
 
-	/* A window resize is the only thing the old listener alone caught - but
-	   collapsing the sidebar changes this component's own width without the
-	   browser window changing size at all, so charts sat at their stale
-	   width until the user happened to resize the actual window. Observing
-	   the host element directly catches any reason its box changes,
-	   sidebar toggle included. */
 	private _resizeObserver?: ResizeObserver;
 
 	constructor() {
-		/* Re-renders on new data *and* on a language change: the axis labels,
-		   legend names and number formatting are all baked into the echarts
-		   option objects imperatively, so nothing short of redrawing picks up a
-		   locale switch - Transloco's own change detection never touches
-		   canvas content it does not own. */
 		effect(() => {
 			const data = this.snapshot();
 			this._language.current();
@@ -173,9 +150,6 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 				this.snapshot.set(data);
 				this.loading.set(false);
 			},
-			/* The api-error interceptor already toasts a translated message and
-			   rethrows; this only has to stop the spinner and fall back to the
-			   empty state rather than leave stale charts on screen. */
 			error: () => {
 				this.snapshot.set(null);
 				this.loading.set(false);
@@ -188,12 +162,6 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 		this._renderLampType(data);
 		this._renderSeverity(data);
 
-		/* A chart's canvas is [hidden] (display: none, zero width) until its
-		   data actually arrives, so echarts.init() can measure a stale 0px
-		   width if it runs in the same tick the [hidden] binding is lifted,
-		   before the browser has actually painted the now-visible container.
-		   One resize() after the next paint corrects it to the card's real
-		   width rather than leaving the chart narrower than its card. */
 		requestAnimationFrame(() => {
 			this._energyChart?.resize();
 			this._lampChart?.resize();
@@ -212,15 +180,6 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
 		this._energyChart.setOption(
 			{
-				/* appendToBody: ECharts otherwise appends the tooltip node
-				   inside the chart's own container, which sits under .shell's
-				   overflow: hidden (the fix that keeps the sidebar from
-				   scrolling away) -- without this the tooltip clips the
-				   moment it would extend past the chart's own box. */
-				/* confine: with appendToBody, ECharts confines the tooltip to
-				   the browser viewport rather than the chart's own box -- so
-				   a point near the page edge shifts the tooltip back onto
-				   screen instead of letting it run off and get cut short. */
 				tooltip: { trigger: 'axis', appendToBody: true, confine: true },
 				grid: { left: 48, right: 16, top: 24, bottom: 32 },
 				xAxis: {
@@ -255,10 +214,6 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
 		this._lampChart.setOption(
 			{
-				/* confine: with appendToBody, ECharts confines the tooltip to
-				   the browser viewport rather than the chart's own box -- so
-				   a point near the page edge shifts the tooltip back onto
-				   screen instead of letting it run off and get cut short. */
 				tooltip: { trigger: 'axis', appendToBody: true, confine: true },
 				grid: { left: 48, right: 16, top: 24, bottom: 32 },
 				xAxis: {

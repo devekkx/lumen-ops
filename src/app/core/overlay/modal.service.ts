@@ -3,41 +3,19 @@ import { Overlay } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { Injectable, InjectionToken, Injector, Type, inject } from '@angular/core';
 
-/* What a component opened through the modal service can do to itself: close
-   with (or without) a result. Nothing else - it never sees the OverlayRef. */
 export interface ModalRef<R = unknown> {
 	close(result?: R): void;
 }
 
 export const MODAL_REF = new InjectionToken<ModalRef>('MODAL_REF');
-/* The per-open payload (e.g. a ConfirmDialogData), typed `unknown` at the
-   token and narrowed by whatever component injects it. */
 export const MODAL_DATA = new InjectionToken<unknown>('MODAL_DATA');
 
-/* CDK Overlay wrapped into "open a component, get a Promise back" - the shape
- * every caller (the confirm dialog, the dirty-exit prompt, and eventually
- * anything else that needs a modal) actually wants, instead of wiring
- * OverlayRef/ComponentPortal/FocusTrap by hand at each call site.
- *
- * Backdrop click and Escape both resolve with `undefined`, exactly like a
- * dismissed native <dialog> - a caller that needs "no answer" to mean
- * something specific (the confirm dialog treats it as "cancelled") checks for
- * that itself rather than this service guessing on its behalf.
- */
 @Injectable({ providedIn: 'root' })
 export class ModalService {
 	private readonly _overlay = inject(Overlay);
 	private readonly _focusTrapFactory = inject(FocusTrapFactory);
 	private readonly _injector = inject(Injector);
 
-	/* A handful of decorators (see @Confirmable) run outside any injection
-	   context - they wrap a plain method on an arbitrary class, not a
-	   constructor or a field initializer, so `inject()` is not available to
-	   them. ModalService is a root singleton, so stashing the one instance
-	   here is a narrow, deliberate exception to "always use DI": it lets the
-	   decorator reach the same service every component gets, without every
-	   consumer of @Confirmable having to expose a `modal` property under an
-	   agreed name. */
 	private static _current: ModalService | null = null;
 
 	static get instance(): ModalService {
@@ -95,9 +73,6 @@ export class ModalService {
 				if (event.key === 'Escape') close();
 			});
 
-			/* A component that gets destroyed some other way (a hard navigation,
-			   a test tearing down the fixture) must still resolve the promise
-			   rather than leave the caller awaiting forever. */
 			componentRef.onDestroy(() => close());
 		});
 	}

@@ -1,9 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { StatusTone } from '@shared/models/status-tone';
 
-/* Reuses the app's one tone vocabulary rather than inventing a
-   success/warning/error trio - a toast's dot is the same "what does this
-   mean" colour as a status pill anywhere else in the app. */
 export type ToastTone = StatusTone;
 
 export interface Toast {
@@ -14,10 +11,6 @@ export interface Toast {
 
 const DEFAULT_DURATION_MS = 5000;
 
-/* A cascade of identical failures - every request in an offline batch
-   rejecting with the same "no connection" message - must read as one toast,
-   not one per request. This is the difference between an interceptor that
-   is useful and one that spams the corner of the screen. */
 @Injectable({ providedIn: 'root' })
 export class ToastService {
 	private _nextId = 0;

@@ -16,28 +16,11 @@ import { buildFilterConditions } from '@shared/utils/filters';
 import { GenericCollectionService } from '../../services/generic-collection.service';
 import { Ordination, Page, PageRequest, createPageRequest } from '../../models/pagination';
 
-/* The base class every paginated screen extends: search, sort, page, filter
- * and refresh, solved once so a concrete table adds only its own column
- * config and its own collection service.
- *
- * switchMap is the load-bearing choice on the fetch, not mergeMap: typing
- * quickly in the search box fires a new request per keystroke (after the
- * debounce), and only switchMap cancels the in-flight one rather than racing
- * it - see paginated-table.base.spec.ts for the case where a slower earlier
- * response would otherwise win and show a stale page.
- */
 export abstract class PaginatedTableBase<T> {
 	protected abstract readonly collection: GenericCollectionService<T>;
 
 	private readonly _params: BehaviorSubject<PageRequest>;
 	private readonly _filterRecord = new BehaviorSubject<FilterRecord>({});
-	/* Bumped only by refresh(). distinctUntilChanged below compares the whole
-	   tuple by JSON.stringify, so a refresh that changes nothing else -
-	   { ...params.value } is a new object with identical contents - would
-	   otherwise stringify equal to the previous emission and be silently
-	   dropped before switchMap ever re-subscribes. This is the one field in
-	   the tuple whose only job is to make "fetch again with the same params"
-	   distinguishable from "nothing changed". */
 	private readonly _refreshTick = new BehaviorSubject(0);
 
 	readonly loading = new BehaviorSubject(false);

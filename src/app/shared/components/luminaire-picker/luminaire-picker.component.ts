@@ -14,11 +14,6 @@ import {
 import { ApiService } from '@core/api/api.service';
 import { LumenTooltipDirective } from '@shared/directives/tooltip.directive';
 
-/* Just enough of the luminaire shape to label a suggestion - reimplemented
-   locally rather than importing @features/luminaires' Luminaire, the same
-   "wire contract, not shared code" convention as luminaire.service.ts and
-   fault.service.ts, and it keeps this shared component free of a dependency
-   on a feature module. */
 interface PickerLuminaire {
 	id: string;
 	code: string;
@@ -26,12 +21,6 @@ interface PickerLuminaire {
 	zone: string;
 }
 
-/* A typeahead ControlValueAccessor over `GET /api/luminaires/search`. The
- * form value is the luminaire's id (a plain string), matching
- * Fault.luminaireId - this component owns turning that id into a label and
- * back, so the form around it never has to know the luminaire's code or
- * street, only its id.
- */
 @Component({
 	selector: 'lumen-luminaire-picker',
 	standalone: true,
@@ -51,10 +40,6 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 	private static _nextId = 0;
 	private readonly _uid = LuminairePickerComponent._nextId++;
 	readonly listboxId = `luminaire-picker-listbox-${this._uid}`;
-	/* Exposed so a parent template's <label [attr.for]="picker.inputId"> can
-	   associate with this component's internal <input> - a plain wrapping
-	   <label> only auto-associates with a native form element, not a custom
-	   component. */
 	readonly inputId = `luminaire-picker-${this._uid}`;
 
 	readonly query = signal('');
@@ -66,8 +51,6 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 	readonly selected = signal<PickerLuminaire | null>(null);
 
 	private readonly _searchTerms = new Subject<string>();
-	/* ControlValueAccessor requires a callable default before Angular Forms
-	   installs the real ones via registerOnChange/registerOnTouched below. */
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	private _onChange: (value: string | null) => void = () => {};
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -98,8 +81,6 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 			});
 	}
 
-	/* ControlValueAccessor */
-
 	writeValue(id: string | null): void {
 		if (!id) {
 			this.selected.set(null);
@@ -112,9 +93,6 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 				this.selected.set(luminaire);
 				this.query.set(this.labelFor(luminaire));
 			},
-			/* The id on the form no longer resolves (deleted luminaire, stale
-			   fixture) - show an empty picker rather than throwing, the field's
-			   own required validator is what surfaces the problem. */
 			error: () => {
 				this.selected.set(null);
 				this.query.set('');
@@ -134,8 +112,6 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 		this.disabled.set(isDisabled);
 	}
 
-	/* Template */
-
 	labelFor(luminaire: PickerLuminaire): string {
 		return `${luminaire.code} · ${luminaire.street}`;
 	}
@@ -144,9 +120,6 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 		this.query.set(value);
 		this.open.set(true);
 
-		/* Typing over a previously chosen label un-chooses it - the form value
-		   must not keep pointing at a luminaire whose code the user is in the
-		   middle of erasing. */
 		const current = this.selected();
 		if (current && value !== this.labelFor(current)) {
 			this.selected.set(null);
@@ -161,10 +134,6 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 	}
 
 	onBlur(): void {
-		/* The listbox binds selection to (mousedown), which fires before this
-		   blur, so a pointer selection is never lost to it. This still runs a
-		   beat later so any option list still visible closes once focus has
-		   genuinely left, and reports touched either way. */
 		setTimeout(() => this.open.set(false), 150);
 		this._onTouched();
 	}

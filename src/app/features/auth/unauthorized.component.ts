@@ -2,9 +2,6 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 
-/* Denied navigations land here rather than failing silently. A guard that
-   returns false with no destination leaves the user on the page they were
-   already on, which reads as a broken link. */
 @Component({
 	selector: 'lumen-unauthorized',
 	standalone: true,
