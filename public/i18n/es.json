@@ -63,6 +63,7 @@
 		"error": "No se pudo cargar la tabla",
 		"retry": "Reintentar",
 		"refresh": "Actualizar",
+		"exportCsv": "Exportar CSV",
 		"actions": "Acciones",
 		"dsl": "Inspector de DSL de filtros",
 		"dslEmpty": "Sin condiciones: los filtros vacíos no generan condición alguna.",

@@ -63,6 +63,7 @@
 		"error": "The table could not be loaded",
 		"retry": "Retry",
 		"refresh": "Refresh",
+		"exportCsv": "Export CSV",
 		"actions": "Actions",
 		"dsl": "Filter DSL inspector",
 		"dslEmpty": "No conditions: empty filters produce no condition at all.",

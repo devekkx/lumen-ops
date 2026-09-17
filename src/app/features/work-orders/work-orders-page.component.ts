@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
-import { map } from 'rxjs';
+import { map, take } from 'rxjs';
 import { AuthService } from '@core/auth/auth.service';
 import { ToastService } from '@core/api/toast.service';
 import { ModalService } from '@core/overlay/modal.service';
@@ -13,6 +13,7 @@ import {
 } from '@shared/components/paginated-table/paginated-table.component';
 import { FilterRecord } from '@shared/models/filter';
 import { LumenTooltipDirective } from '@shared/directives/tooltip.directive';
+import { downloadCsv, toCsv } from '@shared/utils/csv';
 import { CrewService } from '../crews/crew.service';
 import { assignCrewDialog } from './assign-crew-dialog.component';
 import {
@@ -51,7 +52,7 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 		return abilities.assignCrew || abilities.startOrder || abilities.completeOrder;
 	});
 
-	readonly columns: TableColumn<WorkOrder>[] = [
+	private static readonly BASE_COLUMNS: TableColumn<WorkOrder>[] = [
 		{ key: 'code', label: 'order.code', sortable: true },
 		{ key: 'faultCode', label: 'order.fault', sortable: true },
 		{ key: 'luminaireCode', label: 'lum.title', sortable: true },
@@ -59,9 +60,25 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 		{ key: 'crewName', label: 'order.crew', sortable: true },
 		{ key: 'status', label: 'order.status', sortable: true },
 		{ key: 'scheduledAt', label: 'order.scheduledAt', sortable: true },
-		{ key: 'hours', label: 'order.hours', sortable: true },
-		{ key: 'cost', label: 'order.cost', sortable: true }
+		{ key: 'hours', label: 'order.hours', sortable: true }
 	];
+
+	private static readonly COST_COLUMN: TableColumn<WorkOrder> = {
+		key: 'cost',
+		label: 'order.cost',
+		sortable: true
+	};
+
+	/* The one place `seeCosts` actually does something: this page is the only
+	   thing that shows a cost, and only CONTRACTOR/ADMIN ever reach it at
+	   all, so the ability is defined to include contractor here rather than
+	   hidden behind a column nobody who currently uses this screen would
+	   ever see again. */
+	readonly columns = computed<TableColumn<WorkOrder>[]>(() =>
+		this.abilities().seeCosts
+			? [...WorkOrdersPageComponent.BASE_COLUMNS, WorkOrdersPageComponent.COST_COLUMN]
+			: WorkOrdersPageComponent.BASE_COLUMNS
+	);
 
 	readonly pillColumns = { severity: 'severity', status: 'status' };
 	readonly dateColumns = ['scheduledAt'];
@@ -150,6 +167,23 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 		this.collection.updateStatus(order.id, 'DONE').subscribe(() => {
 			this.toast.show(this.transloco.translate('order.completed', { code: order.code }), 'healthy');
 			this.refresh();
+		});
+	}
+
+	/* Reads displayPage$'s already-cached last emission (take(1) on a
+	   shareReplay source, not a new request) rather than the raw page$ -
+	   exporting the crew names actually on screen, "Unassigned" included,
+	   instead of the null the wire sends for one. */
+	exportCsv(): void {
+		this.displayPage$.pipe(take(1)).subscribe((page) => {
+			const columns = this.columns().map((column) => ({
+				key: column.key,
+				header: this.transloco.translate(column.label)
+			}));
+			downloadCsv(
+				`ordenes-trabajo-${new Date().toISOString().slice(0, 10)}.csv`,
+				toCsv(columns, page.data)
+			);
 		});
 	}
 
