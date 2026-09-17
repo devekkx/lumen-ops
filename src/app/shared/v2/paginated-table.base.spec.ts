@@ -31,11 +31,11 @@ const pageOf = (label: string): Page<Row> => ({
    (switchMap's unsubscribe is automatic on any Observable) and v2's does: resource()'s own
    cancellation is a state-level guarantee, not a request-level one (see the second `it` below). */
 class FakeCollection implements GenericCollectionService<Row> {
-	readonly requests: PageRequest[] = [];
-	readonly completed: string[] = [];
-	readonly unsubscribed: string[] = [];
+	public readonly requests: PageRequest[] = [];
+	public readonly completed: string[] = [];
+	public readonly unsubscribed: string[] = [];
 
-	page(request: PageRequest): Observable<Page<Row>> {
+	public page(request: PageRequest): Observable<Page<Row>> {
 		this.requests.push(request);
 		const term = request.searchTerm || 'none';
 		const ms = term === 'slow' ? 500 : 50;

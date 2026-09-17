@@ -7,21 +7,21 @@ import { authGuard, hasRole, hasRoleAndNot, rolesGuard, someRoleGuard } from './
 /* A fake AuthService rather than a real one over HTTP: these specs are about
    the guards' decisions, not about token decoding. */
 class FakeAuth {
-	user: SessionUser | null = null;
+	public user: SessionUser | null = null;
 
-	as(...roles: Role[]): void {
+	public as(...roles: Role[]): void {
 		this.user = { id: 'u', name: 'N', email: 'e', org: 'o', roles, exp: 0 };
 	}
 
-	isAuthenticated() {
+	public isAuthenticated() {
 		return this.user !== null;
 	}
 
-	hasAllRoles(roles: readonly Role[]) {
+	public hasAllRoles(roles: readonly Role[]) {
 		return !!this.user && roles.every((role) => this.user!.roles.includes(role));
 	}
 
-	hasSomeRole(roles: readonly Role[]) {
+	public hasSomeRole(roles: readonly Role[]) {
 		return !!this.user && roles.some((role) => this.user!.roles.includes(role));
 	}
 }

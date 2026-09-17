@@ -3,7 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
-	handleError(error: unknown): void {
+	public handleError(error: unknown): void {
 		if (error instanceof HttpErrorResponse) {
 			console.error('[HTTP]', error.status, error.url, error);
 			return;

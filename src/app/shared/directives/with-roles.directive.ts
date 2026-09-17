@@ -15,7 +15,7 @@ export class WithRolesDirective {
 			if (allowed) this._container.createEmbeddedView(this._template);
 		});
 	}
-	@Input() set lumenWithRoles(value: Role[]) {
+	@Input() public set lumenWithRoles(value: Role[]) {
 		this._roles = value;
 	}
 }
@@ -33,7 +33,7 @@ export class WithSomeRolesDirective {
 			if (allowed) this._container.createEmbeddedView(this._template);
 		});
 	}
-	@Input() set lumenWithSomeRoles(value: Role[]) {
+	@Input() public set lumenWithSomeRoles(value: Role[]) {
 		this._roles = value;
 	}
 }

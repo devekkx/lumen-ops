@@ -60,7 +60,7 @@ export class UnauthorizedComponent {
 
 	/* Back to `/`, so the same canMatch chain that decides a home page on login
 	   decides it here too. */
-	home(): void {
+	public home(): void {
 		void this._router.navigateByUrl('/');
 	}
 }

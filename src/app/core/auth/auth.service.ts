@@ -24,14 +24,14 @@ export class AuthService {
 	private readonly _failureState = signal<SessionFailure | null>(null);
 	private readonly _bootingState = signal(true);
 
-	readonly user = this._userState.asReadonly();
-	readonly failure = this._failureState.asReadonly();
-	readonly booting = this._bootingState.asReadonly();
-	readonly isAuthenticated = computed(() => this._userState() !== null);
+	public readonly user = this._userState.asReadonly();
+	public readonly failure = this._failureState.asReadonly();
+	public readonly booting = this._bootingState.asReadonly();
+	public readonly isAuthenticated = computed(() => this._userState() !== null);
 
-	readonly abilities = computed<Abilities>(() => abilitiesFor(this._userState()));
+	public readonly abilities = computed<Abilities>(() => abilitiesFor(this._userState()));
 
-	async login(credentials: Credentials): Promise<void> {
+	public async login(credentials: Credentials): Promise<void> {
 		const response = await firstValueFrom(
 			this._http.post<LoginResponse>('/api/auth/login', credentials, {
 				context: contextFor({ silent: true })
@@ -40,7 +40,7 @@ export class AuthService {
 		this._adopt(response.token);
 	}
 
-	logout(): void {
+	public logout(): void {
 		this._write(null);
 		this._userState.set(null);
 		this._failureState.set(null);
@@ -55,7 +55,7 @@ export class AuthService {
 	 * bad token discarded, and the guards send the user to /auth/login where the
 	 * reason is shown. See docs/app-initializer.md for what the blank page
 	 * actually looked like. */
-	async initializeUser(): Promise<void> {
+	public async initializeUser(): Promise<void> {
 		try {
 			const { user, reason } = userFromToken(this._read());
 			if (user) {
@@ -70,17 +70,17 @@ export class AuthService {
 		}
 	}
 
-	hasAllRoles(roles: readonly Role[]): boolean {
+	public hasAllRoles(roles: readonly Role[]): boolean {
 		const user = this._userState();
 		return !!user && roles.every((role) => user.roles.includes(role));
 	}
 
-	hasSomeRole(roles: readonly Role[]): boolean {
+	public hasSomeRole(roles: readonly Role[]): boolean {
 		const user = this._userState();
 		return !!user && roles.some((role) => user.roles.includes(role));
 	}
 
-	token(): string | null {
+	public token(): string | null {
 		return this._read();
 	}
 

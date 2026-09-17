@@ -23,9 +23,9 @@ export abstract class PaginatedTableBase<T> {
 	private readonly _filterRecord = new BehaviorSubject<FilterRecord>({});
 	private readonly _refreshTick = new BehaviorSubject(0);
 
-	readonly loading = new BehaviorSubject(false);
-	readonly error = new BehaviorSubject<string | null>(null);
-	readonly page$: Observable<Page<T>>;
+	public readonly loading = new BehaviorSubject(false);
+	public readonly error = new BehaviorSubject<string | null>(null);
+	public readonly page$: Observable<Page<T>>;
 
 	protected constructor(searchKeys: readonly string[], defaultSort: Ordination) {
 		this._params = new BehaviorSubject<PageRequest>(createPageRequest(searchKeys, defaultSort));
@@ -57,46 +57,46 @@ export abstract class PaginatedTableBase<T> {
 		);
 	}
 
-	get filters(): FilterRecord {
+	public get filters(): FilterRecord {
 		return this._filterRecord.value;
 	}
 
-	get sortProperty(): string {
+	public get sortProperty(): string {
 		return this._params.value.ordination.property;
 	}
 
-	get sortDirection(): Ordination['direction'] {
+	public get sortDirection(): Ordination['direction'] {
 		return this._params.value.ordination.direction;
 	}
 
-	setSearch(searchTerm: string): void {
+	public setSearch(searchTerm: string): void {
 		this._update({ searchTerm, page: 1 });
 	}
 
-	setPage(page: number): void {
+	public setPage(page: number): void {
 		this._update({ page });
 	}
 
-	setPerPage(perPage: number): void {
+	public setPerPage(perPage: number): void {
 		this._update({ perPage, page: 1 });
 	}
 
 	/* A run of OR-chained conditions is not expressible from a flat form
 	   record, so this takes the raw record and builds it fresh on every
 	   fetch - the DSL inspector reads the same built Filters back out. */
-	setFilters(record: FilterRecord): void {
+	public setFilters(record: FilterRecord): void {
 		this._filterRecord.next(record);
 		this._update({ page: 1 });
 	}
 
-	sortBy(property: string): void {
+	public sortBy(property: string): void {
 		const current = this._params.value.ordination;
 		const direction: Ordination['direction'] =
 			current.property === property && current.direction === 'ASC' ? 'DESC' : 'ASC';
 		this._update({ ordination: { property, direction } });
 	}
 
-	refresh(): void {
+	public refresh(): void {
 		this._refreshTick.next(this._refreshTick.value + 1);
 	}
 

@@ -45,18 +45,18 @@ export interface AssignCrewDialogData {
 })
 export class AssignCrewDialogComponent {
 	private readonly _ref = inject<ModalRef<string>>(MODAL_REF);
-	readonly data = inject<AssignCrewDialogData>(MODAL_DATA);
+	public readonly data = inject<AssignCrewDialogData>(MODAL_DATA);
 
 	private static _nextId = 0;
-	readonly titleId = `assign-crew-dialog-title-${AssignCrewDialogComponent._nextId++}`;
+	public readonly titleId = `assign-crew-dialog-title-${AssignCrewDialogComponent._nextId++}`;
 
-	readonly selected = signal('');
+	public readonly selected = signal('');
 
-	confirm(): void {
+	public confirm(): void {
 		if (this.selected()) this._ref.close(this.selected());
 	}
 
-	cancel(): void {
+	public cancel(): void {
 		this._ref.close();
 	}
 }

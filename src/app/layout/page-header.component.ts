@@ -55,11 +55,11 @@ import { Component, input, output } from '@angular/core';
 	]
 })
 export class PageHeaderComponent {
-	readonly title = input.required<string>();
-	readonly subtitle = input<string>('');
-	readonly actionLabel = input<string>('');
+	public readonly title = input.required<string>();
+	public readonly subtitle = input<string>('');
+	public readonly actionLabel = input<string>('');
 
-	readonly writeAction = input<string>('');
+	public readonly writeAction = input<string>('');
 
-	readonly action = output<void>();
+	public readonly action = output<void>();
 }

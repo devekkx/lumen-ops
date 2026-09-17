@@ -11,5 +11,5 @@ import { AuthService } from '@core/auth/auth.service';
 	styleUrl: './app.component.scss'
 })
 export class AppComponent {
-	readonly auth = inject(AuthService);
+	public readonly auth = inject(AuthService);
 }

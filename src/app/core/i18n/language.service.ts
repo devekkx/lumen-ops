@@ -12,14 +12,14 @@ export class LanguageService {
 	private readonly _transloco = inject(TranslocoService);
 	private readonly _state = signal<Locale>(this._restore());
 
-	readonly current = this._state.asReadonly();
-	readonly intlLocale = computed(() => (this._state() === 'es' ? 'es-ES' : 'en-GB'));
+	public readonly current = this._state.asReadonly();
+	public readonly intlLocale = computed(() => (this._state() === 'es' ? 'es-ES' : 'en-GB'));
 
 	constructor() {
 		this._transloco.setActiveLang(this._state());
 	}
 
-	use(locale: Locale): void {
+	public use(locale: Locale): void {
 		if (!LOCALES.includes(locale) || locale === this._state()) return;
 		this._state.set(locale);
 		this._transloco.setActiveLang(locale);

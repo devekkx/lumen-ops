@@ -28,7 +28,7 @@ export class SelectivePreloadingStrategy implements PreloadingStrategy {
 	 * app.routes.ts) so they load lazily, on demand, the first time a session
 	 * actually navigates to them.
 	 */
-	preload(route: Route, load: () => Observable<unknown>): Observable<unknown> {
+	public preload(route: Route, load: () => Observable<unknown>): Observable<unknown> {
 		if (route.data?.['preload'] === false) return of(null);
 		return load();
 	}

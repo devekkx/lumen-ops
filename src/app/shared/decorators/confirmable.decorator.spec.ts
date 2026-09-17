@@ -3,11 +3,11 @@ import { ModalService } from '@core/overlay/modal.service';
 import { Confirmable } from './confirmable.decorator';
 
 class Widget {
-	ran = false;
-	lastArgs: unknown[] = [];
+	public ran = false;
+	public lastArgs: unknown[] = [];
 
 	@Confirmable('confirm.deleteFault', { params: (id: string) => ({ id }) })
-	delete(id: string): void {
+	public delete(id: string): void {
 		this.ran = true;
 		this.lastArgs = [id];
 	}

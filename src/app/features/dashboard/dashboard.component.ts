@@ -74,22 +74,22 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 	private _lampChart?: echarts.ECharts;
 	private _severityChart?: echarts.ECharts;
 
-	readonly ranges = RANGES;
-	readonly range = signal<RangeKey>('7');
-	readonly loading = signal(false);
-	readonly snapshot = signal<DashboardSnapshot | null>(null);
+	public readonly ranges = RANGES;
+	public readonly range = signal<RangeKey>('7');
+	public readonly loading = signal(false);
+	public readonly snapshot = signal<DashboardSnapshot | null>(null);
 
-	readonly hasEnergyData = computed(() =>
+	public readonly hasEnergyData = computed(() =>
 		(this.snapshot()?.series ?? []).some((point) => point.kwh > 0)
 	);
-	readonly hasLampData = computed(() =>
+	public readonly hasLampData = computed(() =>
 		(this.snapshot()?.byLampType ?? []).some((item) => item.kwh > 0)
 	);
-	readonly hasSeverityData = computed(() =>
+	public readonly hasSeverityData = computed(() =>
 		(this.snapshot()?.bySeverity ?? []).some((item) => item.count > 0)
 	);
 
-	readonly kpiTiles = computed<KpiTile[]>(() => {
+	public readonly kpiTiles = computed<KpiTile[]>(() => {
 		const data = this.snapshot();
 		if (!data) return [];
 
@@ -118,14 +118,14 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 		});
 	}
 
-	ngAfterViewInit(): void {
+	public ngAfterViewInit(): void {
 		window.addEventListener('resize', this._onResize);
 		this._resizeObserver = new ResizeObserver(() => this._onResize());
 		this._resizeObserver.observe(this._hostRef.nativeElement);
 		this._load();
 	}
 
-	ngOnDestroy(): void {
+	public ngOnDestroy(): void {
 		window.removeEventListener('resize', this._onResize);
 		this._resizeObserver?.disconnect();
 		this._energyChart?.dispose();
@@ -133,7 +133,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 		this._severityChart?.dispose();
 	}
 
-	selectRange(key: RangeKey): void {
+	public selectRange(key: RangeKey): void {
 		if (key === this.range() || this.loading()) return;
 		this.range.set(key);
 		this._load();

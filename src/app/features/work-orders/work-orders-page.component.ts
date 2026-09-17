@@ -37,9 +37,9 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 	private readonly _toast = inject(ToastService);
 	private readonly _transloco = inject(TranslocoService);
 
-	readonly abilities = this._auth.abilities;
+	public readonly abilities = this._auth.abilities;
 
-	readonly hasRowActions = computed(() => {
+	public readonly hasRowActions = computed(() => {
 		const abilities = this.abilities();
 		return abilities.assignCrew || abilities.startOrder || abilities.completeOrder;
 	});
@@ -61,20 +61,20 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 		sortable: true
 	};
 
-	readonly columns = computed<TableColumn<WorkOrder>[]>(() =>
+	public readonly columns = computed<TableColumn<WorkOrder>[]>(() =>
 		this.abilities().seeCosts
 			? [...WorkOrdersPageComponent._BASE_COLUMNS, WorkOrdersPageComponent._COST_COLUMN]
 			: WorkOrdersPageComponent._BASE_COLUMNS
 	);
 
-	readonly pillColumns = { severity: 'severity', status: 'status' };
-	readonly dateColumns = ['scheduledAt'];
+	public readonly pillColumns = { severity: 'severity', status: 'status' };
+	public readonly dateColumns = ['scheduledAt'];
 
-	readonly statuses = ORDER_STATUSES;
+	public readonly statuses = ORDER_STATUSES;
 
 	private _statusFilter: string[] = [];
 
-	readonly displayPage$ = this.page$.pipe(
+	public readonly displayPage$ = this.page$.pipe(
 		map((page) => ({
 			...page,
 			data: page.data.map((order) => ({
@@ -88,26 +88,26 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 		super([...WORK_ORDER_SEARCH_KEYS], { property: 'scheduledAt', direction: 'ASC' });
 	}
 
-	toggleStatus(value: string, checked: boolean): void {
+	public toggleStatus(value: string, checked: boolean): void {
 		this._statusFilter = checked
 			? [...this._statusFilter, value]
 			: this._statusFilter.filter((entry) => entry !== value);
 		this._applyFilters();
 	}
 
-	isStatusOn(value: string): boolean {
+	public isStatusOn(value: string): boolean {
 		return this._statusFilter.includes(value);
 	}
 
-	canAssign(order: WorkOrder): boolean {
+	public canAssign(order: WorkOrder): boolean {
 		return this.abilities().assignCrew && order.status !== 'DONE';
 	}
 
-	canStart(order: WorkOrder): boolean {
+	public canStart(order: WorkOrder): boolean {
 		return this.abilities().startOrder && order.status === 'ASSIGNED';
 	}
 
-	canComplete(order: WorkOrder): boolean {
+	public canComplete(order: WorkOrder): boolean {
 		return this.abilities().completeOrder && order.status === 'IN_PROGRESS';
 	}
 
@@ -115,7 +115,7 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 	   component - crews rarely change, but the picker should never offer a
 	   list that's gone stale across a long-lived session, and this page has
 	   nowhere better to invalidate a cache from. */
-	assignCrew(order: WorkOrder): void {
+	public assignCrew(order: WorkOrder): void {
 		this._crews.list().subscribe((crews) => {
 			void assignCrewDialog(this._modal, { code: order.code, crews }).then((crewId) => {
 				if (!crewId) return;
@@ -133,7 +133,7 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 		});
 	}
 
-	startOrder(order: WorkOrder): void {
+	public startOrder(order: WorkOrder): void {
 		this.collection.updateStatus(order.id, 'IN_PROGRESS').subscribe(() => {
 			this._toast.show(this._transloco.translate('order.started', { code: order.code }), 'queued');
 			this.refresh();
@@ -141,7 +141,7 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 	}
 
 	@Confirmable('confirm.completeOrder', { params: (order: WorkOrder) => ({ code: order.code }) })
-	completeOrder(order: WorkOrder): void {
+	public completeOrder(order: WorkOrder): void {
 		this.collection.updateStatus(order.id, 'DONE').subscribe(() => {
 			this._toast.show(
 				this._transloco.translate('order.completed', { code: order.code }),
@@ -155,7 +155,7 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 	   shareReplay source, not a new request) rather than the raw page$ -
 	   exporting the crew names actually on screen, "Unassigned" included,
 	   instead of the null the wire sends for one. */
-	exportCsv(): void {
+	public exportCsv(): void {
 		this.displayPage$.pipe(take(1)).subscribe((page) => {
 			const columns = this.columns().map((column) => ({
 				key: column.key,

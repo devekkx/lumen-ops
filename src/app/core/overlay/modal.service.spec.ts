@@ -13,8 +13,8 @@ interface TestData {
 	</button>`
 })
 class TestModalComponent {
-	readonly ref = inject<ModalRef<boolean>>(MODAL_REF);
-	readonly data = inject<TestData>(MODAL_DATA);
+	public readonly ref = inject<ModalRef<boolean>>(MODAL_REF);
+	public readonly data = inject<TestData>(MODAL_DATA);
 }
 
 describe('ModalService', () => {

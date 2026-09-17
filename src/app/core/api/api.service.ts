@@ -8,7 +8,7 @@ import { HttpParamsInput, buildHttpParams } from './http-params';
 export class ApiService {
 	private readonly _http = inject(HttpClient);
 
-	get<T = unknown>(
+	public get<T = unknown>(
 		path: string,
 		params?: HttpParamsInput,
 		options?: ApiCallOptions
@@ -19,7 +19,7 @@ export class ApiService {
 		});
 	}
 
-	post<T = unknown>(
+	public post<T = unknown>(
 		path: string,
 		body: unknown,
 		params?: HttpParamsInput,
@@ -31,7 +31,7 @@ export class ApiService {
 		});
 	}
 
-	put<T = unknown>(
+	public put<T = unknown>(
 		path: string,
 		body: unknown,
 		params?: HttpParamsInput,
@@ -43,7 +43,7 @@ export class ApiService {
 		});
 	}
 
-	patch<T = unknown>(
+	public patch<T = unknown>(
 		path: string,
 		body: unknown,
 		params?: HttpParamsInput,
@@ -55,7 +55,7 @@ export class ApiService {
 		});
 	}
 
-	delete<T = unknown>(
+	public delete<T = unknown>(
 		path: string,
 		params?: HttpParamsInput,
 		options?: ApiCallOptions
@@ -66,7 +66,11 @@ export class ApiService {
 		});
 	}
 
-	getBlob(path: string, params?: HttpParamsInput, options?: ApiCallOptions): Observable<Blob> {
+	public getBlob(
+		path: string,
+		params?: HttpParamsInput,
+		options?: ApiCallOptions
+	): Observable<Blob> {
 		return this._http.get(path, {
 			params: buildHttpParams(params),
 			context: contextFor(options),

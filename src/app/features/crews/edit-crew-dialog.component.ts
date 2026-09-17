@@ -82,20 +82,20 @@ export interface EditCrewDialogData {
 })
 export class EditCrewDialogComponent {
 	private readonly _ref = inject<ModalRef<CrewPatch>>(MODAL_REF);
-	readonly data = inject<EditCrewDialogData>(MODAL_DATA);
+	public readonly data = inject<EditCrewDialogData>(MODAL_DATA);
 
 	private static _nextId = 0;
-	readonly titleId = `edit-crew-dialog-title-${EditCrewDialogComponent._nextId++}`;
+	public readonly titleId = `edit-crew-dialog-title-${EditCrewDialogComponent._nextId++}`;
 
-	readonly contractors = CONTRACTORS;
-	readonly shifts = SHIFTS;
+	public readonly contractors = CONTRACTORS;
+	public readonly shifts = SHIFTS;
 
-	readonly name = signal(this.data.crew.name);
-	readonly contractor = signal(this.data.crew.contractor);
-	readonly members = signal(this.data.crew.members);
-	readonly shift = signal(this.data.crew.shift);
+	public readonly name = signal(this.data.crew.name);
+	public readonly contractor = signal(this.data.crew.contractor);
+	public readonly members = signal(this.data.crew.members);
+	public readonly shift = signal(this.data.crew.shift);
 
-	confirm(): void {
+	public confirm(): void {
 		if (!this.name().trim()) return;
 		this._ref.close({
 			name: this.name().trim(),
@@ -105,7 +105,7 @@ export class EditCrewDialogComponent {
 		});
 	}
 
-	cancel(): void {
+	public cancel(): void {
 		this._ref.close();
 	}
 }

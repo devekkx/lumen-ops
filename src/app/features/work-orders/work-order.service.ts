@@ -42,22 +42,22 @@ export interface WorkOrderPatch {
 export class WorkOrderService implements GenericCollectionService<WorkOrder> {
 	private readonly _api = inject(ApiService);
 
-	page(request: PageRequest): Observable<Page<WorkOrder>> {
+	public page(request: PageRequest): Observable<Page<WorkOrder>> {
 		return this._api.post<Page<WorkOrder>>('/api/work-orders/paged', request);
 	}
 
 	/* Not part of GenericCollectionService - a work order is never created or
 	   replaced wholesale by this screen, only patched: assigning a crew or
 	   moving its status is a lifecycle step, not a generic save. */
-	patch(id: string, changes: WorkOrderPatch): Observable<WorkOrder> {
+	public patch(id: string, changes: WorkOrderPatch): Observable<WorkOrder> {
 		return this._api.patch<WorkOrder>(`/api/work-orders/${id}`, changes);
 	}
 
-	assignCrew(orderId: string, crewId: string): Observable<WorkOrder> {
+	public assignCrew(orderId: string, crewId: string): Observable<WorkOrder> {
 		return this.patch(orderId, { crewId });
 	}
 
-	updateStatus(orderId: string, status: OrderStatus): Observable<WorkOrder> {
+	public updateStatus(orderId: string, status: OrderStatus): Observable<WorkOrder> {
 		return this.patch(orderId, { status });
 	}
 }

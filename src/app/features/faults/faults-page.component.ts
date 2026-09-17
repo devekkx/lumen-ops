@@ -32,9 +32,9 @@ export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 	private readonly _toast = inject(ToastService);
 	private readonly _transloco = inject(TranslocoService);
 
-	readonly abilities = this._auth.abilities;
+	public readonly abilities = this._auth.abilities;
 
-	readonly hasRowActions = computed(() => {
+	public readonly hasRowActions = computed(() => {
 		const abilities = this.abilities();
 		return (
 			abilities.editFault ||
@@ -45,7 +45,7 @@ export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 		);
 	});
 
-	readonly columns: TableColumn<Fault>[] = [
+	public readonly columns: TableColumn<Fault>[] = [
 		{ key: 'code', label: 'fault.code', sortable: true },
 		{ key: 'luminaireCode', label: 'fault.luminaire', sortable: true },
 		{ key: 'severity', label: 'fault.severity', sortable: true },
@@ -55,11 +55,11 @@ export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 		{ key: 'dueAt', label: 'fault.dueAt', sortable: true }
 	];
 
-	readonly pillColumns = { severity: 'severity', status: 'status' };
-	readonly dateColumns = ['reportedAt', 'dueAt'];
+	public readonly pillColumns = { severity: 'severity', status: 'status' };
+	public readonly dateColumns = ['reportedAt', 'dueAt'];
 
-	readonly severities = SEVERITIES;
-	readonly statuses = FAULT_STATUSES;
+	public readonly severities = SEVERITIES;
+	public readonly statuses = FAULT_STATUSES;
 
 	private _severityFilter: string[] = [];
 	private _statusFilter: string[] = [];
@@ -68,42 +68,42 @@ export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 		super([...FAULT_SEARCH_KEYS], { property: 'reportedAt', direction: 'DESC' });
 	}
 
-	toggleSeverity(value: string, checked: boolean): void {
+	public toggleSeverity(value: string, checked: boolean): void {
 		this._severityFilter = checked
 			? [...this._severityFilter, value]
 			: this._severityFilter.filter((entry) => entry !== value);
 		this._applyFilters();
 	}
 
-	toggleStatus(value: string, checked: boolean): void {
+	public toggleStatus(value: string, checked: boolean): void {
 		this._statusFilter = checked
 			? [...this._statusFilter, value]
 			: this._statusFilter.filter((entry) => entry !== value);
 		this._applyFilters();
 	}
 
-	isSeverityOn(value: string): boolean {
+	public isSeverityOn(value: string): boolean {
 		return this._severityFilter.includes(value);
 	}
 
-	isStatusOn(value: string): boolean {
+	public isStatusOn(value: string): boolean {
 		return this._statusFilter.includes(value);
 	}
 
-	canValidate(fault: Fault): boolean {
+	public canValidate(fault: Fault): boolean {
 		return this.abilities().validateFault && fault.status === 'REPORTED';
 	}
 
-	canReject(fault: Fault): boolean {
+	public canReject(fault: Fault): boolean {
 		return this.abilities().rejectFault && fault.status === 'REPORTED';
 	}
 
-	canClose(fault: Fault): boolean {
+	public canClose(fault: Fault): boolean {
 		const closeable = fault.status === 'VALIDATED' || fault.status === 'IN_PROGRESS';
 		return this.abilities().closeFault && closeable;
 	}
 
-	rejectFault(fault: Fault): void {
+	public rejectFault(fault: Fault): void {
 		this.collection.transition(fault.id, 'REJECTED').subscribe(() => {
 			this._toast.show(
 				this._transloco.translate('fault.rejected', { code: fault.code }),
@@ -114,7 +114,7 @@ export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 	}
 
 	@Confirmable('confirm.validateFault', { params: (fault: Fault) => ({ code: fault.code }) })
-	validateFault(fault: Fault): void {
+	public validateFault(fault: Fault): void {
 		this.collection.transition(fault.id, 'VALIDATED').subscribe(() => {
 			this._toast.show(
 				this._transloco.translate('fault.validated', { code: fault.code }),
@@ -125,7 +125,7 @@ export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 	}
 
 	@Confirmable('confirm.closeFault', { params: (fault: Fault) => ({ code: fault.code }) })
-	closeFault(fault: Fault): void {
+	public closeFault(fault: Fault): void {
 		this.collection.transition(fault.id, 'CLOSED').subscribe(() => {
 			this._toast.show(
 				this._transloco.translate('fault.closedMsg', { code: fault.code }),
@@ -136,7 +136,7 @@ export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 	}
 
 	@Confirmable('confirm.deleteFault', { params: (fault: Fault) => ({ code: fault.code }) })
-	deleteFault(fault: Fault): void {
+	public deleteFault(fault: Fault): void {
 		this.collection.delete(fault.id).subscribe(() => {
 			this._toast.show(
 				this._transloco.translate('fault.deleted', { code: fault.code }),
@@ -151,7 +151,7 @@ export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 	   TableColumn config the table itself renders, translated at export
 	   time, so a CSV column always matches the header the person exporting
 	   was actually looking at. */
-	exportCsv(): void {
+	public exportCsv(): void {
 		const columns = this.columns.map((column) => ({
 			key: column.key,
 			header: this._transloco.translate(column.label)

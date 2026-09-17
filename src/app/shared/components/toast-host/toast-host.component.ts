@@ -28,9 +28,9 @@ import { ToastService } from '@core/api/toast.service';
 })
 export class ToastHostComponent {
 	private readonly _toastService = inject(ToastService);
-	readonly toasts = this._toastService.toasts;
+	public readonly toasts = this._toastService.toasts;
 
-	dismiss(id: number): void {
+	public dismiss(id: number): void {
 		this._toastService.dismiss(id);
 	}
 }

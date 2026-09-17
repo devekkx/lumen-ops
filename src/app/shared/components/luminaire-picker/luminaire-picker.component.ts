@@ -39,16 +39,16 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 
 	private static _nextId = 0;
 	private readonly _uid = LuminairePickerComponent._nextId++;
-	readonly listboxId = `luminaire-picker-listbox-${this._uid}`;
-	readonly inputId = `luminaire-picker-${this._uid}`;
+	public readonly listboxId = `luminaire-picker-listbox-${this._uid}`;
+	public readonly inputId = `luminaire-picker-${this._uid}`;
 
-	readonly query = signal('');
-	readonly suggestions = signal<PickerLuminaire[]>([]);
-	readonly open = signal(false);
-	readonly activeIndex = signal(-1);
-	readonly loading = signal(false);
-	readonly disabled = signal(false);
-	readonly selected = signal<PickerLuminaire | null>(null);
+	public readonly query = signal('');
+	public readonly suggestions = signal<PickerLuminaire[]>([]);
+	public readonly open = signal(false);
+	public readonly activeIndex = signal(-1);
+	public readonly loading = signal(false);
+	public readonly disabled = signal(false);
+	public readonly selected = signal<PickerLuminaire | null>(null);
 
 	private readonly _searchTerms = new Subject<string>();
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -81,7 +81,7 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 			});
 	}
 
-	writeValue(id: string | null): void {
+	public writeValue(id: string | null): void {
 		if (!id) {
 			this.selected.set(null);
 			this.query.set('');
@@ -100,23 +100,23 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 		});
 	}
 
-	registerOnChange(fn: (value: string | null) => void): void {
+	public registerOnChange(fn: (value: string | null) => void): void {
 		this._onChange = fn;
 	}
 
-	registerOnTouched(fn: () => void): void {
+	public registerOnTouched(fn: () => void): void {
 		this._onTouched = fn;
 	}
 
-	setDisabledState(isDisabled: boolean): void {
+	public setDisabledState(isDisabled: boolean): void {
 		this.disabled.set(isDisabled);
 	}
 
-	labelFor(luminaire: PickerLuminaire): string {
+	public labelFor(luminaire: PickerLuminaire): string {
 		return `${luminaire.code} · ${luminaire.street}`;
 	}
 
-	onInput(value: string): void {
+	public onInput(value: string): void {
 		this.query.set(value);
 		this.open.set(true);
 
@@ -129,16 +129,16 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 		this._searchTerms.next(value);
 	}
 
-	onFocus(): void {
+	public onFocus(): void {
 		if (this.query().trim()) this.open.set(true);
 	}
 
-	onBlur(): void {
+	public onBlur(): void {
 		setTimeout(() => this.open.set(false), 150);
 		this._onTouched();
 	}
 
-	select(luminaire: PickerLuminaire): void {
+	public select(luminaire: PickerLuminaire): void {
 		this.selected.set(luminaire);
 		this.query.set(this.labelFor(luminaire));
 		this.suggestions.set([]);
@@ -147,7 +147,7 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 		this._onTouched();
 	}
 
-	clear(): void {
+	public clear(): void {
 		this.selected.set(null);
 		this.query.set('');
 		this.suggestions.set([]);
@@ -156,7 +156,7 @@ export class LuminairePickerComponent implements ControlValueAccessor {
 		this._onTouched();
 	}
 
-	onKeydown(event: KeyboardEvent): void {
+	public onKeydown(event: KeyboardEvent): void {
 		const items = this.suggestions();
 
 		switch (event.key) {

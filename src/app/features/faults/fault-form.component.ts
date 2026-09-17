@@ -38,17 +38,17 @@ export class FaultFormComponent implements DirtyFormHost {
 	private readonly _toast = inject(ToastService);
 	private readonly _transloco = inject(TranslocoService);
 
-	readonly severities = SEVERITIES;
+	public readonly severities = SEVERITIES;
 
 	private readonly _faultId = signal<string | null>(null);
-	readonly mode = computed<FormMode>(() => (this._faultId() ? 'edit' : 'create'));
+	public readonly mode = computed<FormMode>(() => (this._faultId() ? 'edit' : 'create'));
 
 	private readonly _original = signal<Fault | null>(null);
 
-	readonly loading = signal(false);
-	readonly saving = signal(false);
+	public readonly loading = signal(false);
+	public readonly saving = signal(false);
 
-	readonly form = new FormGroup(
+	public readonly form = new FormGroup(
 		{
 			luminaireId: new FormControl<string | null>(null, Validators.required),
 			severity: new FormControl<Severity>('MEDIUM', {
@@ -81,11 +81,11 @@ export class FaultFormComponent implements DirtyFormHost {
 
 	/* DirtyFormHost, for dirtyFormGuard */
 
-	isDirty(): boolean {
+	public isDirty(): boolean {
 		return this.form.dirty;
 	}
 
-	confirmDiscard(): Promise<boolean> {
+	public confirmDiscard(): Promise<boolean> {
 		return confirmDialog(this._modal, {
 			titleKey: 'fault.dirtyTitle',
 			bodyKey: 'fault.dirtyBody',
@@ -94,7 +94,7 @@ export class FaultFormComponent implements DirtyFormHost {
 		});
 	}
 
-	fieldError(name: FaultFormField): FieldError | null {
+	public fieldError(name: FaultFormField): FieldError | null {
 		const control = this.form.get(name);
 		if (!control || !control.errors || !(control.touched || control.dirty)) return null;
 
@@ -112,11 +112,11 @@ export class FaultFormComponent implements DirtyFormHost {
 		return null;
 	}
 
-	cancel(): void {
+	public cancel(): void {
 		void this._router.navigateByUrl('/averias');
 	}
 
-	save(): void {
+	public save(): void {
 		if (this.form.invalid) {
 			this.form.markAllAsTouched();
 			return;

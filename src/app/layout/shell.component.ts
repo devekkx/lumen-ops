@@ -35,37 +35,37 @@ export class ShellComponent {
 	private readonly _auth = inject(AuthService);
 	private readonly _language = inject(LanguageService);
 
-	readonly locales = LOCALES;
-	readonly activeLocale = this._language.current;
-	readonly user = this._auth.user;
+	public readonly locales = LOCALES;
+	public readonly activeLocale = this._language.current;
+	public readonly user = this._auth.user;
 
 	@ViewChild('menuFirstFocusable') private readonly _menuFirstFocusable?: ElementRef<HTMLElement>;
 
-	readonly collapsed = signal(this._restoreCollapsed());
-	readonly menuOpen = signal(false);
-	readonly narrow = signal(window.innerWidth < MOBILE_WIDTH);
+	public readonly collapsed = signal(this._restoreCollapsed());
+	public readonly menuOpen = signal(false);
+	public readonly narrow = signal(window.innerWidth < MOBILE_WIDTH);
 
-	readonly asideOpen = computed(() => (this.narrow() ? !this.collapsed() : true));
-	readonly showBackdrop = computed(() => this.narrow() && this.asideOpen());
-	readonly showLabels = computed(() => this.narrow() || !this.collapsed());
+	public readonly asideOpen = computed(() => (this.narrow() ? !this.collapsed() : true));
+	public readonly showBackdrop = computed(() => this.narrow() && this.asideOpen());
+	public readonly showLabels = computed(() => this.narrow() || !this.collapsed());
 
-	readonly toggleLeft = computed(() => {
+	public readonly toggleLeft = computed(() => {
 		if (this.narrow()) return 0;
 		return (this.collapsed() ? ASIDE_WIDTH_COLLAPSED : ASIDE_WIDTH) - TOGGLE_RADIUS;
 	});
 
-	readonly toggleTop = computed(() =>
+	public readonly toggleTop = computed(() =>
 		this.narrow() ? Math.max(120, Math.round(window.innerHeight / 2) - 23) : 90
 	);
 
-	readonly toggleFlushTab = computed(() => this.narrow());
+	public readonly toggleFlushTab = computed(() => this.narrow());
 
-	readonly menuScrimLeft = computed(() => {
+	public readonly menuScrimLeft = computed(() => {
 		if (this.narrow()) return 0;
 		return this.collapsed() ? ASIDE_WIDTH_COLLAPSED : ASIDE_WIDTH;
 	});
 
-	readonly toggleIconPath = computed(() =>
+	public readonly toggleIconPath = computed(() =>
 		!this.collapsed() ? 'M14.5 6.5 9 12l5.5 5.5' : 'M9.5 6.5 15 12l-5.5 5.5'
 	);
 
@@ -78,9 +78,9 @@ export class ShellComponent {
 		{ initialValue: this._router.routerState.snapshot.root }
 	);
 
-	readonly crumbs = computed(() => crumbsFrom(this._navigation()));
+	public readonly crumbs = computed(() => crumbsFrom(this._navigation()));
 
-	readonly groups = computed(() => {
+	public readonly groups = computed(() => {
 		const auth = this._auth;
 		return NAV_GROUPS.map((group) => ({
 			label: group.label,
@@ -88,7 +88,7 @@ export class ShellComponent {
 		})).filter((group) => group.items.length > 0);
 	});
 
-	readonly session = computed(() => {
+	public readonly session = computed(() => {
 		const user = this.user();
 		if (!user) return null;
 		return {
@@ -116,21 +116,21 @@ export class ShellComponent {
 
 	private readonly _onResize = () => this.narrow.set(window.innerWidth < MOBILE_WIDTH);
 
-	toggleAside(): void {
+	public toggleAside(): void {
 		this.collapsed.update((value) => {
 			this._persistCollapsed(!value);
 			return !value;
 		});
 	}
 
-	closeAside(): void {
+	public closeAside(): void {
 		if (this.narrow()) this.collapsed.set(true);
 	}
 
 	/* Opening the menu with the keyboard (Enter/Space on the trigger) should
 	   land focus inside it - otherwise a keyboard user hears "menu opened" and
 	   is left exactly where they were, with no obvious way to reach it. */
-	toggleMenu(): void {
+	public toggleMenu(): void {
 		const next = !this.menuOpen();
 		this.menuOpen.set(next);
 		if (next) {
@@ -138,24 +138,24 @@ export class ShellComponent {
 		}
 	}
 
-	closeMenu(): void {
+	public closeMenu(): void {
 		this.menuOpen.set(false);
 	}
 
 	/* Escape closes the menu and returns focus to the trigger, or keyboard users
 	   are dropped into the page behind it. */
-	onMenuKeydown(event: KeyboardEvent, trigger: HTMLElement): void {
+	public onMenuKeydown(event: KeyboardEvent, trigger: HTMLElement): void {
 		if (event.key !== 'Escape') return;
 		event.stopPropagation();
 		this.closeMenu();
 		trigger.focus();
 	}
 
-	use(locale: Locale): void {
+	public use(locale: Locale): void {
 		this._language.use(locale);
 	}
 
-	isActive(path: string): boolean {
+	public isActive(path: string): boolean {
 		return this._router.isActive(path, {
 			paths: 'subset',
 			queryParams: 'ignored',
@@ -164,7 +164,7 @@ export class ShellComponent {
 		});
 	}
 
-	logout(): void {
+	public logout(): void {
 		this._auth.logout();
 		void this._router.navigateByUrl('/auth/login');
 	}

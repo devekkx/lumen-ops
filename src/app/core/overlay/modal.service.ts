@@ -18,7 +18,7 @@ export class ModalService {
 
 	private static _current: ModalService | null = null;
 
-	static get instance(): ModalService {
+	public static get instance(): ModalService {
 		if (!ModalService._current) {
 			throw new Error('ModalService used before Angular constructed it');
 		}
@@ -29,7 +29,7 @@ export class ModalService {
 		ModalService._current = this;
 	}
 
-	open<C, R = unknown>(component: Type<C>, data?: unknown): Promise<R | undefined> {
+	public open<C, R = unknown>(component: Type<C>, data?: unknown): Promise<R | undefined> {
 		return new Promise<R | undefined>((resolve) => {
 			const previouslyFocused = document.activeElement as HTMLElement | null;
 

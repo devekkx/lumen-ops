@@ -20,11 +20,11 @@ export class DiagnosticsPageComponent implements OnInit {
 	private readonly _toast = inject(ToastService);
 	private readonly _transloco = inject(TranslocoService);
 
-	readonly traps = signal<DiagnosticsTraps | null>(null);
-	readonly callingTrap = signal(false);
-	readonly callingSlow = signal(false);
+	public readonly traps = signal<DiagnosticsTraps | null>(null);
+	public readonly callingTrap = signal(false);
+	public readonly callingSlow = signal(false);
 
-	ngOnInit(): void {
+	public ngOnInit(): void {
 		this._api
 			.get<DiagnosticsTraps>('/api/diagnostics/traps')
 			.subscribe((traps) => this.traps.set(traps));
@@ -34,7 +34,7 @@ export class DiagnosticsPageComponent implements OnInit {
 	   the translated 500 toast on its own, so there is nothing more useful
 	   to do with the error here than let the interceptor's own toast be the
 	   result the person clicking this button sees. */
-	callTrap(): void {
+	public callTrap(): void {
 		const traps = this.traps();
 		if (!traps) return;
 		this.callingTrap.set(true);
@@ -44,7 +44,7 @@ export class DiagnosticsPageComponent implements OnInit {
 		});
 	}
 
-	callSlow(): void {
+	public callSlow(): void {
 		const traps = this.traps();
 		if (!traps) return;
 		this.callingSlow.set(true);
@@ -60,7 +60,7 @@ export class DiagnosticsPageComponent implements OnInit {
 	}
 
 	@Confirmable('confirm.resetDiagnostics')
-	reset(): void {
+	public reset(): void {
 		this._api.post<{ ok: boolean }>('/api/diagnostics/reset', {}).subscribe(() => {
 			this._toast.show(this._transloco.translate('diag.resetDone'), 'healthy');
 		});

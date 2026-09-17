@@ -18,16 +18,16 @@ export class LoginComponent {
 	private readonly _transloco = inject(TranslocoService);
 	private readonly _language = inject(LanguageService);
 
-	readonly locales = LOCALES;
-	readonly activeLocale = this._language.current;
+	public readonly locales = LOCALES;
+	public readonly activeLocale = this._language.current;
 
-	readonly email = signal('');
-	readonly password = signal('');
-	readonly showPassword = signal(false);
-	readonly busy = signal(false);
-	readonly error = signal<string | null>(null);
+	public readonly email = signal('');
+	public readonly password = signal('');
+	public readonly showPassword = signal(false);
+	public readonly busy = signal(false);
+	public readonly error = signal<string | null>(null);
 
-	readonly bootFailure = computed(() => {
+	public readonly bootFailure = computed(() => {
 		const failure = this._auth.failure();
 		if (!failure) return null;
 		return failure === 'EXPIRED' ? 'auth.expired' : 'auth.bootFailed';
@@ -36,11 +36,11 @@ export class LoginComponent {
 	/* Injecting LanguageService here - not just in the shell - is what makes
 	   the active language (and the switcher below) apply before a session
 	   exists at all, rather than only once someone is signed in. */
-	use(locale: Locale): void {
+	public use(locale: Locale): void {
 		this._language.use(locale);
 	}
 
-	async submit(): Promise<void> {
+	public async submit(): Promise<void> {
 		if (this.busy()) return;
 
 		this.busy.set(true);

@@ -62,28 +62,28 @@ export class LuminaireMapComponent implements AfterViewInit, OnDestroy {
 	private readonly _pointStyles = new Map<LuminaireStatus, Style>();
 	private readonly _clusterStyles = new Map<string, Style>();
 
-	readonly statuses = LUMINAIRE_STATUSES;
-	readonly loading = signal(false);
-	readonly apiError = signal(false);
-	readonly tilesOffline = signal(false);
-	readonly clustered = signal(true);
-	readonly count = signal(0);
-	readonly selected = signal<Luminaire | null>(null);
+	public readonly statuses = LUMINAIRE_STATUSES;
+	public readonly loading = signal(false);
+	public readonly apiError = signal(false);
+	public readonly tilesOffline = signal(false);
+	public readonly clustered = signal(true);
+	public readonly count = signal(0);
+	public readonly selected = signal<Luminaire | null>(null);
 
-	tone(value: string): string {
+	public tone(value: string): string {
 		return pillClass(value);
 	}
 
-	toggleCluster(enabled: boolean): void {
+	public toggleCluster(enabled: boolean): void {
 		this.clustered.set(enabled);
 		this._clusterSource.setDistance(enabled ? CLUSTER_DISTANCE : 0);
 	}
 
-	retry(): void {
+	public retry(): void {
 		this._loadFeatures();
 	}
 
-	ngAfterViewInit(): void {
+	public ngAfterViewInit(): void {
 		const osmSource = new OSM();
 		osmSource.on('tileloaderror', () => this.tilesOffline.set(true));
 
@@ -119,7 +119,7 @@ export class LuminaireMapComponent implements AfterViewInit, OnDestroy {
 	   component instance does. Nothing here registers a listener on `window`
 	   or `document`, or hands a reference to `this` to a longer-lived service,
 	   so repeated create/destroy across route visits does not accumulate. */
-	ngOnDestroy(): void {
+	public ngOnDestroy(): void {
 		this._map?.dispose();
 		this._map = undefined;
 	}

@@ -26,10 +26,10 @@ export class CrewsPageComponent extends PaginatedTableBase<Crew> {
 	private readonly _toast = inject(ToastService);
 	private readonly _transloco = inject(TranslocoService);
 
-	readonly abilities = this._auth.abilities;
-	readonly hasRowActions = computed(() => this.abilities().editCrew);
+	public readonly abilities = this._auth.abilities;
+	public readonly hasRowActions = computed(() => this.abilities().editCrew);
 
-	readonly columns: TableColumn<Crew>[] = [
+	public readonly columns: TableColumn<Crew>[] = [
 		{ key: 'code', label: 'crew.code', sortable: true },
 		{ key: 'name', label: 'crew.name', sortable: true },
 		{ key: 'contractor', label: 'crew.contractor', sortable: true },
@@ -38,13 +38,13 @@ export class CrewsPageComponent extends PaginatedTableBase<Crew> {
 		{ key: 'shift', label: 'crew.shift', sortable: true }
 	];
 
-	readonly pillColumns = { shift: 'shift' };
+	public readonly pillColumns = { shift: 'shift' };
 
 	constructor() {
 		super([...CREW_SEARCH_KEYS], { property: 'code', direction: 'ASC' });
 	}
 
-	editCrew(crew: Crew): void {
+	public editCrew(crew: Crew): void {
 		void editCrewDialog(this._modal, { crew }).then((patch) => {
 			if (!patch) return;
 			this.collection.update(crew.id, patch).subscribe(() => {

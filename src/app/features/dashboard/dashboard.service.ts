@@ -46,7 +46,7 @@ export interface DashboardQuery {
 export class DashboardService {
 	private readonly _api = inject(ApiService);
 
-	snapshot(query: DashboardQuery): Observable<DashboardSnapshot> {
+	public snapshot(query: DashboardQuery): Observable<DashboardSnapshot> {
 		return this._api.get<DashboardSnapshot>('/api/dashboard', {
 			from: query.from,
 			to: query.to,

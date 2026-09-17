@@ -39,9 +39,9 @@ export abstract class PaginatedTableBaseV2<T> {
 
 	private readonly _dataResource: ResourceRef<Page<T>>;
 
-	readonly page: Signal<Page<T>>;
-	readonly loading: Signal<boolean>;
-	readonly error: Signal<string | null>;
+	public readonly page: Signal<Page<T>>;
+	public readonly loading: Signal<boolean>;
+	public readonly error: Signal<string | null>;
 
 	protected constructor(searchKeys: readonly string[], defaultSort: Ordination) {
 		this._searchKeys = [...searchKeys];
@@ -96,38 +96,38 @@ export abstract class PaginatedTableBaseV2<T> {
 		);
 	}
 
-	get filters(): FilterRecord {
+	public get filters(): FilterRecord {
 		return this._filterRecord();
 	}
 
-	get sortProperty(): string {
+	public get sortProperty(): string {
 		return this._params().ordination.property;
 	}
 
-	get sortDirection(): Ordination['direction'] {
+	public get sortDirection(): Ordination['direction'] {
 		return this._params().ordination.direction;
 	}
 
-	setSearch(searchTerm: string): void {
+	public setSearch(searchTerm: string): void {
 		this._update({ searchTerm, page: 1 });
 	}
 
-	setPage(page: number): void {
+	public setPage(page: number): void {
 		this._update({ page });
 	}
 
-	setPerPage(perPage: number): void {
+	public setPerPage(perPage: number): void {
 		this._update({ perPage, page: 1 });
 	}
 
 	/* A run of OR-chained conditions is not expressible from a flat form record, so this takes the
 	 * raw record and builds it fresh on every fetch - same contract as v1's setFilters. */
-	setFilters(record: FilterRecord): void {
+	public setFilters(record: FilterRecord): void {
 		this._filterRecord.set(record);
 		this._update({ page: 1 });
 	}
 
-	sortBy(property: string): void {
+	public sortBy(property: string): void {
 		const current = this._params().ordination;
 		const direction: Ordination['direction'] =
 			current.property === property && current.direction === 'ASC' ? 'DESC' : 'ASC';
@@ -139,7 +139,7 @@ export abstract class PaginatedTableBaseV2<T> {
 	 * silently no-op'ing whenever nothing else has changed - resource()'s reload() carries its
 	 * own counter independent of the request value, so it always forces a real refetch of the
 	 * same request. */
-	refresh(): void {
+	public refresh(): void {
 		this._dataResource.reload();
 	}
 

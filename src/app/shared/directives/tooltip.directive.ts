@@ -23,14 +23,14 @@ interface LumenTooltipInstance {
 	standalone: true
 })
 export class LumenTooltipDirective implements OnChanges, OnDestroy {
-	@Input() title = '';
-	@Input() placement: 'top' | 'right' | 'bottom' | 'left' = 'top';
+	@Input() public title = '';
+	@Input() public placement: 'top' | 'right' | 'bottom' | 'left' = 'top';
 
 	private readonly _el = inject(ElementRef<HTMLElement>);
 	private readonly _renderer = inject(Renderer2);
 	private _tooltip: LumenTooltipInstance | undefined;
 
-	ngOnChanges(changes: SimpleChanges): void {
+	public ngOnChanges(changes: SimpleChanges): void {
 		if (!('title' in changes)) return;
 
 		if (!this.title) {
@@ -56,7 +56,7 @@ export class LumenTooltipDirective implements OnChanges, OnDestroy {
 		this._renderer.listen(this._el.nativeElement, 'click', () => this._el.nativeElement.blur());
 	}
 
-	ngOnDestroy(): void {
+	public ngOnDestroy(): void {
 		this._teardown();
 	}
 

@@ -42,14 +42,14 @@ export const FAULT_SEARCH_KEYS = ['code', 'street', 'description'] as const;
 export class FaultService implements GenericCollectionService<Fault> {
 	private readonly _api = inject(ApiService);
 
-	page(request: PageRequest): Observable<Page<Fault>> {
+	public page(request: PageRequest): Observable<Page<Fault>> {
 		return this._api.post<Page<Fault>>('/api/faults/paged', request);
 	}
 
 	/* There is no GET /api/faults/:id on the mock - only luminaires got that
 	   single-record route - so the edit form's lookup goes through the same
 	   paged endpoint everything else uses, filtered down to one id. */
-	get(id: string): Observable<Fault> {
+	public get(id: string): Observable<Fault> {
 		const request: PageRequest = createPageRequest([], { property: 'code', direction: 'ASC' });
 		request.perPage = 1;
 		request.filters = [condition('id', MatchMode.EQUAL, id)];
@@ -66,21 +66,21 @@ export class FaultService implements GenericCollectionService<Fault> {
 	/* POST for a new fault (no id yet), PUT to update an existing one - the
 	   mock's two routes mirror that split exactly, so there is no need for a
 	   third "upsert" endpoint on the server. */
-	save(model: Fault): Observable<Fault> {
+	public save(model: Fault): Observable<Fault> {
 		if (!model.id) {
 			return this._api.post<Fault>('/api/faults', model);
 		}
 		return this._api.put<Fault>(`/api/faults/${model.id}`, model);
 	}
 
-	delete(id: string): Observable<void> {
+	public delete(id: string): Observable<void> {
 		return this._api.delete<void>(`/api/faults/${id}`);
 	}
 
 	/* Not part of GenericCollectionService - validate/reject/close are lifecycle
 	   moves, not a generic save, and the mock models them as their own route so
 	   validating can create a work order server-side as a side effect. */
-	transition(id: string, status: FaultStatus): Observable<Fault> {
+	public transition(id: string, status: FaultStatus): Observable<Fault> {
 		return this._api.post<Fault>(`/api/faults/${id}/transition`, { status });
 	}
 }

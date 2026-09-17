@@ -5,7 +5,7 @@ import { LanguageService } from './language.service';
 export class LumenNumberPipe implements PipeTransform {
 	private readonly _language = inject(LanguageService);
 
-	transform(value: number | null | undefined, digits = 0): string {
+	public transform(value: number | null | undefined, digits = 0): string {
 		return new Intl.NumberFormat(this._language.intlLocale(), {
 			minimumFractionDigits: digits,
 			maximumFractionDigits: digits
@@ -32,7 +32,7 @@ const ordinal = (day: number): string => {
 export class LumenDatePipe implements PipeTransform {
 	private readonly _language = inject(LanguageService);
 
-	transform(value: string | Date | null | undefined, withTime = false): string {
+	public transform(value: string | Date | null | undefined, withTime = false): string {
 		if (!value) return '-';
 		const date = value instanceof Date ? value : new Date(value);
 		if (Number.isNaN(date.getTime())) return '-';
@@ -66,7 +66,7 @@ export class LumenDatePipe implements PipeTransform {
 export class LumenCurrencyPipe implements PipeTransform {
 	private readonly _language = inject(LanguageService);
 
-	transform(value: number | null | undefined): string {
+	public transform(value: number | null | undefined): string {
 		return new Intl.NumberFormat(this._language.intlLocale(), {
 			style: 'currency',
 			currency: 'EUR',

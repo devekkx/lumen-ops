@@ -16,9 +16,13 @@ export class ToastService {
 	private _nextId = 0;
 	private readonly _toastsState = signal<Toast[]>([]);
 
-	readonly toasts = this._toastsState.asReadonly();
+	public readonly toasts = this._toastsState.asReadonly();
 
-	show(message: string, tone: ToastTone = 'neutral', durationMs = DEFAULT_DURATION_MS): void {
+	public show(
+		message: string,
+		tone: ToastTone = 'neutral',
+		durationMs = DEFAULT_DURATION_MS
+	): void {
 		if (this._toastsState().some((toast) => toast.message === message && toast.tone === tone)) {
 			return;
 		}
@@ -28,7 +32,7 @@ export class ToastService {
 		setTimeout(() => this.dismiss(id), durationMs);
 	}
 
-	dismiss(id: number): void {
+	public dismiss(id: number): void {
 		this._toastsState.update((toasts) => toasts.filter((toast) => toast.id !== id));
 	}
 }

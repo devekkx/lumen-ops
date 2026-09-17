@@ -6,7 +6,7 @@ import { Translation, TranslocoLoader } from '@jsverse/transloco';
 export class TranslocoHttpLoader implements TranslocoLoader {
 	private readonly _http = inject(HttpClient);
 
-	getTranslation(path: string) {
+	public getTranslation(path: string) {
 		return this._http.get<Translation>(`/i18n/${path}.json`);
 	}
 }

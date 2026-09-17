@@ -6,15 +6,15 @@ import { DirtyFormHost, dirtyFormGuard } from './dirty-form.guard';
    those two methods is a more direct proof than standing up a real route
    navigation would be. */
 class FakeHost implements DirtyFormHost {
-	dirty = false;
-	discardResult: Promise<boolean> = Promise.resolve(true);
-	confirmDiscardCalls = 0;
+	public dirty = false;
+	public discardResult: Promise<boolean> = Promise.resolve(true);
+	public confirmDiscardCalls = 0;
 
-	isDirty(): boolean {
+	public isDirty(): boolean {
 		return this.dirty;
 	}
 
-	confirmDiscard(): Promise<boolean> {
+	public confirmDiscard(): Promise<boolean> {
 		this.confirmDiscardCalls++;
 		return this.discardResult;
 	}

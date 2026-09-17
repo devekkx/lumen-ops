@@ -45,17 +45,17 @@ export interface GeoRequest {
 export class LuminaireService implements GenericCollectionService<Luminaire> {
 	private readonly _api = inject(ApiService);
 
-	page(request: PageRequest): Observable<Page<Luminaire>> {
+	public page(request: PageRequest): Observable<Page<Luminaire>> {
 		return this._api.post<Page<Luminaire>>('/api/luminaires/paged', request);
 	}
 
-	get(id: string): Observable<Luminaire> {
+	public get(id: string): Observable<Luminaire> {
 		return this._api.get<Luminaire>(`/api/luminaires/${id}`);
 	}
 
 	/* /api/luminaires/geo returns a plain array, not a Page - the map draws
 	   every matching feature at once rather than one page of them. */
-	geo(request: GeoRequest = {}): Observable<Luminaire[]> {
+	public geo(request: GeoRequest = {}): Observable<Luminaire[]> {
 		return this._api.post<Luminaire[]>('/api/luminaires/geo', request);
 	}
 }
