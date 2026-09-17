@@ -48,6 +48,15 @@ export default tseslint.config(
 					format: ['UPPER_CASE'],
 					leadingUnderscore: 'require'
 				}
+			],
+			'@typescript-eslint/explicit-member-accessibility': [
+				'error',
+				{
+					accessibility: 'explicit',
+					overrides: {
+						constructors: 'no-public'
+					}
+				}
 			]
 		}
 	},
