@@ -34,5 +34,23 @@
 		(pageChange)="setPage($event)"
 		(perPageChange)="setPerPage($event)"
 		(retry)="refresh()"
-	/>
+	>
+		@if (hasRowActions()) {
+		<ng-template #rowActions let-crew>
+			<button
+				type="button"
+				class="btn btn-sm btn-link p-1"
+				data-action="edit"
+				data-bs-toggle="tooltip"
+				[title]="t('crew.edit')"
+				[attr.aria-label]="t('crew.edit')"
+				(click)="editCrew(crew)"
+			>
+				<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z" />
+				</svg>
+			</button>
+		</ng-template>
+		}
+	</lumen-table>
 </section>

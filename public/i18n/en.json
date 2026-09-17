@@ -160,7 +160,11 @@
 		"zone": "Home district",
 		"shift": "Shift",
 		"load": "Load",
-		"openOrders": "{n} open orders"
+		"openOrders": "{n} open orders",
+		"edit": "Edit crew",
+		"editTitle": "Edit crew {code}",
+		"save": "Save",
+		"updated": "Crew {code} updated"
 	},
 	"map": {
 		"title": "Map",

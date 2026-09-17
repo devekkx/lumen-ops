@@ -20,6 +20,7 @@ import {
 	luminaires,
 	nextCode,
 	resetDatabase,
+	type Crew,
 	type Fault,
 	type FaultStatus,
 	type WorkOrder
@@ -74,9 +75,7 @@ const paginate = <T extends object>(rows: readonly T[], request: PagedRequest) =
 	if (ordination?.property) {
 		const direction = ordination.direction === 'DESC' ? -1 : 1;
 		const property = ordination.property as keyof T;
-		matched = matched
-			.slice()
-			.sort((a, b) => compare(a[property], b[property]) * direction);
+		matched = matched.slice().sort((a, b) => compare(a[property], b[property]) * direction);
 	}
 
 	const total = matched.length;
@@ -203,6 +202,35 @@ app.get('/api/luminaires/:id/faults', async (request: Request, response: Respons
 app.get('/api/crews', async (_request: Request, response: Response) => {
 	await sleep(quickLatency());
 	return response.json(crews);
+});
+
+/* Editable in place, not create/delete - the twelve seeded crews are the
+   contractors' real roster for this contract, not a collection an ADMIN
+   session grows or shrinks; only name/contractor/members/shift are ever
+   worth an ADMIN correcting. */
+app.patch('/api/crews/:id', async (request: Request, response: Response) => {
+	await sleep(quickLatency());
+	const crew = crews.find((item) => item.id === request.params.id);
+	if (!crew) return response.status(404).json({ code: 'NOT_FOUND' });
+
+	const patch = request.body as Partial<Crew>;
+	if (patch.name !== undefined) crew.name = patch.name;
+	if (patch.contractor !== undefined) crew.contractor = patch.contractor;
+	if (patch.members !== undefined) crew.members = patch.members;
+	if (patch.shift !== undefined) crew.shift = patch.shift;
+
+	/* Work orders denormalise crewName/contractor at assignment time (see the
+	   PATCH /api/work-orders/:id handler below) so the table never joins
+	   against the crew list per row - an edit here has to walk forward and
+	   refresh every order that already carries this crew's stale copy. */
+	database.workOrders
+		.filter((order) => order.crewId === crew.id)
+		.forEach((order) => {
+			order.crewName = crew.name;
+			order.contractor = crew.contractor;
+		});
+
+	return response.json(crew);
 });
 
 /* ---- faults ----------------------------------------------------------- */

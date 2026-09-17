@@ -160,7 +160,11 @@
 		"zone": "Distrito de origen",
 		"shift": "Turno",
 		"load": "Carga",
-		"openOrders": "{n} órdenes abiertas"
+		"openOrders": "{n} órdenes abiertas",
+		"edit": "Editar cuadrilla",
+		"editTitle": "Editar cuadrilla {code}",
+		"save": "Guardar",
+		"updated": "Cuadrilla {code} actualizada"
 	},
 	"map": {
 		"title": "Mapa",
