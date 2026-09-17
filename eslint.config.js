@@ -37,7 +37,53 @@ module.exports = tseslint.config(
 					prefix: 'lumen',
 					style: 'kebab-case'
 				}
+			],
+			// A private field or method is only ever seen from inside its own
+			// class, so the underscore is a visual flag at the *call site*, not
+			// just the declaration - `this._foo` reads as "internal" wherever
+			// it's used, without having to go check the modifier.
+			'@typescript-eslint/naming-convention': [
+				'error',
+				{
+					selector: ['classProperty', 'classMethod', 'accessor'],
+					modifiers: ['private'],
+					format: ['camelCase'],
+					leadingUnderscore: 'require'
+				}
 			]
+		}
+	},
+	{
+		// Type-aware rules need real type info, which only src/ has a tsconfig
+		// project for (mock-api and scripts are plain tsx/node scripts with no
+		// program of their own).
+		files: ['src/**/*.ts'],
+		ignores: [
+			// Neither file is imported from anywhere in the app - both are
+			// intentionally-disconnected illustrations of a technique ("the real
+			// repo does X") - so neither is part of tsconfig.app.json's or
+			// tsconfig.spec.json's program, and a type-aware rule has no type
+			// info to check them against.
+			'src/app/core/i18n/load-translations.decorator.ts',
+			'src/app/shared/directives/with-roles.directive.ts'
+		],
+		languageOptions: {
+			parserOptions: {
+				project: ['./tsconfig.app.json', './tsconfig.spec.json'],
+				tsconfigRootDir: __dirname
+			}
+		},
+		rules: {
+			// A private field that is never reassigned outside its constructor
+			// should say so - readonly is the compiler-enforced guarantee that a
+			// leading underscore alone can't give.
+			'@typescript-eslint/prefer-readonly': 'error',
+			// Two rules that catch real bugs, not just style: a promise dropped
+			// without await/catch/void silently swallows its rejection, and
+			// passing an async function where a sync callback is expected (an
+			// event handler, an array predicate) runs it un-awaited too.
+			'@typescript-eslint/no-floating-promises': 'error',
+			'@typescript-eslint/no-misused-promises': 'error'
 		}
 	},
 	{
