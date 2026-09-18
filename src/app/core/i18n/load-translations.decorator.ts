@@ -18,9 +18,6 @@ export function LoadTranslations(scope: string, alias?: string): ClassDecorator 
 		if (definition) {
 			definition.providers = [...(definition.providers ?? []), provider];
 		} else {
-			/* Decorators run before the component definition exists when the class
-			   is compiled ahead of time, so stash it and let Angular pick it up
-			   from the static providers the component already declares. */
 			const pending = target as unknown as { ɵɵpendingScopes?: unknown[] };
 			pending.ɵɵpendingScopes = [...(pending.ɵɵpendingScopes ?? []), provider];
 		}

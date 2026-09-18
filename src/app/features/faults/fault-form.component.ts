@@ -31,32 +31,24 @@ type FaultFormField = 'luminaireId' | 'severity' | 'description' | 'reportedAt' 
 	templateUrl: './fault-form.component.html'
 })
 export class FaultFormComponent implements DirtyFormHost {
-	private readonly route = inject(ActivatedRoute);
-	private readonly router = inject(Router);
-	private readonly faults = inject(FaultService);
-	private readonly modal = inject(ModalService);
-	private readonly toast = inject(ToastService);
-	private readonly transloco = inject(TranslocoService);
+	private readonly _route = inject(ActivatedRoute);
+	private readonly _router = inject(Router);
+	private readonly _faults = inject(FaultService);
+	private readonly _modal = inject(ModalService);
+	private readonly _toast = inject(ToastService);
+	private readonly _transloco = inject(TranslocoService);
 
-	readonly severities = SEVERITIES;
+	public readonly severities = SEVERITIES;
 
-	private readonly faultId = signal<string | null>(null);
-	/* The one thing every "isEdit ? X : Y" question in the template actually
-	   needs - everything else (loading the record, defaulting the form,
-	   building the save payload) is handled here, once, rather than repeated
-	   as scattered conditionals. */
-	readonly mode = computed<FormMode>(() => (this.faultId() ? 'edit' : 'create'));
+	private readonly _faultId = signal<string | null>(null);
+	public readonly mode = computed<FormMode>(() => (this._faultId() ? 'edit' : 'create'));
 
-	/* The full record as loaded, kept only so save() can merge the form's
-	   patch over fields the form never edits (code, status, photos,
-	   reportedBy, and the luminaire's denormalised street/zone) - a PUT that
-	   sent those back blank would overwrite server-held data with nothing. */
-	private readonly original = signal<Fault | null>(null);
+	private readonly _original = signal<Fault | null>(null);
 
-	readonly loading = signal(false);
-	readonly saving = signal(false);
+	public readonly loading = signal(false);
+	public readonly saving = signal(false);
 
-	readonly form = new FormGroup(
+	public readonly form = new FormGroup(
 		{
 			luminaireId: new FormControl<string | null>(null, Validators.required),
 			severity: new FormControl<Severity>('MEDIUM', {
@@ -80,21 +72,21 @@ export class FaultFormComponent implements DirtyFormHost {
 	);
 
 	constructor() {
-		this.route.paramMap.pipe(takeUntilDestroyed()).subscribe((params) => {
+		this._route.paramMap.pipe(takeUntilDestroyed()).subscribe((params) => {
 			const id = params.get('id');
-			this.faultId.set(id);
-			if (id) this.load(id);
+			this._faultId.set(id);
+			if (id) this._load(id);
 		});
 	}
 
 	/* DirtyFormHost, for dirtyFormGuard */
 
-	isDirty(): boolean {
+	public isDirty(): boolean {
 		return this.form.dirty;
 	}
 
-	confirmDiscard(): Promise<boolean> {
-		return confirmDialog(this.modal, {
+	public confirmDiscard(): Promise<boolean> {
+		return confirmDialog(this._modal, {
 			titleKey: 'fault.dirtyTitle',
 			bodyKey: 'fault.dirtyBody',
 			confirmKey: 'fault.dirtyLeave',
@@ -102,7 +94,7 @@ export class FaultFormComponent implements DirtyFormHost {
 		});
 	}
 
-	fieldError(name: FaultFormField): FieldError | null {
+	public fieldError(name: FaultFormField): FieldError | null {
 		const control = this.form.get(name);
 		if (!control || !control.errors || !(control.touched || control.dirty)) return null;
 
@@ -120,11 +112,11 @@ export class FaultFormComponent implements DirtyFormHost {
 		return null;
 	}
 
-	cancel(): void {
-		void this.router.navigateByUrl('/averias');
+	public cancel(): void {
+		void this._router.navigateByUrl('/averias');
 	}
 
-	save(): void {
+	public save(): void {
 		if (this.form.invalid) {
 			this.form.markAllAsTouched();
 			return;
@@ -140,7 +132,7 @@ export class FaultFormComponent implements DirtyFormHost {
 			dueAt: new Date(value.dueAt).toISOString()
 		};
 
-		const existing = this.original();
+		const existing = this._original();
 		const model: Fault = existing
 			? { ...existing, ...patch }
 			: {
@@ -156,25 +148,22 @@ export class FaultFormComponent implements DirtyFormHost {
 					...patch
 				};
 
-		this.faults.save(model).subscribe({
+		this._faults.save(model).subscribe({
 			next: (saved) => {
 				this.saving.set(false);
-				/* Must happen before navigating away: a pristine form is what
-				   stops dirtyFormGuard from prompting after a save that already
-				   succeeded. */
 				this.form.markAsPristine();
-				this.toast.show(this.transloco.translate('fault.saved', { code: saved.code }), 'healthy');
-				void this.router.navigateByUrl('/averias');
+				this._toast.show(this._transloco.translate('fault.saved', { code: saved.code }), 'healthy');
+				void this._router.navigateByUrl('/averias');
 			},
 			error: () => this.saving.set(false)
 		});
 	}
 
-	private load(id: string): void {
+	private _load(id: string): void {
 		this.loading.set(true);
-		this.faults.get(id).subscribe({
+		this._faults.get(id).subscribe({
 			next: (fault) => {
-				this.original.set(fault);
+				this._original.set(fault);
 				this.form.reset({
 					luminaireId: fault.luminaireId,
 					severity: fault.severity,
@@ -186,8 +175,8 @@ export class FaultFormComponent implements DirtyFormHost {
 			},
 			error: () => {
 				this.loading.set(false);
-				this.toast.show(this.transloco.translate('error.404'), 'critical');
-				void this.router.navigateByUrl('/averias');
+				this._toast.show(this._transloco.translate('error.404'), 'critical');
+				void this._router.navigateByUrl('/averias');
 			}
 		});
 	}

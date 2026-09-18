@@ -13,20 +13,6 @@ import {
 import { CREW_SEARCH_KEYS, Crew, CrewService } from './crew.service';
 import { editCrewDialog } from './edit-crew-dialog.component';
 
-/* Same v1 (RxJS) base as work-orders - see docs/table-v1-vs-v2.md for why
-   luminaires/faults are the deliberate v1/v2 comparison and everything else
-   just picks v1.
-
-   No "load" / open-orders-per-crew column here, even though crew.load and
-   crew.openOrders exist in the i18n files: the backend has no endpoint that
-   returns that count cheaply. GET /api/crews returns the crew shape only,
-   and the only way to derive an open-order count per crew is
-   POST /api/work-orders/paged filtered by crewId - one request per visible
-   row, per page, forever. That's a real N+1, not a one-time cost, for a
-   number this screen can live without; faking it from a single unfiltered
-   fetch would silently go stale/wrong as soon as there's more than one page
-   of work orders. Documented gap, not an oversight - see docs/table-v1-vs-v2.md
-   companion note in the work-orders-and-crews PR description. */
 @Component({
 	selector: 'lumen-crews-page',
 	standalone: true,
@@ -35,15 +21,15 @@ import { editCrewDialog } from './edit-crew-dialog.component';
 })
 export class CrewsPageComponent extends PaginatedTableBase<Crew> {
 	protected readonly collection = inject(CrewService);
-	private readonly auth = inject(AuthService);
-	private readonly modal = inject(ModalService);
-	private readonly toast = inject(ToastService);
-	private readonly transloco = inject(TranslocoService);
+	private readonly _auth = inject(AuthService);
+	private readonly _modal = inject(ModalService);
+	private readonly _toast = inject(ToastService);
+	private readonly _transloco = inject(TranslocoService);
 
-	readonly abilities = this.auth.abilities;
-	readonly hasRowActions = computed(() => this.abilities().editCrew);
+	public readonly abilities = this._auth.abilities;
+	public readonly hasRowActions = computed(() => this.abilities().editCrew);
 
-	readonly columns: TableColumn<Crew>[] = [
+	public readonly columns: TableColumn<Crew>[] = [
 		{ key: 'code', label: 'crew.code', sortable: true },
 		{ key: 'name', label: 'crew.name', sortable: true },
 		{ key: 'contractor', label: 'crew.contractor', sortable: true },
@@ -52,17 +38,17 @@ export class CrewsPageComponent extends PaginatedTableBase<Crew> {
 		{ key: 'shift', label: 'crew.shift', sortable: true }
 	];
 
-	readonly pillColumns = { shift: 'shift' };
+	public readonly pillColumns = { shift: 'shift' };
 
 	constructor() {
 		super([...CREW_SEARCH_KEYS], { property: 'code', direction: 'ASC' });
 	}
 
-	editCrew(crew: Crew): void {
-		void editCrewDialog(this.modal, { crew }).then((patch) => {
+	public editCrew(crew: Crew): void {
+		void editCrewDialog(this._modal, { crew }).then((patch) => {
 			if (!patch) return;
 			this.collection.update(crew.id, patch).subscribe(() => {
-				this.toast.show(this.transloco.translate('crew.updated', { code: crew.code }), 'healthy');
+				this._toast.show(this._transloco.translate('crew.updated', { code: crew.code }), 'healthy');
 				this.refresh();
 			});
 		});

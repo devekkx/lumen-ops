@@ -33,9 +33,6 @@ export const dateRangeValidator = (
 		const reportedRaw = reportedAtControl.value;
 		const dueRaw = dueAtControl.value;
 
-		/* Either side left blank is somebody else's problem (Validators.required
-		   reports it); a range check on a value that isn't there yet would just
-		   be noise. */
 		if (!reportedRaw || !dueRaw) {
 			clearOwnErrors();
 			return null;

@@ -18,9 +18,9 @@ const pageOf = (label: string): Page<Row> => ({
 });
 
 class FakeCollection implements GenericCollectionService<Row> {
-	readonly requests: PageRequest[] = [];
+	public readonly requests: PageRequest[] = [];
 
-	page(request: PageRequest): Observable<Page<Row>> {
+	public page(request: PageRequest): Observable<Page<Row>> {
 		this.requests.push(request);
 		/* 'slow' deliberately outlasts the second request below, so a result
 		   racing rather than cancelling would let it win last. */

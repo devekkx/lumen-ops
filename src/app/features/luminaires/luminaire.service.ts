@@ -5,9 +5,6 @@ import { GenericCollectionService } from '@shared/services/generic-collection.se
 import { Filters } from '@shared/models/filter';
 import { Page, PageRequest } from '@shared/models/pagination';
 
-/* Mirrors the seed's shape independently rather than importing it - the
-   contract is the wire payload, not shared code, matching how the filter
-   DSL's evaluator is deliberately reimplemented on both sides. */
 export type LampType = 'SODIUM' | 'LED' | 'METAL_HALIDE';
 export type LuminaireStatus = 'OK' | 'FAULT' | 'MAINTENANCE' | 'OFFLINE';
 
@@ -38,10 +35,6 @@ export interface Luminaire {
 
 export const LUMINAIRE_SEARCH_KEYS = ['code', 'street', 'zone'] as const;
 
-/* The map's request: the same search/filter vocabulary as the table, but no
-   page or ordination, because /geo has no pagination envelope - it always
-   answers with every matching luminaire. Every field is optional; an empty
-   body means "everything". */
 export interface GeoRequest {
 	searchTerm?: string;
 	searchKeys?: string[];
@@ -50,19 +43,19 @@ export interface GeoRequest {
 
 @Injectable({ providedIn: 'root' })
 export class LuminaireService implements GenericCollectionService<Luminaire> {
-	private readonly api = inject(ApiService);
+	private readonly _api = inject(ApiService);
 
-	page(request: PageRequest): Observable<Page<Luminaire>> {
-		return this.api.post<Page<Luminaire>>('/api/luminaires/paged', request);
+	public page(request: PageRequest): Observable<Page<Luminaire>> {
+		return this._api.post<Page<Luminaire>>('/api/luminaires/paged', request);
 	}
 
-	get(id: string): Observable<Luminaire> {
-		return this.api.get<Luminaire>(`/api/luminaires/${id}`);
+	public get(id: string): Observable<Luminaire> {
+		return this._api.get<Luminaire>(`/api/luminaires/${id}`);
 	}
 
 	/* /api/luminaires/geo returns a plain array, not a Page - the map draws
 	   every matching feature at once rather than one page of them. */
-	geo(request: GeoRequest = {}): Observable<Luminaire[]> {
-		return this.api.post<Luminaire[]>('/api/luminaires/geo', request);
+	public geo(request: GeoRequest = {}): Observable<Luminaire[]> {
+		return this._api.post<Luminaire[]>('/api/luminaires/geo', request);
 	}
 }

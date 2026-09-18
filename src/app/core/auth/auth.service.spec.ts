@@ -5,8 +5,15 @@ import { AuthService } from './auth.service';
 
 const TOKEN_KEY = 'lumen.session.token';
 
+/* unescape(encodeURIComponent(x)) is the classic UTF-8-safe-base64 idiom, but
+   unescape itself is deprecated - this percent-decodes the same %XX output by
+   hand instead, which is all unescape ever did here. */
 const encode = (value: object) =>
-	btoa(unescape(encodeURIComponent(JSON.stringify(value))))
+	btoa(
+		encodeURIComponent(JSON.stringify(value)).replace(/%([0-9A-F]{2})/g, (_, hex: string) =>
+			String.fromCharCode(parseInt(hex, 16))
+		)
+	)
 		.replace(/\+/g, '-')
 		.replace(/\//g, '_')
 		.replaceAll('=', '');

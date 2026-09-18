@@ -34,6 +34,10 @@ describe('buildHttpParams', () => {
 	it('keeps every key when several are set in sequence', () => {
 		const params = buildHttpParams({ a: 1, b: 2, c: 3 });
 
-		expect(params.keys().sort()).toEqual(['a', 'b', 'c']);
+		expect(params.keys().sort((first, second) => first.localeCompare(second))).toEqual([
+			'a',
+			'b',
+			'c'
+		]);
 	});
 });

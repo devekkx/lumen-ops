@@ -109,8 +109,8 @@ describe('buildFilterConditions', () => {
 			matchMode: string;
 		}[];
 
-		expect(filters.map((filter) => filter.matchMode).sort()).toEqual(
-			[MatchMode.IS_NOT_NULL, MatchMode.IS_NULL].sort()
+		expect(filters.map((filter) => filter.matchMode).sort((a, b) => a.localeCompare(b))).toEqual(
+			[MatchMode.IS_NOT_NULL, MatchMode.IS_NULL].sort((a, b) => a.localeCompare(b))
 		);
 	});
 

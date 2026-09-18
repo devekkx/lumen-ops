@@ -11,8 +11,6 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoDirective } from '@jsverse/transloco';
 import Feature from 'ol/Feature';
-/* Renamed on import: the global Map is used two lines down for the style
-   caches, and `ol/Map`'s default export would otherwise shadow it. */
 import OlMap from 'ol/Map';
 import type MapBrowserEvent from 'ol/MapBrowserEvent';
 import View from 'ol/View';
@@ -33,20 +31,11 @@ import {
 	LuminaireStatus
 } from './luminaire.service';
 
-/* Worst-first: a mixed cluster is coloured by its most urgent member, so a
-   blob of grouped points still hints that something inside needs attention
-   rather than averaging the trouble away. */
 const SEVERITY_ORDER: readonly LuminaireStatus[] = ['FAULT', 'MAINTENANCE', 'OFFLINE', 'OK'];
 
-/* Centro, Madrid (see ZONES in mock-api/seed.ts) - the real centre of the
-   contract's service area, not an arbitrary point. */
 const MAP_CENTER: [number, number] = [-3.7074, 40.4155];
 const MAP_ZOOM = 12;
 
-/* 600 raw points are already noticeable while dragging (see map.clusterHint).
-   40px is too tight to save much work at this zoom; 60px starts merging
-   points that sit on different streets. 50px is the middle of that range and
-   reads well against Madrid's block size at zoom ~12-14. */
 const CLUSTER_DISTANCE = 50;
 
 @Component({
@@ -57,74 +46,67 @@ const CLUSTER_DISTANCE = 50;
 	styleUrl: './luminaire-map.component.scss'
 })
 export class LuminaireMapComponent implements AfterViewInit, OnDestroy {
-	private readonly luminaires = inject(LuminaireService);
-	private readonly destroyRef = inject(DestroyRef);
+	private readonly _luminaires = inject(LuminaireService);
+	private readonly _destroyRef = inject(DestroyRef);
 
-	@ViewChild('mapHost') private readonly mapHost!: ElementRef<HTMLElement>;
+	@ViewChild('mapHost') private readonly _mapHost!: ElementRef<HTMLElement>;
 
-	private map?: OlMap;
-	private vectorLayer?: VectorLayer<ClusterSource>;
-	private readonly vectorSource = new VectorSource<Feature<Point>>();
-	private readonly clusterSource = new ClusterSource({
+	private _map?: OlMap;
+	private _vectorLayer?: VectorLayer<ClusterSource>;
+	private readonly _vectorSource = new VectorSource<Feature<Point>>();
+	private readonly _clusterSource = new ClusterSource({
 		distance: CLUSTER_DISTANCE,
-		source: this.vectorSource
+		source: this._vectorSource
 	});
 
-	private readonly pointStyles = new Map<LuminaireStatus, Style>();
-	private readonly clusterStyles = new Map<string, Style>();
+	private readonly _pointStyles = new Map<LuminaireStatus, Style>();
+	private readonly _clusterStyles = new Map<string, Style>();
 
-	readonly statuses = LUMINAIRE_STATUSES;
-	readonly loading = signal(false);
-	readonly apiError = signal(false);
-	readonly tilesOffline = signal(false);
-	readonly clustered = signal(true);
-	readonly count = signal(0);
-	readonly selected = signal<Luminaire | null>(null);
+	public readonly statuses = LUMINAIRE_STATUSES;
+	public readonly loading = signal(false);
+	public readonly apiError = signal(false);
+	public readonly tilesOffline = signal(false);
+	public readonly clustered = signal(true);
+	public readonly count = signal(0);
+	public readonly selected = signal<Luminaire | null>(null);
 
-	tone(value: string): string {
+	public tone(value: string): string {
 		return pillClass(value);
 	}
 
-	toggleCluster(enabled: boolean): void {
+	public toggleCluster(enabled: boolean): void {
 		this.clustered.set(enabled);
-		this.clusterSource.setDistance(enabled ? CLUSTER_DISTANCE : 0);
+		this._clusterSource.setDistance(enabled ? CLUSTER_DISTANCE : 0);
 	}
 
-	retry(): void {
-		this.loadFeatures();
+	public retry(): void {
+		this._loadFeatures();
 	}
 
-	ngAfterViewInit(): void {
+	public ngAfterViewInit(): void {
 		const osmSource = new OSM();
-		/* Fires per failed tile, which is exactly the "OSM tiles could not load"
-		   case map.offline describes - the vector layer is a separate source and
-		   keeps working regardless. */
 		osmSource.on('tileloaderror', () => this.tilesOffline.set(true));
 
-		this.vectorLayer = new VectorLayer({
-			source: this.clusterSource,
-			style: (feature) => this.styleFor(feature as Feature<Point>)
+		this._vectorLayer = new VectorLayer({
+			source: this._clusterSource,
+			style: (feature) => this._styleFor(feature as Feature<Point>)
 		});
 
-		this.map = new OlMap({
-			target: this.mapHost.nativeElement,
-			layers: [new TileLayer({ source: osmSource }), this.vectorLayer],
+		this._map = new OlMap({
+			target: this._mapHost.nativeElement,
+			layers: [new TileLayer({ source: osmSource }), this._vectorLayer],
 			view: new View({ center: fromLonLat(MAP_CENTER), zoom: MAP_ZOOM })
 		});
 
-		this.map.on('singleclick', (event) => this.handleClick(event));
+		this._map.on('singleclick', (event) => this._handleClick(event));
 
-		/* The only visible sign a point is hoverable at all, short of a full
-		   highlight-on-hover style: the cursor itself. Standard OpenLayers
-		   idiom - forEachFeatureAtPixel on pointermove rather than a DOM
-		   hover, since the "points" are canvas pixels, not real elements. */
-		this.map.on('pointermove', (event) => {
+		this._map.on('pointermove', (event) => {
 			if (event.dragging) return;
-			const hasFeature = !!this.map?.forEachFeatureAtPixel(event.pixel, () => true);
-			this.mapHost.nativeElement.style.cursor = hasFeature ? 'pointer' : '';
+			const hasFeature = !!this._map?.forEachFeatureAtPixel(event.pixel, () => true);
+			this._mapHost.nativeElement.style.cursor = hasFeature ? 'pointer' : '';
 		});
 
-		this.loadFeatures();
+		this._loadFeatures();
 	}
 
 	/* map.dispose() - not just setTarget(undefined) - is what OpenLayers itself
@@ -137,22 +119,22 @@ export class LuminaireMapComponent implements AfterViewInit, OnDestroy {
 	   component instance does. Nothing here registers a listener on `window`
 	   or `document`, or hands a reference to `this` to a longer-lived service,
 	   so repeated create/destroy across route visits does not accumulate. */
-	ngOnDestroy(): void {
-		this.map?.dispose();
-		this.map = undefined;
+	public ngOnDestroy(): void {
+		this._map?.dispose();
+		this._map = undefined;
 	}
 
-	private loadFeatures(): void {
+	private _loadFeatures(): void {
 		this.loading.set(true);
 		this.apiError.set(false);
 
-		this.luminaires
+		this._luminaires
 			.geo({})
-			.pipe(takeUntilDestroyed(this.destroyRef))
+			.pipe(takeUntilDestroyed(this._destroyRef))
 			.subscribe({
 				next: (items) => {
-					this.vectorSource.clear();
-					this.vectorSource.addFeatures(this.buildFeatures(items));
+					this._vectorSource.clear();
+					this._vectorSource.addFeatures(this._buildFeatures(items));
 					this.count.set(items.length);
 					this.loading.set(false);
 				},
@@ -163,7 +145,7 @@ export class LuminaireMapComponent implements AfterViewInit, OnDestroy {
 			});
 	}
 
-	private buildFeatures(items: readonly Luminaire[]): Feature<Point>[] {
+	private _buildFeatures(items: readonly Luminaire[]): Feature<Point>[] {
 		return items.map((lamp) => {
 			const feature = new Feature({ geometry: new Point(fromLonLat([lamp.lon, lamp.lat])) });
 			feature.setId(lamp.id);
@@ -172,71 +154,50 @@ export class LuminaireMapComponent implements AfterViewInit, OnDestroy {
 		});
 	}
 
-	private handleClick(event: MapBrowserEvent): void {
-		const map = this.map;
+	private _handleClick(event: MapBrowserEvent): void {
+		const map = this._map;
 		if (!map) return;
 
 		const clicked = map.forEachFeatureAtPixel(event.pixel, (feature) => feature as Feature<Point>);
 		if (!clicked) {
-			this.select(null);
+			this._select(null);
 			return;
 		}
 
 		const members = (clicked.get('features') as Feature<Point>[] | undefined) ?? [clicked];
 		if (members.length === 1) {
-			this.select(members[0].get('lamp') as Luminaire);
+			this._select(members[0].get('lamp') as Luminaire);
 			return;
 		}
 
-		/* A cluster of more than one point has no single record to show, so a
-		   click zooms into it instead - the conventional OpenLayers cluster
-		   interaction, and the only one that resolves the ambiguity without
-		   inventing a "which one did you mean" picker. */
 		const extent = boundingExtent(
 			members.map((member) => (member.getGeometry() as Point).getCoordinates())
 		);
 		map.getView().fit(extent, { padding: [48, 48, 48, 48], maxZoom: 18, duration: 250 });
-		this.select(null);
+		this._select(null);
 	}
 
-	/* styleFor reads this.selected() to decide whether a point is highlighted,
-	   but OpenLayers has no idea an Angular signal changed underneath it - a
-	   plain this.selected.set(...) updates the side panel (it's a template
-	   binding) but leaves every point on the canvas exactly as it was
-	   rendered. vectorLayer.changed() is what makes OL re-invoke styleFor for
-	   every feature, which is what actually puts a highlight on the map. */
-	private select(lamp: Luminaire | null): void {
+	private _select(lamp: Luminaire | null): void {
 		this.selected.set(lamp);
-		this.vectorLayer?.changed();
+		this._vectorLayer?.changed();
 	}
 
-	private styleFor(feature: Feature<Point>): Style | Style[] {
+	private _styleFor(feature: Feature<Point>): Style[] {
 		const members = feature.get('features') as Feature<Point>[];
 		if (members.length === 1) {
 			const lamp = members[0].get('lamp') as Luminaire;
-			if (this.selected()?.id === lamp.id) return this.selectedPointStyle(lamp.status);
-			return this.pointStyle(lamp.status);
+			if (this.selected()?.id === lamp.id) return this._selectedPointStyle(lamp.status);
+			return [this._pointStyle(lamp.status)];
 		}
-		return this.clusterStyle(members);
+		return [this._clusterStyle(members)];
 	}
 
-	/* Not cached like pointStyle/clusterStyle - at most one feature ever
-	   wears this at a time, so there is nothing to gain by memoizing per
-	   status, and doing so would risk two differently-selected features
-	   sharing a style object across renders.
-
-	   Two layered styles, not one bigger/thicker circle of the same status
-	   colour: a selected FAULT point is already red, so a marginally larger
-	   red circle with a marginally thicker white ring reads as "a bit
-	   bigger", not "selected". The halo ring below is the app's own accent
-	   colour rather than the status tone, so "this is the one you picked"
-	   looks the same regardless of which status happens to sit under it. */
-	private selectedPointStyle(status: LuminaireStatus): Style[] {
+	private _selectedPointStyle(status: LuminaireStatus): Style[] {
 		return [
 			new Style({
 				image: new Circle({
 					radius: 13,
-					stroke: new Stroke({ color: this.selectionColor(), width: 2.5 })
+					stroke: new Stroke({ color: this._selectionColor(), width: 2.5 })
 				}),
 				zIndex: 9
 			}),
@@ -251,21 +212,15 @@ export class LuminaireMapComponent implements AfterViewInit, OnDestroy {
 		];
 	}
 
-	/* --color-primary rather than a hardcoded hex, same read-the-cascade
-	   approach as toneInk() below - falls back to the token's own value for
-	   the same reason toneInk falls back: unit tests and a pre-stylesheet
-	   render have no cascade to read yet. */
-	private selectionColor(): string {
+	private _selectionColor(): string {
 		const custom = getComputedStyle(document.documentElement)
 			.getPropertyValue('--color-primary')
 			.trim();
 		return custom || '#ff385c';
 	}
 
-	/* toneInk() reads a CSS custom property, so the four possible results are
-	   cached rather than re-read from the cascade on every render frame. */
-	private pointStyle(status: LuminaireStatus): Style {
-		let style = this.pointStyles.get(status);
+	private _pointStyle(status: LuminaireStatus): Style {
+		let style = this._pointStyles.get(status);
 		if (!style) {
 			style = new Style({
 				image: new Circle({
@@ -274,15 +229,15 @@ export class LuminaireMapComponent implements AfterViewInit, OnDestroy {
 					stroke: new Stroke({ color: '#fff', width: 1.5 })
 				})
 			});
-			this.pointStyles.set(status, style);
+			this._pointStyles.set(status, style);
 		}
 		return style;
 	}
 
-	private clusterStyle(members: Feature<Point>[]): Style {
-		const status = this.dominantStatus(members);
+	private _clusterStyle(members: Feature<Point>[]): Style {
+		const status = this._dominantStatus(members);
 		const key = `${status}:${members.length}`;
-		let style = this.clusterStyles.get(key);
+		let style = this._clusterStyles.get(key);
 		if (!style) {
 			const radius = Math.min(10 + Math.sqrt(members.length) * 2, 22);
 			style = new Style({
@@ -297,12 +252,12 @@ export class LuminaireMapComponent implements AfterViewInit, OnDestroy {
 					font: '600 12px sans-serif'
 				})
 			});
-			this.clusterStyles.set(key, style);
+			this._clusterStyles.set(key, style);
 		}
 		return style;
 	}
 
-	private dominantStatus(members: Feature<Point>[]): LuminaireStatus {
+	private _dominantStatus(members: Feature<Point>[]): LuminaireStatus {
 		const present = new Set(members.map((member) => (member.get('lamp') as Luminaire).status));
 		return SEVERITY_ORDER.find((status) => present.has(status)) ?? 'OK';
 	}

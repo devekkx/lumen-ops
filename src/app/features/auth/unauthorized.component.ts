@@ -2,9 +2,6 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 
-/* Denied navigations land here rather than failing silently. A guard that
-   returns false with no destination leaves the user on the page they were
-   already on, which reads as a broken link. */
 @Component({
 	selector: 'lumen-unauthorized',
 	standalone: true,
@@ -59,11 +56,11 @@ import { TranslocoDirective } from '@jsverse/transloco';
 	]
 })
 export class UnauthorizedComponent {
-	private readonly router = inject(Router);
+	private readonly _router = inject(Router);
 
 	/* Back to `/`, so the same canMatch chain that decides a home page on login
 	   decides it here too. */
-	home(): void {
-		void this.router.navigateByUrl('/');
+	public home(): void {
+		void this._router.navigateByUrl('/');
 	}
 }

@@ -43,8 +43,6 @@ export const condition = (
 		matchMode
 	};
 
-	/* The null checks carry no operand at all - not an empty one. A rightHand
-	   of '' would read as "equals empty string" to any backend. */
 	if (matchMode !== MatchMode.IS_NULL && matchMode !== MatchMode.IS_NOT_NULL) {
 		filter.rightHand = {
 			type: options.type ?? AssignmentType.CONTROL,
@@ -57,32 +55,10 @@ export const condition = (
 };
 
 export interface BuildOptions {
-	/* Pins a match mode for a key whose type does not imply the right one - a
-	   code field that should be EQUAL rather than the CONTAINS a string gets. */
 	overrides?: Record<string, MatchMode>;
 	type?: AssignmentType;
 }
 
-/* Turns a flat record of form values into Filters, choosing the match mode from
- * the value's runtime type.
- *
- * The type-driven defaults are the point: a filter form should not have to
- * restate what kind of comparison each of its fields wants.
- *
- *   string  -> CONTAINS   (a text box is a search box)
- *   array   -> IN         (a multi-select is a set)
- *   number  -> EQUAL      (a number box is an exact value)
- *   boolean -> EQUAL
- *   range   -> GTE + LTE  (two conditions, never one BETWEEN)
- *
- * A range becomes two chained conditions rather than a single BETWEEN so that a
- * half-open range still filters. BETWEEN needs both ends; "installed after
- * 2020, no upper bound" is a perfectly ordinary thing to ask for.
- */
-/* One record entry's worth of conditions - split out of buildFilterConditions
-   so each key's type-driven branching (sentinel, blank, override, array,
-   number/boolean, range, string) is its own unit rather than one function
-   that has to hold all of it in mind at once. */
 const conditionsForEntry = (
 	key: string,
 	raw: FilterRecord[string],
@@ -92,9 +68,6 @@ const conditionsForEntry = (
 	if (raw === IS_NULL_SENTINEL) return [condition(key, MatchMode.IS_NULL)];
 	if (raw === IS_NOT_NULL_SENTINEL) return [condition(key, MatchMode.IS_NOT_NULL)];
 
-	/* Blank means no condition at all - not a condition that matches
-	   nothing. This single line is what keeps an untouched filter panel
-	   from emptying the table. */
 	if (isBlank(raw)) return [];
 
 	const override = overrides[key];
@@ -129,8 +102,6 @@ export const buildFilterConditions = (
 		conditionsForEntry(key, raw, overrides, type)
 	);
 
-	/* Conditions default to AND against the next one. Set it explicitly on all
-	   but the last so the payload is unambiguous to read and to log. */
 	return filters.map((filter, index) =>
 		index < filters.length - 1 ? { ...filter, operator: filter.operator ?? 'AND' } : filter
 	);

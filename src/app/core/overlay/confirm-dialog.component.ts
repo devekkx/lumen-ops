@@ -2,17 +2,11 @@ import { Component, inject } from '@angular/core';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { MODAL_DATA, MODAL_REF, ModalRef, ModalService } from './modal.service';
 
-/* One dialog shape covers both uses this exercise asks for - a yes/no confirm
-   and the dirty-exit prompt - because both are "a title, a body, two
-   buttons, resolve true or false" once the copy is parameterised. Keeping it
-   to one component means one focus-trapped, backdrop-dismissible surface to
-   get right rather than two near-duplicates. */
 export interface ConfirmDialogData {
 	titleKey: string;
 	bodyKey: string;
 	confirmKey: string;
 	cancelKey: string;
-	/* transloco interpolation params for bodyKey, e.g. { code: 'AVR-0012' }. */
 	params?: Record<string, unknown>;
 }
 
@@ -43,19 +37,19 @@ export interface ConfirmDialogData {
 	`
 })
 export class ConfirmDialogComponent {
-	private readonly ref = inject<ModalRef<boolean>>(MODAL_REF);
-	readonly data = inject<ConfirmDialogData>(MODAL_DATA);
+	private readonly _ref = inject<ModalRef<boolean>>(MODAL_REF);
+	public readonly data = inject<ConfirmDialogData>(MODAL_DATA);
 
-	private static nextId = 0;
-	readonly titleId = `confirm-dialog-title-${ConfirmDialogComponent.nextId++}`;
-	readonly bodyId = `${this.titleId}-body`;
+	private static _nextId = 0;
+	public readonly titleId = `confirm-dialog-title-${ConfirmDialogComponent._nextId++}`;
+	public readonly bodyId = `${this.titleId}-body`;
 
-	confirm(): void {
-		this.ref.close(true);
+	public confirm(): void {
+		this._ref.close(true);
 	}
 
-	cancel(): void {
-		this.ref.close(false);
+	public cancel(): void {
+		this._ref.close(false);
 	}
 }
 
