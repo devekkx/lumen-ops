@@ -77,7 +77,7 @@ describe('Confirmable', () => {
 	   forces construction via provideAppInitializer; this pins down exactly
 	   what breaks if that wiring is ever removed again. */
 	it('throws if ModalService was never constructed before a decorated method runs', () => {
-		(ModalService as unknown as { current: ModalService | null }).current = null;
+		(ModalService as unknown as { _current: ModalService | null })._current = null;
 
 		expect(() => new Widget().delete('fault-1')).toThrowError(
 			'ModalService used before Angular constructed it'
