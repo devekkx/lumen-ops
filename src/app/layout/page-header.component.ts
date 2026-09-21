@@ -6,7 +6,7 @@ import { Component, input, output } from '@angular/core';
 	template: `
 		<div class="page-header">
 			<div class="page-header__text">
-				<h1 class="page-header__title">{{ title() }}</h1>
+				<h1 class="page-header__title lum-visually-hidden">{{ title() }}</h1>
 				@if (subtitle()) {
 					<p class="page-header__subtitle">{{ subtitle() }}</p>
 				}
@@ -38,12 +38,6 @@ import { Component, input, output } from '@angular/core';
 				flex-direction: column;
 				gap: 6px;
 				min-width: 0;
-			}
-
-			.page-header__title {
-				font: var(--type-display-xl);
-				letter-spacing: var(--tracking-display-lg);
-				color: var(--color-ink);
 			}
 
 			.page-header__subtitle {
