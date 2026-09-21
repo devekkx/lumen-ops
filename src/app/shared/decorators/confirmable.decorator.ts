@@ -5,10 +5,6 @@ export interface ConfirmableOptions<A extends unknown[]> {
 	titleKey?: string;
 	confirmKey?: string;
 	cancelKey?: string;
-	/* Builds the transloco interpolation params (e.g. { code: fault.code })
-	   from whatever the decorated method was called with - `messageKey` is a
-	   fixed i18n key ('confirm.deleteFault'), so the {code} inside it has to
-	   come from the call site rather than from the decorator declaration. */
 	params?: (...args: A) => Record<string, unknown>;
 }
 
@@ -48,9 +44,7 @@ export function Confirmable<A extends unknown[]>(
 					if (confirmed) original.apply(this, args);
 				})
 				.catch(() => {
-					/* The dialog itself never rejects; this only guards against a
-					   caller's own confirmed handler throwing, so a broken action
-					   never surfaces as an unhandled rejection. */
+					/* empty */
 				});
 		};
 

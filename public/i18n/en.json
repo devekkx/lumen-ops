@@ -26,7 +26,7 @@
 		"passwordPlaceholder": "Your password",
 		"signIn": "Sign in",
 		"signingIn": "Signing in…",
-		"invalid": "Wrong user or password",
+		"invalid": "Wrong email or password",
 		"expired": "Your session expired. Sign in again.",
 		"boot": "Resolving the session before the first route…",
 		"bootFailed": "Session could not be resolved",
@@ -42,8 +42,7 @@
 		"language": "Language",
 		"logout": "Sign out",
 		"menu": "Menu",
-		"close": "Close",
-		"homeCrumb": "Home"
+		"close": "Close"
 	},
 	"table": {
 		"searchPlaceholder": "Search by code or street",

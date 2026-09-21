@@ -8,12 +8,6 @@ export interface AssignCrewDialogData {
 	crews: readonly Crew[];
 }
 
-/* A small, single-purpose picker rather than a whole form component - the
-   only input is "which crew", which is exactly what a <select> already
-   models. Shaped like ConfirmDialogComponent (same ModalService, same
-   MODAL_REF/MODAL_DATA tokens, same resolve-a-promise contract) because
-   assigning a crew is the same "one modal decision" the confirm dialog
-   already solves, just with a value attached to the "yes". */
 @Component({
 	selector: 'lumen-assign-crew-dialog',
 	standalone: true,
@@ -50,20 +44,20 @@ export interface AssignCrewDialogData {
 	`
 })
 export class AssignCrewDialogComponent {
-	private readonly ref = inject<ModalRef<string>>(MODAL_REF);
-	readonly data = inject<AssignCrewDialogData>(MODAL_DATA);
+	private readonly _ref = inject<ModalRef<string>>(MODAL_REF);
+	public readonly data = inject<AssignCrewDialogData>(MODAL_DATA);
 
-	private static nextId = 0;
-	readonly titleId = `assign-crew-dialog-title-${AssignCrewDialogComponent.nextId++}`;
+	private static _nextId = 0;
+	public readonly titleId = `assign-crew-dialog-title-${AssignCrewDialogComponent._nextId++}`;
 
-	readonly selected = signal('');
+	public readonly selected = signal('');
 
-	confirm(): void {
-		if (this.selected()) this.ref.close(this.selected());
+	public confirm(): void {
+		if (this.selected()) this._ref.close(this.selected());
 	}
 
-	cancel(): void {
-		this.ref.close();
+	public cancel(): void {
+		this._ref.close();
 	}
 }
 

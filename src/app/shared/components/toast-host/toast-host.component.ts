@@ -1,8 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ToastService } from '@core/api/toast.service';
 
-/* One host, mounted once in the shell. Every interceptor and service calls
-   ToastService.show() and never touches the DOM directly. */
 @Component({
 	selector: 'lumen-toast-host',
 	standalone: true,
@@ -29,10 +27,10 @@ import { ToastService } from '@core/api/toast.service';
 	`
 })
 export class ToastHostComponent {
-	private readonly toastService = inject(ToastService);
-	readonly toasts = this.toastService.toasts;
+	private readonly _toastService = inject(ToastService);
+	public readonly toasts = this._toastService.toasts;
 
-	dismiss(id: number): void {
-		this.toastService.dismiss(id);
+	public dismiss(id: number): void {
+		this._toastService.dismiss(id);
 	}
 }

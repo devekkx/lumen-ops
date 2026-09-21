@@ -1,8 +1,5 @@
 import { Component, input, output } from '@angular/core';
 
-/* The title / subtitle / one-action row every feature page opens with.
-   A component rather than copied markup, so the h1 and its spacing cannot
-   drift between screens. */
 @Component({
 	selector: 'lumen-page-header',
 	standalone: true,
@@ -58,13 +55,11 @@ import { Component, input, output } from '@angular/core';
 	]
 })
 export class PageHeaderComponent {
-	readonly title = input.required<string>();
-	readonly subtitle = input<string>('');
-	readonly actionLabel = input<string>('');
+	public readonly title = input.required<string>();
+	public readonly subtitle = input<string>('');
+	public readonly actionLabel = input<string>('');
 
-	/* Names the ability this action needs, so the "a VIEWER's DOM carries no
-	   write actions" spec can find it by attribute instead of by button text. */
-	readonly writeAction = input<string>('');
+	public readonly writeAction = input<string>('');
 
-	readonly action = output<void>();
+	public readonly action = output<void>();
 }

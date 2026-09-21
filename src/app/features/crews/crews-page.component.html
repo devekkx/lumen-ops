@@ -4,14 +4,16 @@
 			<h1>{{ t('crew.title') }}</h1>
 			<p class="text-secondary mb-0">{{ t('crew.subtitle') }}</p>
 		</div>
-		<button type="button" class="btn btn-outline-secondary" (click)="refresh()">
-			{{ t('table.refresh') }}
-		</button>
+		<div class="lum-toolbar">
+			<button type="button" class="btn btn-sm btn-outline-secondary" (click)="refresh()">
+				{{ t('table.refresh') }}
+			</button>
+		</div>
 	</div>
 
 	<div class="card card-body mb-3">
-		<label class="d-block mb-0">
-			<span class="form-label">{{ t('table.search') }}</span>
+		<label class="d-block mb-0 w-md lum-toolbar">
+			<span class="form-label lum-visually-hidden">{{ t('table.search') }}</span>
 			<input
 				class="form-control form-control-sm"
 				type="search"

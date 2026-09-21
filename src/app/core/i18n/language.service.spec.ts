@@ -3,8 +3,8 @@ import { TranslocoService } from '@jsverse/transloco';
 import { DEFAULT_LOCALE, LanguageService } from './language.service';
 
 class TranslocoStub {
-	active: string | null = null;
-	setActiveLang(lang: string) {
+	public active: string | null = null;
+	public setActiveLang(lang: string) {
 		this.active = lang;
 	}
 }

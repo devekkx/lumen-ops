@@ -3,11 +3,11 @@ import { ModalService } from '@core/overlay/modal.service';
 import { Confirmable } from './confirmable.decorator';
 
 class Widget {
-	ran = false;
-	lastArgs: unknown[] = [];
+	public ran = false;
+	public lastArgs: unknown[] = [];
 
 	@Confirmable('confirm.deleteFault', { params: (id: string) => ({ id }) })
-	delete(id: string): void {
+	public delete(id: string): void {
 		this.ran = true;
 		this.lastArgs = [id];
 	}
@@ -77,7 +77,7 @@ describe('Confirmable', () => {
 	   forces construction via provideAppInitializer; this pins down exactly
 	   what breaks if that wiring is ever removed again. */
 	it('throws if ModalService was never constructed before a decorated method runs', () => {
-		(ModalService as unknown as { current: ModalService | null }).current = null;
+		(ModalService as unknown as { _current: ModalService | null })._current = null;
 
 		expect(() => new Widget().delete('fault-1')).toThrowError(
 			'ModalService used before Angular constructed it'

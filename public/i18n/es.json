@@ -26,7 +26,7 @@
 		"passwordPlaceholder": "Tu contraseña",
 		"signIn": "Iniciar sesión",
 		"signingIn": "Iniciando sesión…",
-		"invalid": "Usuario o contraseña incorrectos",
+		"invalid": "Correo electrónico o contraseña incorrectos",
 		"expired": "Tu sesión ha expirado. Inicia sesión de nuevo.",
 		"boot": "Resolviendo la sesión antes de la primera ruta…",
 		"bootFailed": "No se pudo resolver la sesión",
@@ -42,8 +42,7 @@
 		"language": "Idioma",
 		"logout": "Cerrar sesión",
 		"menu": "Menú",
-		"close": "Cerrar",
-		"homeCrumb": "Inicio"
+		"close": "Cerrar"
 	},
 	"table": {
 		"searchPlaceholder": "Buscar por código o calle",

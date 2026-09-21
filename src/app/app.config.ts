@@ -37,29 +37,14 @@ export const appConfig: ApplicationConfig = {
 				availableLangs: [...LOCALES],
 				defaultLang: DEFAULT_LOCALE,
 				fallbackLang: DEFAULT_LOCALE,
-				/* Spanish is both default and fallback: a key missing from en.json
-           shows Spanish copy rather than a raw key in the UI. */
 				missingHandler: { useFallbackTranslation: true },
 				reRenderOnLangChange: true,
 				prodMode: true,
-				/* Every string in en.json/es.json is written with single-brace
-				   params - 'Showing {a}–{b} of {total}', 'Fault {code} saved' -
-				   but Transloco's own default is double braces ('{{a}}'). Left at
-				   the default, every parameterised translation in the app renders
-				   its placeholders literally instead of substituting them; this
-				   is what actually matches the dictionaries. */
 				interpolation: ['{', '}']
 			},
 			loader: TranslocoHttpLoader
 		}),
 		provideAppInitializer(() => inject(AuthService).initializeUser()),
-		/* Forces ModalService's constructor to run at bootstrap, before any
-		   route or @Confirmable-decorated method can call ModalService.instance.
-		   Without this, the static instance is only set the first time some
-		   component happens to inject it - which a CONTRACTOR-only session that
-		   never opens the fault form might never do, so ModalService.instance
-		   would throw the first time @Confirmable ran, silently no-opping a
-		   destructive action's confirm step instead of running it. */
 		provideAppInitializer(() => {
 			inject(ModalService);
 		}),
@@ -67,10 +52,6 @@ export const appConfig: ApplicationConfig = {
 			routes,
 			withHashLocation(),
 			withComponentInputBinding(),
-			/* SelectivePreloadingStrategy, not PreloadAllModules - see its doc
-			   comment and app.routes.ts's `data.preload` flags. Every lazy route
-			   is still preloaded except the two measured-heavy ones (dashboard,
-			   map), which load on demand instead. */
 			withPreloading(SelectivePreloadingStrategy)
 		)
 	]
