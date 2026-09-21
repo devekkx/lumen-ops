@@ -42,8 +42,7 @@
 		"language": "Idioma",
 		"logout": "Cerrar sesión",
 		"menu": "Menú",
-		"close": "Cerrar",
-		"homeCrumb": "Inicio"
+		"close": "Cerrar"
 	},
 	"table": {
 		"searchPlaceholder": "Buscar por código o calle",
