@@ -5,16 +5,16 @@
 			<p class="text-secondary mb-0">{{ t('fault.subtitle') }}</p>
 		</div>
 		<div class="d-flex gap-2">
-			<button type="button" class="btn btn-outline-secondary" (click)="refresh()">
+			<button type="button" class="btn btn-sm btn-outline-secondary" (click)="refresh()">
 				{{ t('table.refresh') }}
 			</button>
 			@if (abilities().exportData) {
-				<button type="button" class="btn btn-outline-secondary" data-action="export" (click)="exportCsv()">
+				<button type="button" class="btn btn-sm btn-outline-secondary" data-action="export" (click)="exportCsv()">
 					{{ t('table.exportCsv') }}
 				</button>
 			}
 			@if (abilities().createFault) {
-				<a class="btn btn-primary" data-action="create" routerLink="/averias/nueva">
+				<a class="btn btn-sm btn-primary" data-action="create" routerLink="/averias/nueva">
 					{{ t('fault.new') }}
 				</a>
 			}
@@ -22,9 +22,9 @@
 	</div>
 
 	<div class="card card-body mb-3">
-		<div class="d-flex flex-wrap align-items-end gap-2">
+		<div class="d-flex flex-wrap align-items-center gap-2">
 			<label class="d-block w-md">
-				<span class="form-label">{{ t('table.search') }}</span>
+				<span class="form-label lum-visually-hidden">{{ t('table.search') }}</span>
 				<input
 					class="form-control form-control-sm"
 					type="search"
