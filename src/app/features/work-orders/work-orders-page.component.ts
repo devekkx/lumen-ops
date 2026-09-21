@@ -8,6 +8,10 @@ import { ModalService } from '@core/overlay/modal.service';
 import { Confirmable } from '@shared/decorators/confirmable.decorator';
 import { PaginatedTableBase } from '@shared/components/paginated-table/paginated-table.base';
 import {
+	FilterDropdownComponent,
+	FilterToggleEvent
+} from '@shared/components/filter-dropdown/filter-dropdown.component';
+import {
 	PaginatedTableComponent,
 	TableColumn
 } from '@shared/components/paginated-table/paginated-table.component';
@@ -26,7 +30,13 @@ import {
 @Component({
 	selector: 'lumen-work-orders-page',
 	standalone: true,
-	imports: [AsyncPipe, TranslocoDirective, PaginatedTableComponent, LumenTooltipDirective],
+	imports: [
+		AsyncPipe,
+		TranslocoDirective,
+		PaginatedTableComponent,
+		LumenTooltipDirective,
+		FilterDropdownComponent
+	],
 	templateUrl: './work-orders-page.component.html'
 })
 export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
@@ -74,6 +84,10 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 
 	private _statusFilter: string[] = [];
 
+	public get statusFilter(): readonly string[] {
+		return this._statusFilter;
+	}
+
 	public readonly displayPage$ = this.page$.pipe(
 		map((page) => ({
 			...page,
@@ -88,15 +102,11 @@ export class WorkOrdersPageComponent extends PaginatedTableBase<WorkOrder> {
 		super([...WORK_ORDER_SEARCH_KEYS], { property: 'scheduledAt', direction: 'ASC' });
 	}
 
-	public toggleStatus(value: string, checked: boolean): void {
+	public toggleStatus({ value, checked }: FilterToggleEvent): void {
 		this._statusFilter = checked
 			? [...this._statusFilter, value]
 			: this._statusFilter.filter((entry) => entry !== value);
 		this._applyFilters();
-	}
-
-	public isStatusOn(value: string): boolean {
-		return this._statusFilter.includes(value);
 	}
 
 	public canAssign(order: WorkOrder): boolean {

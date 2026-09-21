@@ -67,6 +67,32 @@ textarea {
 	border-radius: var(--radius-xs);
 }
 
+/* A field that shouldn't stretch to fill its row once something else -
+   a filter dropdown group, say - shares that row with it. */
+.w-md {
+	width: 100%;
+	max-width: 320px;
+}
+
+/* Bootstrap's own -sm scale (4px radius, 4px/8px padding) reads as cramped
+   once a search field, a filter dropdown and a couple of buttons all sit on
+   one line - this softens just that row's controls rather than the shared
+   $border-radius-sm/--radius-xs token, which tables and focus rings also
+   key off. */
+.lum-toolbar {
+	.btn-sm,
+	.dropdown-toggle {
+		--bs-btn-padding-y: 0.375rem;
+		--bs-btn-padding-x: 0.75rem;
+		--bs-btn-border-radius: 0.375rem;
+	}
+
+	.form-control-sm {
+		padding: 0.375rem 0.75rem;
+		border-radius: 0.375rem;
+	}
+}
+
 /* Hidden from sight, never from focus or from a screen reader. */
 .lum-visually-hidden {
 	position: absolute;

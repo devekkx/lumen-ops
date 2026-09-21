@@ -6,6 +6,10 @@ import { ToastService } from '@core/api/toast.service';
 import { Confirmable } from '@shared/decorators/confirmable.decorator';
 import { LumenTooltipDirective } from '@shared/directives/tooltip.directive';
 import {
+	FilterDropdownComponent,
+	FilterToggleEvent
+} from '@shared/components/filter-dropdown/filter-dropdown.component';
+import {
 	PaginatedTableComponent,
 	TableColumn
 } from '@shared/components/paginated-table/paginated-table.component';
@@ -23,7 +27,13 @@ import {
 @Component({
 	selector: 'lumen-faults-page',
 	standalone: true,
-	imports: [TranslocoDirective, RouterLink, PaginatedTableComponent, LumenTooltipDirective],
+	imports: [
+		TranslocoDirective,
+		RouterLink,
+		PaginatedTableComponent,
+		LumenTooltipDirective,
+		FilterDropdownComponent
+	],
 	templateUrl: './faults-page.component.html'
 })
 export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
@@ -64,30 +74,30 @@ export class FaultsPageComponent extends PaginatedTableBaseV2<Fault> {
 	private _severityFilter: string[] = [];
 	private _statusFilter: string[] = [];
 
+	public get severityFilter(): readonly string[] {
+		return this._severityFilter;
+	}
+
+	public get statusFilter(): readonly string[] {
+		return this._statusFilter;
+	}
+
 	constructor() {
 		super([...FAULT_SEARCH_KEYS], { property: 'reportedAt', direction: 'DESC' });
 	}
 
-	public toggleSeverity(value: string, checked: boolean): void {
+	public toggleSeverity({ value, checked }: FilterToggleEvent): void {
 		this._severityFilter = checked
 			? [...this._severityFilter, value]
 			: this._severityFilter.filter((entry) => entry !== value);
 		this._applyFilters();
 	}
 
-	public toggleStatus(value: string, checked: boolean): void {
+	public toggleStatus({ value, checked }: FilterToggleEvent): void {
 		this._statusFilter = checked
 			? [...this._statusFilter, value]
 			: this._statusFilter.filter((entry) => entry !== value);
 		this._applyFilters();
-	}
-
-	public isSeverityOn(value: string): boolean {
-		return this._severityFilter.includes(value);
-	}
-
-	public isStatusOn(value: string): boolean {
-		return this._statusFilter.includes(value);
 	}
 
 	public canValidate(fault: Fault): boolean {
