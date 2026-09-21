@@ -42,7 +42,8 @@
 		"language": "Language",
 		"logout": "Sign out",
 		"menu": "Menu",
-		"close": "Close"
+		"close": "Close",
+		"homeCrumb": "Home"
 	},
 	"table": {
 		"searchPlaceholder": "Search by code or street",

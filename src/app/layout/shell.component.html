@@ -68,6 +68,24 @@
 
 	<div class="shell__main">
 		<header class="shell__header" role="banner">
+			<nav class="shell__crumbs" [attr.aria-label]="t('shell.homeCrumb')">
+				@for (crumb of crumbs(); track crumb.label; let last = $last) {
+					<span class="shell__crumb">
+						@if (crumb.href) {
+							<a class="shell__crumb-link" [routerLink]="crumb.href">
+								{{ crumb.literal ? crumb.label : t(crumb.label) }}
+							</a>
+						} @else {
+							<span class="shell__crumb-current" aria-current="page">
+								{{ crumb.literal ? crumb.label : t(crumb.label) }}
+							</span>
+						}
+						@if (!last) {
+							<span class="shell__crumb-divider" aria-hidden="true">/</span>
+						}
+					</span>
+				}
+			</nav>
 
 			<div class="shell__langs" role="group" [attr.aria-label]="t('shell.language')">
 				@for (locale of locales; track locale) {
