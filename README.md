@@ -51,9 +51,9 @@ than the dev-server proxy (`src/proxy.conf.json`) uses.
 | `src/app/core` | Auth (session, guards, JWT decoding), the one `ApiService`, HTTP interceptors, i18n plumbing, the modal/overlay service. Cross-cutting, app-wide. |
 | `src/app/shared` | Reusable primitives with no feature opinions: the filter DSL, the pagination models, both paginated-table base classes (v1 and v2 - see below), validators, the luminaire-picker form control. |
 | `src/app/features` | The actual screens - login, dashboard, luminaires, faults, the map - each its own lazy route (`loadComponent`). |
-| `src/app/business` | Reserved for domain logic that doesn't belong in a feature's own folder. Empty in this build; not every exercise needed it. |
+| `src/app/business` | The real repo's home for domain logic that doesn't belong in a feature's own folder - `@business/*` is a live path alias (`tsconfig.json`) for parity, but no folder exists here yet, because nothing in this build needed one. |
 | `mock-api` | An Express server implementing the exact contract the app consumes: the pagination envelope, the filter DSL evaluator, auth, and the energy model. Deterministic (fixed PRNG seed) so the same 600 luminaires and 400 faults come back every run. |
-| `docs/` | Design notes written *during* the build, not after - read these before changing the area they cover. `mock-api.md` and `filter-dsl.md` are the contract; `table-v1-vs-v2.md`, `a11y-notes.md`, `app-initializer.md`, `i18n-notes.md` explain specific decisions and their known gaps. |
+| `docs/` | Design notes written *during* the build, not after - read these before changing the area they cover. `mock-api.md` and `filter-dsl.md` are the contract; `table-v1-vs-v2.md`, `a11y-notes.md`, `app-initializer.md`, `i18n-notes.md`, `canmatch-vs-canactivate.md`, `design-tokens.md`, `router-options.md`, `shell-and-navigation.md` and `tsconfig-notes.md` each explain one specific decision and its known gaps; `build-week-guide.md` is the brief itself, restated. |
 
 ## Three things worth understanding before you change anything
 
@@ -130,13 +130,14 @@ ng test
 ```
 
 runs the Karma/Jasmine suite. `karma.conf.js` wires in coverage
-(`karma-coverage`) with conservative, not-yet-verified thresholds - see the
-comment in that file for why they're a floor inferred from which modules
-have specs, not a measured baseline. **No headless browser is available in
-the environment this suite and this README were written in**, so `ng test`
-has not actually been executed against this codebase; every spec was reasoned
-through by hand. `.github/workflows/ci.yml` is the first place this suite
-actually runs, against a real headless Chrome.
+(`karma-coverage`) with a deliberately conservative floor (60%
+statements/lines, 55% functions, 40% branches) - actual coverage, measured
+in CI, runs well above that (comfortably in the high 80s on statements and
+lines), so the floor has room to be raised without breaking a real run.
+`.github/workflows/ci.yml`'s `Unit tests` job is what actually runs this
+suite, against a real headless Chrome - no headless browser is available in
+every environment this codebase gets worked on in, so CI, not a local
+`ng test`, is the source of truth for whether the suite passes.
 
 ## Building and deployment
 
@@ -145,11 +146,17 @@ ng build --configuration production
 ```
 
 builds to `dist/lumen-ops/browser`. The production budget
-(`angular.json`) is 2 MB warning / 4 MB error on the initial bundle - see the
-inline comments added alongside that change for the measured numbers behind
-it (the actual initial bundle is under 750 kB; OpenLayers and ECharts, the
-two genuinely heavy dependencies, are confirmed lazy-loaded on their own
-routes and excluded from preloading via `SelectivePreloadingStrategy`).
+(`angular.json`) is 2 MB warning / 4 MB error on the initial bundle - the
+actual initial bundle is around 810 kB raw (~170 kB gzipped; `--stats-json`
+has the exact breakdown). `angular.json` also turns off `inlineCritical`
+for production styles: Angular's default defers non-critical CSS behind a
+`<link media="print" onload="...">` swap, and that `onload` is inline JS
+that `nginx.conf`'s CSP (`script-src 'self'`, no exceptions) silently
+blocks - the stylesheet would never actually apply on screen with that
+optimization left on, which is worth more than the few kB it would have
+saved. OpenLayers and ECharts, the two genuinely heavy dependencies, are
+confirmed lazy-loaded on their own routes and excluded from preloading via
+`SelectivePreloadingStrategy`.
 
 `Dockerfile` + `docker-compose.yml` package this into two containers (the
 built app behind nginx, and the mock API run via `tsx`) - see "Running it"
