@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { TranslocoDirective } from '@jsverse/transloco';
 
 export interface FilterToggleEvent {
@@ -13,14 +13,14 @@ export interface FilterToggleEvent {
 	templateUrl: './filter-dropdown.component.html'
 })
 export class FilterDropdownComponent {
-	@Input({ required: true }) public label = '';
-	@Input({ required: true }) public optionLabelPrefix = '';
-	@Input({ required: true }) public options: readonly string[] = [];
-	@Input() public selected: readonly string[] = [];
+	public readonly label = input.required<string>();
+	public readonly optionLabelPrefix = input.required<string>();
+	public readonly options = input.required<readonly string[]>();
+	public readonly selected = input<readonly string[]>([]);
 
-	@Output() public readonly filterToggle = new EventEmitter<FilterToggleEvent>();
+	public readonly filterToggle = output<FilterToggleEvent>();
 
 	public isOn(value: string): boolean {
-		return this.selected.includes(value);
+		return this.selected().includes(value);
 	}
 }
