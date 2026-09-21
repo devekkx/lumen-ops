@@ -3,13 +3,15 @@
 		<div>
 			<h1>{{ t('lum.title') }}</h1>
 		</div>
-		<button type="button" class="btn btn-sm btn-outline-secondary" (click)="refresh()">
-			{{ t('table.refresh') }}
-		</button>
+		<div class="lum-toolbar">
+			<button type="button" class="btn btn-sm btn-outline-secondary" (click)="refresh()">
+				{{ t('table.refresh') }}
+			</button>
+		</div>
 	</div>
 
 	<div class="card card-body mb-3">
-		<div class="d-flex flex-wrap align-items-center gap-2">
+		<div class="d-flex flex-wrap align-items-center gap-2 lum-toolbar">
 			<label class="d-block w-md">
 				<span class="form-label lum-visually-hidden">{{ t('table.search') }}</span>
 				<input
