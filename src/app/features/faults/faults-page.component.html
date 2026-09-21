@@ -22,47 +22,32 @@
 	</div>
 
 	<div class="card card-body mb-3">
-		<label class="d-block mb-3">
-			<span class="form-label">{{ t('table.search') }}</span>
-			<input
-				class="form-control form-control-sm"
-				type="search"
-				[placeholder]="t('table.searchFaults')"
-				(input)="setSearch($any($event.target).value)"
-			/>
-		</label>
+		<div class="d-flex flex-wrap align-items-end gap-2">
+			<label class="d-block w-md">
+				<span class="form-label">{{ t('table.search') }}</span>
+				<input
+					class="form-control form-control-sm"
+					type="search"
+					[placeholder]="t('table.searchFaults')"
+					(input)="setSearch($any($event.target).value)"
+				/>
+			</label>
 
-		<div class="mb-3">
-			<span class="form-label d-block mb-2">{{ t('fault.severity') }}</span>
-			<div class="d-flex flex-wrap gap-2">
-				@for (severity of severities; track severity) {
-					<button
-						type="button"
-						class="lum-chip"
-						[class.lum-chip--on]="isSeverityOn(severity)"
-						[attr.aria-pressed]="isSeverityOn(severity)"
-						(click)="toggleSeverity(severity, !isSeverityOn(severity))"
-					>
-						{{ t('severity.' + severity) }}
-					</button>
-				}
-			</div>
-		</div>
-
-		<div>
-			<span class="form-label d-block mb-2">{{ t('fault.status') }}</span>
-			<div class="d-flex flex-wrap gap-2">
-				@for (status of statuses; track status) {
-					<button
-						type="button"
-						class="lum-chip"
-						[class.lum-chip--on]="isStatusOn(status)"
-						[attr.aria-pressed]="isStatusOn(status)"
-						(click)="toggleStatus(status, !isStatusOn(status))"
-					>
-						{{ t('status.' + status) }}
-					</button>
-				}
+			<div class="d-flex flex-wrap gap-2 ms-auto">
+				<lumen-filter-dropdown
+					label="fault.severity"
+					optionLabelPrefix="severity."
+					[options]="severities"
+					[selected]="severityFilter"
+					(filterToggle)="toggleSeverity($event)"
+				/>
+				<lumen-filter-dropdown
+					label="fault.status"
+					optionLabelPrefix="status."
+					[options]="statuses"
+					[selected]="statusFilter"
+					(filterToggle)="toggleStatus($event)"
+				/>
 			</div>
 		</div>
 	</div>

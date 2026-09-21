@@ -3,6 +3,10 @@ import { Component, inject } from '@angular/core';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { PaginatedTableBase } from '@shared/components/paginated-table/paginated-table.base';
 import {
+	FilterDropdownComponent,
+	FilterToggleEvent
+} from '@shared/components/filter-dropdown/filter-dropdown.component';
+import {
 	PaginatedTableComponent,
 	TableColumn
 } from '@shared/components/paginated-table/paginated-table.component';
@@ -20,7 +24,7 @@ import {
 @Component({
 	selector: 'lumen-luminaires-page',
 	standalone: true,
-	imports: [AsyncPipe, TranslocoDirective, PaginatedTableComponent],
+	imports: [AsyncPipe, TranslocoDirective, PaginatedTableComponent, FilterDropdownComponent],
 	templateUrl: './luminaires-page.component.html'
 })
 export class LuminairesPageComponent extends PaginatedTableBase<Luminaire> {
@@ -45,30 +49,30 @@ export class LuminairesPageComponent extends PaginatedTableBase<Luminaire> {
 	private _statusFilter: string[] = [];
 	private _lampTypeFilter: string[] = [];
 
+	public get statusFilter(): readonly string[] {
+		return this._statusFilter;
+	}
+
+	public get lampTypeFilter(): readonly string[] {
+		return this._lampTypeFilter;
+	}
+
 	constructor() {
 		super([...LUMINAIRE_SEARCH_KEYS], { property: 'code', direction: 'ASC' });
 	}
 
-	public toggleStatus(value: string, checked: boolean): void {
+	public toggleStatus({ value, checked }: FilterToggleEvent): void {
 		this._statusFilter = checked
 			? [...this._statusFilter, value]
 			: this._statusFilter.filter((entry) => entry !== value);
 		this._applyFilters();
 	}
 
-	public toggleLampType(value: string, checked: boolean): void {
+	public toggleLampType({ value, checked }: FilterToggleEvent): void {
 		this._lampTypeFilter = checked
 			? [...this._lampTypeFilter, value]
 			: this._lampTypeFilter.filter((entry) => entry !== value);
 		this._applyFilters();
-	}
-
-	public isStatusOn(value: string): boolean {
-		return this._statusFilter.includes(value);
-	}
-
-	public isLampTypeOn(value: string): boolean {
-		return this._lampTypeFilter.includes(value);
 	}
 
 	/* Rebuilds the readable DSL lines straight from the same builder the

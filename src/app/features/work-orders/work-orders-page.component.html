@@ -16,8 +16,8 @@
 		</div>
 	</div>
 
-	<div class="card card-body mb-3">
-		<label class="d-block mb-3">
+	<div class="card card-body mb-3 d-flex flex-wrap align-items-end gap-2">
+		<label class="d-block w-md">
 			<span class="form-label">{{ t('table.search') }}</span>
 			<input
 				class="form-control form-control-sm"
@@ -27,21 +27,14 @@
 			/>
 		</label>
 
-		<div>
-			<span class="form-label d-block mb-2">{{ t('order.status') }}</span>
-			<div class="d-flex flex-wrap gap-2">
-				@for (status of statuses; track status) {
-					<button
-						type="button"
-						class="lum-chip"
-						[class.lum-chip--on]="isStatusOn(status)"
-						[attr.aria-pressed]="isStatusOn(status)"
-						(click)="toggleStatus(status, !isStatusOn(status))"
-					>
-						{{ t('status.' + status) }}
-					</button>
-				}
-			</div>
+		<div class="ms-auto">
+			<lumen-filter-dropdown
+				label="order.status"
+				optionLabelPrefix="status."
+				[options]="statuses"
+				[selected]="statusFilter"
+				(filterToggle)="toggleStatus($event)"
+			/>
 		</div>
 	</div>
 

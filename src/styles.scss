@@ -67,6 +67,13 @@ textarea {
 	border-radius: var(--radius-xs);
 }
 
+/* A field that shouldn't stretch to fill its row once something else -
+   a filter dropdown group, say - shares that row with it. */
+.w-md {
+	width: 100%;
+	max-width: 320px;
+}
+
 /* Hidden from sight, never from focus or from a screen reader. */
 .lum-visually-hidden {
 	position: absolute;
